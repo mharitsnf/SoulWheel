@@ -6,11 +6,14 @@ onready var inner_line = $InnerLine
 
 
 func initialize():
-	# Set the center of the circle
-	outer_line.position = Configurations.wheel_center
-	inner_line.position = Configurations.wheel_center
-	
+	yield(get_tree(), "idle_frame")
+	position = Configurations.wheel_center
 	draw_outline()
+
+
+func destroy():
+	yield(get_tree(), "idle_frame")
+	queue_free()
 
 
 # Function for drawing the wheel's outline.
