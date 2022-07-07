@@ -1,0 +1,47 @@
+[gd_scene format=2]
+
+[node name="HUD" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_top = 0.8
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 4.0
+margin_right = -8.0
+margin_bottom = -4.0
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
+margin_right = 164.0
+margin_bottom = 56.0
+columns = 2
+
+[node name="Button" type="Button" parent="MarginContainer/GridContainer"]
+margin_right = 80.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Skill 1"
+
+[node name="Button2" type="Button" parent="MarginContainer/GridContainer"]
+margin_left = 84.0
+margin_right = 164.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+text = "Skill 2"
+
+[node name="Button3" type="Button" parent="MarginContainer/GridContainer"]
+margin_top = 24.0
+margin_right = 80.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+text = "Skill 3"
+
+[node name="Button4" type="Button" parent="MarginContainer/GridContainer"]
+margin_left = 84.0
+margin_top = 24.0
+margin_right = 164.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+text = "Skill 4"
