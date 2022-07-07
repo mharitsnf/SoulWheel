@@ -5,7 +5,7 @@ onready var outer_line = $OuterLine
 onready var inner_line = $InnerLine
 
 
-func _ready():
+func initialize():
 	# Set the center of the circle
 	outer_line.position = Configurations.wheel_center
 	inner_line.position = Configurations.wheel_center
