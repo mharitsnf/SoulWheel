@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/Components/Character/character.gd"
 }, {
+"base": "Character",
+"class": "Enemy",
+"language": "GDScript",
+"path": "res://Scenes/Components/Enemy/enemy.gd"
+}, {
 "base": "Resource",
 "class": "EnemyDataModel",
 "language": "GDScript",
@@ -36,6 +41,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Character": "",
+"Enemy": "",
 "EnemyDataModel": "",
 "Player": "",
 "PlayerDataModel": "",
@@ -52,6 +58,7 @@ config/icon="res://icon.png"
 
 Configurations="*res://Singletons/configurations.gd"
 Globals="*res://Singletons/globals.gd"
+WheelSingleton="*res://Singletons/wheel_singleton.gd"
 
 [display]
 

@@ -14,3 +14,5 @@ width = 3.0
 default_color = Color( 1, 1, 1, 1 )
 
 [node name="Areas" type="Node2D" parent="."]
+
+[node name="SavedAreas" type="Node2D" parent="."]
