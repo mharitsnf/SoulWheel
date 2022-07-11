@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Attack Skills/arrow_data_model.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+attack_type = 0
+name = "Basic"
+data = [ {
+"move_speed": 85,
+"rot_angle": 180,
+"thickness": 4
+} ]

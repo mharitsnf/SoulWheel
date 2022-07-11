@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "ArrowDataModel",
+"language": "GDScript",
+"path": "res://Resources/Attack Skills/arrow_data_model.gd"
+}, {
 "base": "Node2D",
 "class": "Character",
 "language": "GDScript",
@@ -40,6 +45,7 @@ _global_script_classes=[ {
 "path": "res://Scenes/Main/turn_manager.gd"
 } ]
 _global_script_class_icons={
+"ArrowDataModel": "",
 "Character": "",
 "Enemy": "",
 "EnemyDataModel": "",
@@ -58,7 +64,7 @@ config/icon="res://icon.png"
 
 Configurations="*res://Singletons/configurations.gd"
 Globals="*res://Singletons/globals.gd"
-WheelSingleton="*res://Singletons/wheel_singleton.gd"
+EnemyProcessor="*res://Singletons/enemy_processor.gd"
 
 [display]
 

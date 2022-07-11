@@ -6,11 +6,13 @@ export(float) var tween_speed : float
 onready var btn_container = $MarginContainer/ButtonContainer
 
 
-func initialize():
-	for btn in btn_container.get_children():
-		if btn is Button:
-			btn.rect_size = Vector2(40, 40)
-			btn.connect("pressed", Globals.player, "_on_skill_button_pressed", [btn.text])
+func initialize(_skills):
+	for skill in _skills:
+		var btn = Button.new()
+		btn.text = skill.name
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn_container.add_child(btn)
+		btn.connect("pressed", Globals.player, "_on_skill_button_pressed", [btn.get_index()])
 	
 	$Tween.interpolate_property(
 		self,

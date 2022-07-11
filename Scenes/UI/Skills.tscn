@@ -27,31 +27,4 @@ margin_right = 164.0
 margin_bottom = 40.0
 alignment = 1
 
-[node name="Button" type="Button" parent="MarginContainer/ButtonContainer"]
-margin_right = 38.0
-margin_bottom = 40.0
-size_flags_horizontal = 3
-text = "1"
-
-[node name="Button2" type="Button" parent="MarginContainer/ButtonContainer"]
-margin_left = 42.0
-margin_right = 80.0
-margin_bottom = 40.0
-size_flags_horizontal = 3
-text = "2"
-
-[node name="Button3" type="Button" parent="MarginContainer/ButtonContainer"]
-margin_left = 84.0
-margin_right = 122.0
-margin_bottom = 40.0
-size_flags_horizontal = 3
-text = "3"
-
-[node name="Button4" type="Button" parent="MarginContainer/ButtonContainer"]
-margin_left = 126.0
-margin_right = 164.0
-margin_bottom = 40.0
-size_flags_horizontal = 3
-text = "4"
-
 [node name="Tween" type="Tween" parent="."]
