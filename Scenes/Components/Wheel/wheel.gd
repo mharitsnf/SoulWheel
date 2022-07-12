@@ -25,12 +25,17 @@ func _process(delta):
 		if phase == "lock":
 			for i in range(enemy.soul_areas.size()):
 				enemy.soul_areas[i].rot_angle += delta * enemy.soul_areas[i].move_speed
+				enemy.soul_areas[i].rot_angle = fmod(enemy.soul_areas[i].rot_angle, 360)
 				$Areas.get_child(i).rotation_degrees = enemy.soul_areas[i].rot_angle
+				
+				if i == 0: print(enemy.soul_areas[i].rot_angle)
 		
 		elif phase == "strike":
 			for i in range(arrows.data.size()):
 				arrows.data[i].rot_angle += delta * arrows.data[i].move_speed
+				arrows.data[i].rot_angle = fmod(arrows.data[i].rot_angle, 360)
 				$Arrows.get_child(i).rotation_degrees = arrows.data[i].rot_angle
+				
 		
 		time_elapsed += delta
 		
@@ -69,6 +74,7 @@ func set_enemy(_enemy):
 		tmp_soul.thickness = _thickness_preprocess(tmp_soul.thickness)
 		tmp_soul.move_speed += rng.randf_range(-20, 20)
 		tmp_soul.rot_angle += rng.randf_range(-180, 180)
+		if tmp_soul.rot_angle < 0: tmp_soul.rot_angle += 360
 		processed_souls.append(tmp_soul)
 	
 	_enemy.soul_areas = processed_souls

@@ -7,7 +7,11 @@ script = ExtResource( 1 )
 attack_type = 0
 name = "Basic"
 data = [ {
-"move_speed": 85,
+"move_speed": 80,
 "rot_angle": 180,
 "thickness": 4
+}, {
+"move_speed": 80,
+"rot_angle": 90,
+"thickness": 0
 } ]

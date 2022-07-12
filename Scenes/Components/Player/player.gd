@@ -76,22 +76,34 @@ func _check_result():
 	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
 		
 		for enemy in Globals.saved_areas:
-			var is_hit = false
+			var hit_count = 0
 			
 			for arrow in Globals.saved_arrow.data:
-				var arrow_angles = _generate_angles(arrow.rot_angle, arrow.thickness)
-				print(arrow_angles)
+				var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
+				
 				for area in enemy.soul_areas:
-					pass
+					var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
+					
+					print(arrow_angle, ' ', area_angle)
+					
+					if _is_hit(arrow_angle, area_angle):
+						hit_count += 1
+						break
 			
-		print(Globals.saved_areas)
-		print(Globals.saved_arrow)
+			print(enemy.node, " is hit ", hit_count, " times.")
 
 
 func _generate_angles(rot_angle, thickness):
 	var start_angle = -thickness
 	var end_angle = thickness + 1
-	return Vector2(start_angle + rot_angle, end_angle + rot_angle)
+	return Vector2(fmod(start_angle + rot_angle, 360), fmod(end_angle + rot_angle, 360))
+
+
+func _is_hit(arrow : Vector2, area : Vector2):
+	if arrow.y >= area.x and arrow.x <= area.y:
+		return true
+	
+	return false
 
 
 func _end_turn():
