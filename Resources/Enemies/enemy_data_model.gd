@@ -2,7 +2,6 @@ extends Resource
 class_name EnemyDataModel
 
 export var enemy_type : int
-export var name : String
 export var max_health : int
 export var soul_areas : Array
 

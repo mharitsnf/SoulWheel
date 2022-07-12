@@ -9,7 +9,7 @@ onready var inner_line = $InnerLine
 var rng = RandomNumberGenerator.new()
 
 var enemy = null
-var arrows := {}
+var arrows = []
 
 var phase = null
 var running : bool = false
@@ -27,14 +27,12 @@ func _process(delta):
 				enemy.soul_areas[i].rot_angle += delta * enemy.soul_areas[i].move_speed
 				enemy.soul_areas[i].rot_angle = fmod(enemy.soul_areas[i].rot_angle, 360)
 				$Areas.get_child(i).rotation_degrees = enemy.soul_areas[i].rot_angle
-				
-				if i == 0: print(enemy.soul_areas[i].rot_angle)
 		
 		elif phase == "strike":
-			for i in range(arrows.data.size()):
-				arrows.data[i].rot_angle += delta * arrows.data[i].move_speed
-				arrows.data[i].rot_angle = fmod(arrows.data[i].rot_angle, 360)
-				$Arrows.get_child(i).rotation_degrees = arrows.data[i].rot_angle
+			for i in range(arrows.size()):
+				arrows[i].rot_angle += delta * arrows[i].move_speed
+				arrows[i].rot_angle = fmod(arrows[i].rot_angle, 360)
+				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
 				
 		
 		time_elapsed += delta
@@ -87,12 +85,12 @@ func set_arrows(_arrows):
 	
 	var processed_arrows = []
 	
-	for arrow in _arrows.data:
+	for arrow in _arrows:
 		var tmp_arrow = arrow.duplicate()
 		tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
 		processed_arrows.append(tmp_arrow)
 	
-	_arrows.data = processed_arrows
+	_arrows = processed_arrows
 	arrows = _arrows
 
 
@@ -108,12 +106,12 @@ func draw_areas():
 func draw_arrows():
 	yield(get_tree(), "idle_frame")
 	
-	for arrow in arrows.data:
+	for arrow in arrows:
 		var arrow_display = _create_arrow(arrow.thickness, arrow.rot_angle)
 		$Arrows.add_child(arrow_display)
 
 
-func soul_lock():
+func action():
 	emit_signal("start_running")
 	yield(self, "stop_running")
 
@@ -137,10 +135,15 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 
 func _draw_saved_area():
 	for enemy in Globals.saved_areas:
+		var area_container = Node2D.new()
+		area_container.modulate.a = 0.5
+		
 		for area in enemy.soul_areas:
 			var saved_area = _create_area(area.rot_angle)
-			$SavedAreas.add_child(saved_area)
+			area_container.add_child(saved_area)
 			_draw_area(saved_area, 72, area.thickness)
+		
+		$SavedAreas.add_child(area_container)
 
 
 func _calculate_point_on_circle(radian: float, radius: float) -> Vector2:
@@ -155,7 +158,6 @@ func _create_area(rot_angle):
 	var area : Line2D = Line2D.new()
 	area.width = 8
 	area.rotation_degrees = rot_angle
-	area.default_color.a = 0.5
 	return area
 
 
@@ -163,7 +165,7 @@ func _create_arrow(thickness : int, rot_angle : int):
 	thickness = _thickness_preprocess(thickness)
 	
 	var new_polygon = Polygon2D.new()
-	new_polygon.color = Color(1, 0, 0, 1)
+	new_polygon.color = Color(0, 1, 1, 1)
 	new_polygon.rotation_degrees = rot_angle
 	
 	var origin_point = Vector2.ZERO
@@ -195,5 +197,8 @@ func _on_stop_running():
 	
 	if phase == "lock":
 		Globals.saved_areas.append(enemy)
+			
 	elif phase == "strike":
-		Globals.saved_arrow = arrows
+		for arrow in arrows:
+			Globals.saved_arrow.append(arrow)
+	

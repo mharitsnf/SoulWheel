@@ -7,7 +7,6 @@ export(PackedScene) var wheel : PackedScene
 export(PackedScene) var skill_hud : PackedScene
 
 var rng = RandomNumberGenerator.new()
-var skills := []
 var chosen_skill = null
 
 var skill_hud_ins : Control = null
@@ -26,17 +25,12 @@ func _ready():
 	rng.randomize()
 	
 	if Globals.current_area == 1 and Globals.current_round == 1:
-		_load_deck(Globals.skill_resource_paths.attack1)
+		_put_card_on_deck(Globals.skill_resource_paths.attack1)
+		_put_card_on_deck(Globals.skill_resource_paths.attack2)
+
 
 func play_turn():
 	print("player playing")
-	
-	# Randomize current skills
-	var skill_limit = Globals.skill_deck.size() if Globals.skill_deck.size() <= 4 else 4
-	for i in range(skill_limit):
-		var chosen_skill_idx = rng.randi_range(0, skill_limit - 1)
-		var skill = Globals.skill_deck[chosen_skill_idx]
-		skills.append(skill)
 	
 	# Skill selection phase
 	yield(_summon_skill_hud(), "completed")
@@ -50,53 +44,46 @@ func play_turn():
 			yield(_summon_wheel("lock"), "completed")
 			yield(wheel_ins.set_enemy(current_enemy), "completed")
 			yield(wheel_ins.draw_areas(), "completed")
-			yield(wheel_ins.soul_lock(), "completed")
+			yield(wheel_ins.action(), "completed")
 			yield(_destroy_wheel(), "completed")
 			
 			# TODO: Add transition
 			yield(get_tree().create_timer(1), "timeout")
 	
 	# Soul strike phase
-#	print(skills[chosen_skill])
-	yield(_summon_wheel("strike"), "completed")
-	yield(wheel_ins.set_arrows(skills[chosen_skill]), "completed")
-	yield(wheel_ins.draw_arrows(), "completed")
-	yield(wheel_ins.soul_lock(), "completed")
-	yield(_destroy_wheel(), "completed")
-	
-	# Deal damage
-	yield(_check_result(), "completed")
+	for wheel_phase in chosen_skill.data:
+		yield(_summon_wheel("strike"), "completed")
+		yield(wheel_ins.set_arrows(wheel_phase), "completed")
+		yield(wheel_ins.draw_arrows(), "completed")
+		yield(wheel_ins.action(), "completed")
+		yield(_destroy_wheel(), "completed")
+		
+		# TODO: Add transition
+		_check_result()
+		Globals.saved_arrow = []
+		
+		yield(get_tree().create_timer(0.5), "timeout")
+		
 	
 	_end_turn()
 
 
 func _check_result():
-	yield(get_tree(), "idle_frame")
-	
 	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
 		
 		for enemy in Globals.saved_areas:
 			var hit_count = 0
-			
-			for arrow in Globals.saved_arrow.data:
-				var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
-				
+
+			for arrow in Globals.saved_arrow:
+				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+
 				for area in enemy.soul_areas:
-					var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
-					
-					print(arrow_angle, ' ', area_angle)
-					
+					var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+
 					if _is_hit(arrow_angle, area_angle):
 						hit_count += 1
-						break
-			
+
 			print(enemy.node, " is hit ", hit_count, " times.")
-
-
-func _generate_angles(rot_angle, thickness):
-	var start_angle = -thickness
-	var end_angle = thickness + 1
-	return Vector2(fmod(start_angle + rot_angle, 360), fmod(end_angle + rot_angle, 360))
 
 
 func _is_hit(arrow : Vector2, area : Vector2):
@@ -107,12 +94,10 @@ func _is_hit(arrow : Vector2, area : Vector2):
 
 
 func _end_turn():
-	skills = []
 	Globals.saved_areas = []
-	Globals.saved_arrow = {}
 
 
-func _load_deck(path):
+func _put_card_on_deck(path):
 	Globals.skill_deck.append(Globals.attack_loader(path))
 
 
@@ -130,7 +115,7 @@ func _destroy_wheel():
 func _summon_skill_hud():
 	skill_hud_ins = skill_hud.instance()
 	Globals.root.add_child(skill_hud_ins)
-	yield(skill_hud_ins.initialize(skills), "completed")
+	yield(skill_hud_ins.initialize(Globals.skill_deck), "completed")
 
 
 func _destroy_skill_hud():
@@ -139,5 +124,5 @@ func _destroy_skill_hud():
 
 
 func _on_skill_button_pressed(btn_idx):
-	chosen_skill = btn_idx
+	chosen_skill = Globals.skill_deck[btn_idx]
 	emit_signal("skill_button_pressed")

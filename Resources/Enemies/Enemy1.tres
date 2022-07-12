@@ -5,7 +5,6 @@
 [resource]
 script = ExtResource( 1 )
 enemy_type = 1
-name = "Enemy1"
 max_health = 30
 soul_areas = [ {
 "move_speed": 100,

@@ -4,14 +4,14 @@
 
 [resource]
 script = ExtResource( 1 )
-attack_type = 0
-name = "Basic"
+attack_type = 1
+name = "Double"
 data = [ [ {
 "move_speed": 100,
-"rot_angle": 180,
-"thickness": 8
-}, {
+"rot_angle": 0,
+"thickness": 4
+} ], [ {
 "move_speed": 100,
-"rot_angle": 90,
-"thickness": 6
+"rot_angle": 60,
+"thickness": 4
 } ] ]
