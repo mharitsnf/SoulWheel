@@ -1,0 +1,11 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://Resources/Arrow/NormalArrow.tres" type="Resource" id=1]
+[ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=2]
+
+[resource]
+script = ExtResource( 2 )
+name = "Double"
+data = [ [ ExtResource( 1 ) ], [ ExtResource( 1 ) ] ]
+damage = 5
+time_alive = 5

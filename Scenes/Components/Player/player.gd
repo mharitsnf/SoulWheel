@@ -7,7 +7,7 @@ export(PackedScene) var wheel : PackedScene
 export(PackedScene) var skill_hud : PackedScene
 
 var rng = RandomNumberGenerator.new()
-var chosen_skill = null
+var chosen_skill : AttackSkill = null
 
 var skill_hud_ins : Control = null
 var wheel_ins : Node2D = null
@@ -25,8 +25,9 @@ func _ready():
 	rng.randomize()
 	
 	if Globals.current_area == 1 and Globals.current_round == 1:
-		_put_card_on_deck(Globals.skill_resource_paths.attack1)
-		_put_card_on_deck(Globals.skill_resource_paths.attack2)
+		_put_card_on_deck(Globals.skill_resource_paths.basic)
+		_put_card_on_deck(Globals.skill_resource_paths.double)
+		_put_card_on_deck(Globals.skill_resource_paths.trinity)
 
 
 func play_turn():
@@ -56,34 +57,43 @@ func play_turn():
 		yield(wheel_ins.set_arrows(wheel_phase), "completed")
 		yield(wheel_ins.draw_arrows(), "completed")
 		yield(wheel_ins.action(), "completed")
-		yield(_destroy_wheel(), "completed")
 		
 		# TODO: Add transition
-		_check_result()
+		var defeateds = _check_result()
+		for enemy in defeateds:
+			enemy.node.defeated()
+			Globals.saved_areas.erase(enemy)
+		
 		Globals.saved_arrow = []
 		
 		yield(get_tree().create_timer(0.5), "timeout")
-		
+		yield(_destroy_wheel(), "completed")
+		yield(get_tree().create_timer(0.5), "timeout")
 	
 	_end_turn()
 
 
 func _check_result():
+	var defeated_enemies = []
+	
 	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
 		
 		for enemy in Globals.saved_areas:
-			var hit_count = 0
 
 			for arrow in Globals.saved_arrow:
 				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
 
-				for area in enemy.soul_areas:
+				for area in enemy.dm.soul_areas:
 					var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+					print(arrow_angle, ' ', area_angle)
 
 					if _is_hit(arrow_angle, area_angle):
-						hit_count += 1
-
-			print(enemy.node, " is hit ", hit_count, " times.")
+						enemy.node.take_damage(chosen_skill.damage)
+						print(enemy.node, " hit! health: ", enemy.node.current_health)
+						
+	
+	print()
+	return defeated_enemies
 
 
 func _is_hit(arrow : Vector2, area : Vector2):

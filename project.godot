@@ -10,9 +10,14 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Resource",
-"class": "ArrowDataModel",
+"class": "ArrowTemplate",
 "language": "GDScript",
-"path": "res://Resources/Attack Skills/arrow_data_model.gd"
+"path": "res://Resources/Arrow/arrow_template.gd"
+}, {
+"base": "Resource",
+"class": "AttackSkill",
+"language": "GDScript",
+"path": "res://Resources/Attack Skills/attack_skill.gd"
 }, {
 "base": "Node2D",
 "class": "Character",
@@ -39,18 +44,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Resources/Player/player_data_model.gd"
 }, {
+"base": "Resource",
+"class": "SoulArea",
+"language": "GDScript",
+"path": "res://Resources/Soul Areas/soul_area.gd"
+}, {
 "base": "Node2D",
 "class": "TurnManager",
 "language": "GDScript",
 "path": "res://Scenes/Main/turn_manager.gd"
 } ]
 _global_script_class_icons={
-"ArrowDataModel": "",
+"ArrowTemplate": "",
+"AttackSkill": "",
 "Character": "",
 "Enemy": "",
 "EnemyDataModel": "",
 "Player": "",
 "PlayerDataModel": "",
+"SoulArea": "",
 "TurnManager": ""
 }
 

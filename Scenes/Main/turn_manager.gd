@@ -7,8 +7,6 @@ var active_character : Character
 
 func initialize():
 	active_character = get_child(0)
-	
-	var atk1 = load("res://Resources/Attack Skills/Attack1.tres")
 
 
 func play_turn():

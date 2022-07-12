@@ -23,10 +23,10 @@ func _process(delta):
 	if running:
 		
 		if phase == "lock":
-			for i in range(enemy.soul_areas.size()):
-				enemy.soul_areas[i].rot_angle += delta * enemy.soul_areas[i].move_speed
-				enemy.soul_areas[i].rot_angle = fmod(enemy.soul_areas[i].rot_angle, 360)
-				$Areas.get_child(i).rotation_degrees = enemy.soul_areas[i].rot_angle
+			for i in range(enemy.dm.soul_areas.size()):
+				enemy.dm.soul_areas[i].rot_angle += delta * enemy.dm.soul_areas[i].move_speed
+				enemy.dm.soul_areas[i].rot_angle = fmod(enemy.dm.soul_areas[i].rot_angle, 360)
+				$Areas.get_child(i).rotation_degrees = enemy.dm.soul_areas[i].rot_angle
 		
 		elif phase == "strike":
 			for i in range(arrows.size()):
@@ -67,7 +67,7 @@ func set_enemy(_enemy):
 	
 	var processed_souls = []
 		
-	for soul in _enemy.soul_areas:
+	for soul in _enemy.dm.soul_areas:
 		var tmp_soul = soul.duplicate()
 		tmp_soul.thickness = _thickness_preprocess(tmp_soul.thickness)
 		tmp_soul.move_speed += rng.randf_range(-20, 20)
@@ -75,7 +75,7 @@ func set_enemy(_enemy):
 		if tmp_soul.rot_angle < 0: tmp_soul.rot_angle += 360
 		processed_souls.append(tmp_soul)
 	
-	_enemy.soul_areas = processed_souls
+	_enemy.dm.soul_areas = processed_souls
 	
 	enemy = _enemy
 
@@ -85,9 +85,14 @@ func set_arrows(_arrows):
 	
 	var processed_arrows = []
 	
+	var rot_angle_variation = rng.randf_range(-180, 180)
+	var move_speed_variation = rng.randf_range(-20, 20)
+	
 	for arrow in _arrows:
 		var tmp_arrow = arrow.duplicate()
 		tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
+		tmp_arrow.rot_angle += rot_angle_variation
+		tmp_arrow.move_speed += move_speed_variation
 		processed_arrows.append(tmp_arrow)
 	
 	_arrows = processed_arrows
@@ -97,7 +102,7 @@ func set_arrows(_arrows):
 func draw_areas():
 	yield(get_tree(), "idle_frame")
 	
-	for soul in enemy.soul_areas:
+	for soul in enemy.dm.soul_areas:
 		var new_area = _create_area(soul.rot_angle)
 		$Areas.add_child(new_area)
 		_draw_area(new_area, 72, soul.thickness)
@@ -138,7 +143,7 @@ func _draw_saved_area():
 		var area_container = Node2D.new()
 		area_container.modulate.a = 0.5
 		
-		for area in enemy.soul_areas:
+		for area in enemy.dm.soul_areas:
 			var saved_area = _create_area(area.rot_angle)
 			area_container.add_child(saved_area)
 			_draw_area(saved_area, 72, area.thickness)
@@ -197,7 +202,6 @@ func _on_stop_running():
 	
 	if phase == "lock":
 		Globals.saved_areas.append(enemy)
-			
 	elif phase == "strike":
 		for arrow in arrows:
 			Globals.saved_arrow.append(arrow)

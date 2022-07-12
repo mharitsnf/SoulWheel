@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://Resources/Soul Areas/soul_area.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+thickness = 60
+move_speed = 100
+rot_angle = 30
