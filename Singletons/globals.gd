@@ -7,6 +7,7 @@ var current_area = 1
 var current_round = 1
 
 var saved_areas = []
+var saved_damage_areas = []
 var saved_arrow = []
 
 var skill_deck := []

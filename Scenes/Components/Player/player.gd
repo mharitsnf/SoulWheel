@@ -92,23 +92,6 @@ func _check_result():
 	return defeated_enemies
 
 
-func _is_hit(arrow : Vector2, area : Vector2):
-	# when arrow is behind
-	if arrow.y - area.x > 360:
-		area.x += 360
-		area.y += 360
-	
-	# when arrow is in front
-	if area.y - arrow.x > 360:
-		arrow.x += 360
-		arrow.y += 360
-	
-	if arrow.y >= area.x and arrow.x <= area.y:
-		return true
-	
-	return false
-
-
 func _defeat_enemy(enemy_data):
 	Globals.saved_areas.erase(enemy_data)
 	enemy_data.node.queue_free()

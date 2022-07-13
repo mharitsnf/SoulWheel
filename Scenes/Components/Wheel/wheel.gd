@@ -260,4 +260,9 @@ func _on_stop_running():
 	elif phase == "strike":
 		for arrow in arrows:
 			Globals.saved_arrow.append(arrow)
+	else:
+		Globals.saved_areas.append(enemy)
+		
+		for arrow in arrows:
+			Globals.saved_arrow.append(arrow)
 	

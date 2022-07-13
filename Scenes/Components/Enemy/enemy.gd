@@ -28,7 +28,30 @@ func play_turn():
 		yield(wheel_ins.action(), "completed")
 		yield(_destroy_wheel(), "completed")
 		
+		_check_result()
+		
+		Globals.saved_arrow = []
+		
+		_end_turn()
+		
 		yield(get_tree().create_timer(1), "timeout")
+
+
+func _check_result():
+	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
+		for enemy in Globals.saved_areas:
+			for arrow in Globals.saved_arrow:
+				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+				
+				for area in enemy.dm.damage_areas:
+					var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+					
+					if _is_hit(arrow_angle, area_angle):
+						print("player is hit by: ", enemy.node)
+
+
+func _end_turn():
+	Globals.saved_areas = []
 
 
 func get_soul_area_data():
