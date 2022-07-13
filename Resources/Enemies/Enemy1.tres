@@ -8,4 +8,4 @@
 script = ExtResource( 1 )
 enemy_type = 1
 max_health = 30
-soul_areas = [ ExtResource( 2 ), ExtResource( 3 ) ]
+soul_areas = [ ExtResource( 3 ), ExtResource( 2 ) ]

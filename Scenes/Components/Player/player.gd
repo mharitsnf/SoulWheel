@@ -61,8 +61,7 @@ func play_turn():
 		# TODO: Add transition
 		var defeateds = _check_result()
 		for enemy in defeateds:
-			enemy.node.defeated()
-			Globals.saved_areas.erase(enemy)
+			_defeat_enemy(enemy)
 		
 		Globals.saved_arrow = []
 		
@@ -85,22 +84,36 @@ func _check_result():
 
 				for area in enemy.dm.soul_areas:
 					var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
-					print(arrow_angle, ' ', area_angle)
 
 					if _is_hit(arrow_angle, area_angle):
-						enemy.node.take_damage(chosen_skill.damage)
+						var is_defeated = enemy.node.take_damage(chosen_skill.damage)
 						print(enemy.node, " hit! health: ", enemy.node.current_health)
 						
-	
-	print()
+						if is_defeated: defeated_enemies.append(enemy)
+						
 	return defeated_enemies
 
 
 func _is_hit(arrow : Vector2, area : Vector2):
+	# when arrow is behind
+	if arrow.y - area.x > 360:
+		area.x += 360
+		area.y += 360
+	
+	# when arrow is in front
+	if area.y - arrow.x > 360:
+		arrow.x += 360
+		arrow.y += 360
+	
 	if arrow.y >= area.x and arrow.x <= area.y:
 		return true
 	
 	return false
+
+
+func _defeat_enemy(enemy_data):
+	Globals.saved_areas.erase(enemy_data)
+	enemy_data.node.queue_free()
 
 
 func _end_turn():

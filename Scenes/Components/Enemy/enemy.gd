@@ -36,10 +36,6 @@ func take_damage(damage):
 	return false
 
 
-func defeated():
-	queue_free()
-
-
 func _input(event):
 	if event.is_action_pressed("ui_cancel"):
 		emit_signal("input_signal")
