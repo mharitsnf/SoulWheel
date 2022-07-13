@@ -3,14 +3,12 @@ class_name Player
 
 
 export var player_data_model : Resource
-export(PackedScene) var wheel : PackedScene
 export(PackedScene) var skill_hud : PackedScene
 
 var rng = RandomNumberGenerator.new()
 var chosen_skill : AttackSkill = null
 
 var skill_hud_ins : Control = null
-var wheel_ins : Node2D = null
 
 onready var root : Node = get_parent().get_parent()
 onready var turn_manager : Node2D = get_parent()
@@ -122,17 +120,6 @@ func _end_turn():
 
 func _put_card_on_deck(path):
 	Globals.skill_deck.append(Globals.attack_loader(path))
-
-
-func _summon_wheel(phase):
-	wheel_ins = wheel.instance()
-	Globals.root.add_child(wheel_ins)
-	yield(wheel_ins.initialize(phase), "completed")
-
-
-func _destroy_wheel():
-	yield(wheel_ins.destroy(), "completed")
-	wheel_ins = null
 
 
 func _summon_skill_hud():

@@ -1,11 +1,31 @@
-[gd_resource type="Resource" load_steps=4 format=2]
+[gd_resource type="Resource" load_steps=8 format=2]
 
 [ext_resource path="res://Resources/Enemies/enemy_data_model.gd" type="Script" id=1]
 [ext_resource path="res://Resources/Soul Areas/20.tres" type="Resource" id=2]
 [ext_resource path="res://Resources/Soul Areas/60.tres" type="Resource" id=3]
+[ext_resource path="res://Resources/Damage Area/damage_area.gd" type="Script" id=4]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 4 )
+move_speed = 150
+thickness = 60
+rot_angle = 0
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 4 )
+move_speed = 150
+thickness = 60
+rot_angle = 120
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 4 )
+move_speed = 150
+thickness = 60
+rot_angle = 240
 
 [resource]
 script = ExtResource( 1 )
 enemy_type = 1
 max_health = 30
 soul_areas = [ ExtResource( 3 ), ExtResource( 2 ) ]
+damage_areas = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]

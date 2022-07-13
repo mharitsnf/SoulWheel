@@ -33,7 +33,17 @@ func _process(delta):
 				arrows[i].rot_angle += delta * arrows[i].move_speed
 				arrows[i].rot_angle = fmod(arrows[i].rot_angle, 360)
 				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
-				
+		
+		else:
+			for i in range(enemy.dm.damage_areas.size()):
+				enemy.dm.damage_areas[i].rot_angle += delta * enemy.dm.damage_areas[i].move_speed
+				enemy.dm.damage_areas[i].rot_angle = fmod(enemy.dm.damage_areas[i].rot_angle, 360)
+				$DamageAreas.get_child(i).rotation_degrees = enemy.dm.damage_areas[i].rot_angle
+			
+			for i in range(arrows.size()):
+				arrows[i].rot_angle += -delta * arrows[i].move_speed
+				arrows[i].rot_angle = fmod(arrows[i].rot_angle, 360)
+				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
 		
 		time_elapsed += delta
 		
@@ -54,7 +64,9 @@ func initialize(_phase):
 	_e = connect("start_running", self, "_on_start_running")
 	
 	_draw_outline()
-	_draw_saved_area()
+	
+	if phase != "enemy_attack":
+		_draw_saved_area()
 
 
 func destroy():
@@ -65,17 +77,31 @@ func destroy():
 func set_enemy(_enemy):
 	yield(get_tree(), "idle_frame")
 	
-	var processed_souls = []
+	if phase == "lock":
+		var processed_souls = []
+			
+		for soul in _enemy.dm.soul_areas:
+			var tmp_soul = soul.duplicate()
+			tmp_soul.thickness = _thickness_preprocess(tmp_soul.thickness)
+			tmp_soul.move_speed += rng.randf_range(-20, 20)
+			tmp_soul.rot_angle += rng.randf_range(-180, 180)
+			if tmp_soul.rot_angle < 0: tmp_soul.rot_angle += 360
+			processed_souls.append(tmp_soul)
 		
-	for soul in _enemy.dm.soul_areas:
-		var tmp_soul = soul.duplicate()
-		tmp_soul.thickness = _thickness_preprocess(tmp_soul.thickness)
-		tmp_soul.move_speed += rng.randf_range(-20, 20)
-		tmp_soul.rot_angle += rng.randf_range(-180, 180)
-		if tmp_soul.rot_angle < 0: tmp_soul.rot_angle += 360
-		processed_souls.append(tmp_soul)
+		_enemy.dm.soul_areas = processed_souls
 	
-	_enemy.dm.soul_areas = processed_souls
+	else:
+		var processed_damage_areas = []
+		
+		var angle_variation = rng.randf_range(-180, 180)
+		
+		for damage in _enemy.dm.damage_areas:
+			var tmp_damage = damage.duplicate()
+			tmp_damage.thickness = _thickness_preprocess(tmp_damage.thickness)
+			tmp_damage.rot_angle += angle_variation
+			processed_damage_areas.append(tmp_damage)
+		
+		_enemy.dm.damage_areas = processed_damage_areas
 	
 	enemy = _enemy
 
@@ -83,29 +109,54 @@ func set_enemy(_enemy):
 func set_arrows(_arrows):
 	yield(get_tree(), "idle_frame")
 	
-	var processed_arrows = []
+	if phase == "strike":
+		print(_arrows)
+		var processed_arrows = []
+		
+		var rot_angle_variation = rng.randf_range(-180, 180)
+		var move_speed_variation = rng.randf_range(-20, 20)
+		
+		for arrow in _arrows:
+			var tmp_arrow = arrow.duplicate()
+			tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
+			tmp_arrow.rot_angle += rot_angle_variation
+			tmp_arrow.move_speed += move_speed_variation
+			processed_arrows.append(tmp_arrow)
+		
+		_arrows = processed_arrows
 	
-	var rot_angle_variation = rng.randf_range(-180, 180)
-	var move_speed_variation = rng.randf_range(-20, 20)
+	else:
+		var processed_arrows = []
+		
+		var rot_angle_variation = rng.randf_range(-180, 180)
+		var move_speed_variation = rng.randf_range(-20, 20)
+		
+		for arrow in _arrows:
+			var tmp_arrow = arrow.duplicate()
+			tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
+			tmp_arrow.rot_angle += rot_angle_variation
+			tmp_arrow.move_speed += move_speed_variation
+			processed_arrows.append(tmp_arrow)
+		
+		_arrows = processed_arrows
 	
-	for arrow in _arrows:
-		var tmp_arrow = arrow.duplicate()
-		tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
-		tmp_arrow.rot_angle += rot_angle_variation
-		tmp_arrow.move_speed += move_speed_variation
-		processed_arrows.append(tmp_arrow)
-	
-	_arrows = processed_arrows
 	arrows = _arrows
 
 
 func draw_areas():
 	yield(get_tree(), "idle_frame")
 	
-	for soul in enemy.dm.soul_areas:
-		var new_area = _create_area(soul.rot_angle)
-		$Areas.add_child(new_area)
-		_draw_area(new_area, 72, soul.thickness)
+	if phase == "lock":
+		for soul in enemy.dm.soul_areas:
+			var new_area = _create_area(soul.rot_angle)
+			$Areas.add_child(new_area)
+			_draw_area(new_area, 72, soul.thickness)
+	
+	else:
+		for damage in enemy.dm.damage_areas:
+			var new_damage_area = _create_area(damage.rot_angle)
+			$DamageAreas.add_child(new_damage_area)
+			_draw_area(new_damage_area, 72, damage.thickness)
 
 
 func draw_arrows():
@@ -163,6 +214,10 @@ func _create_area(rot_angle):
 	var area : Line2D = Line2D.new()
 	area.width = 8
 	area.rotation_degrees = rot_angle
+	
+	if phase == "enemy_attack":
+		area.default_color = Color(1, 0, 0, 1)
+	
 	return area
 
 

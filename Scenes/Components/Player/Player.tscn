@@ -7,6 +7,6 @@
 
 [node name="Player" type="Node2D"]
 script = ExtResource( 1 )
-player_data_model = ExtResource( 2 )
 wheel = ExtResource( 3 )
+player_data_model = ExtResource( 2 )
 skill_hud = ExtResource( 4 )

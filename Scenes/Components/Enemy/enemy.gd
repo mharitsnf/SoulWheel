@@ -16,7 +16,19 @@ func _ready():
 
 func play_turn():
 	print("enemy playing")
-	yield(self, "input_signal")
+	
+	var current_enemy = Globals.enemy_loader(self)
+	
+	for arrow_phase in Globals.player.player_data_model.player_soul_arrows:
+		yield(_summon_wheel("enemy_attack"), "completed")
+		yield(wheel_ins.set_enemy(current_enemy), "completed")
+		yield(wheel_ins.set_arrows(arrow_phase), "completed")
+		yield(wheel_ins.draw_areas(), "completed")
+		yield(wheel_ins.draw_arrows(), "completed")
+		yield(wheel_ins.action(), "completed")
+		yield(_destroy_wheel(), "completed")
+		
+		yield(get_tree().create_timer(1), "timeout")
 
 
 func get_soul_area_data():
