@@ -18,4 +18,8 @@ func play_turn():
 	
 	var new_index = (active_character.get_index() + 1) % get_child_count()
 	active_character = get_child(new_index)
+	
+	if active_character is Enemy:
+		print("enemy playing")
+	
 	play_turn()

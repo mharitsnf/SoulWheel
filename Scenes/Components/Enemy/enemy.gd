@@ -6,6 +6,9 @@ export var enemy_data_model : Resource
 
 onready var current_health = enemy_data_model.max_health
 
+var enemies_to_process = []
+var arrows_to_process = []
+
 signal input_signal
 
 
@@ -20,17 +23,21 @@ func play_turn():
 	var current_enemy = Globals.enemy_loader(self)
 	
 	for arrow_phase in Globals.player.player_data_model.player_soul_arrows:
-		yield(_summon_wheel("enemy_attack"), "completed")
+		yield(_summon_wheel("enemy_attack", enemies_to_process), "completed")
 		yield(wheel_ins.set_enemy(current_enemy), "completed")
 		yield(wheel_ins.set_arrows(arrow_phase), "completed")
 		yield(wheel_ins.draw_areas(), "completed")
 		yield(wheel_ins.draw_arrows(), "completed")
-		yield(wheel_ins.action(), "completed")
+		
+		var result = yield(wheel_ins.action(), "completed")
+		enemies_to_process.append(result[0])
+		arrows_to_process = result[1]
+		
 		yield(_destroy_wheel(), "completed")
 		
 		var is_player_defeated = _check_result()
 		
-		Globals.saved_arrow = []
+		arrows_to_process = []
 		
 		if is_player_defeated:
 			_end_turn()
@@ -43,26 +50,25 @@ func play_turn():
 
 
 func _check_result():
-	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
-		for enemy in Globals.saved_areas:
-			for arrow in Globals.saved_arrow:
-				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+	for enemy in enemies_to_process:
+		for arrow in arrows_to_process:
+			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+			
+			for area in enemy.dm.damage_areas:
+				var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 				
-				for area in enemy.dm.damage_areas:
-					var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+				if _is_hit(arrow_angle, area_angle):
+					var is_player_defeated = Globals.player.take_damage(area.damage)
+					print("player is hit by: ", self, " current player HP: ", Globals.player.player_data_model.current_health)
 					
-					if _is_hit(arrow_angle, area_angle):
-						var is_player_defeated = Globals.player.take_damage(area.damage)
-						print("player is hit by: ", self, " current player HP: ", Globals.player.player_data_model.current_health)
-						
-						if is_player_defeated:
-							return true
+					if is_player_defeated:
+						return true
 	
 	return false
 
 
 func _end_turn():
-	Globals.saved_areas = []
+	enemies_to_process = []
 	
 	._end_turn()
 

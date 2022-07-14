@@ -82,7 +82,7 @@ func _rotate(rot_angle, move_speed, delta):
 	return new_rot_angle
 
 
-func initialize(_phase):
+func initialize(_phase, processed_enemies = []):
 	yield(get_tree(), "idle_frame")
 	
 	phase = _phase
@@ -97,7 +97,7 @@ func initialize(_phase):
 	_draw_outline()
 	
 	if phase != "enemy_attack":
-		_draw_saved_area()
+		_draw_saved_area(processed_enemies)
 
 
 func destroy():
@@ -205,6 +205,15 @@ func draw_arrows():
 func action():
 	emit_signal("start_running")
 	yield(self, "stop_running")
+	
+	if phase == "lock":
+		return enemy
+	
+	elif phase == "strike":
+		return arrows
+	
+	else:
+		return [enemy, arrows]
 
 
 # Function for drawing the wheel's outline.
@@ -224,8 +233,8 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 		line_node.add_point(_calculate_point_on_circle(radian, radius))
 
 
-func _draw_saved_area():
-	for cur_enemy in Globals.saved_areas:
+func _draw_saved_area(processed_enemies):
+	for cur_enemy in processed_enemies:
 		var area_container = Node2D.new()
 		area_container.modulate.a = 0.5
 		
@@ -283,17 +292,3 @@ func _on_start_running():
 func _on_stop_running():
 	running = false
 	time_elapsed = 0
-	
-	if phase == "lock":
-		Globals.saved_areas.append(enemy)
-	
-	elif phase == "strike":
-		for arrow in arrows:
-			Globals.saved_arrow.append(arrow)
-	
-	else:
-		Globals.saved_areas.append(enemy)
-		
-		for arrow in arrows:
-			Globals.saved_arrow.append(arrow)
-	

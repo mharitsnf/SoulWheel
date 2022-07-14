@@ -10,10 +10,10 @@ var turn_count : int = 0
 onready var turn_manager : Node2D = get_parent()
 
 
-func _summon_wheel(phase):
+func _summon_wheel(phase, enemies_to_process):
 	wheel_ins = wheel.instance()
 	Globals.root.add_child(wheel_ins)
-	yield(wheel_ins.initialize(phase), "completed")
+	yield(wheel_ins.initialize(phase, enemies_to_process), "completed")
 
 
 func _destroy_wheel():
