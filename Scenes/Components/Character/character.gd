@@ -3,7 +3,11 @@ class_name Character
 
 
 export(PackedScene) var wheel : PackedScene
+
 var wheel_ins : Node2D = null
+var turn_count : int = 0
+
+onready var turn_manager : Node2D = get_parent()
 
 
 func _summon_wheel(phase):
@@ -34,8 +38,12 @@ func _is_hit(arrow : Vector2, area : Vector2):
 	return false
 
 
-func _end_turn():
+func take_damage(_damage):
 	pass
+
+
+func _end_turn():
+	turn_count += 1
 
 
 func play_turn():

@@ -21,4 +21,6 @@ script = ExtResource( 2 )
 name = "Trinity"
 data = [ [ ExtResource( 1 ), SubResource( 1 ), SubResource( 2 ) ] ]
 damage = 5
+hp_cost = 0
+is_cost_percentage = false
 time_alive = 5

@@ -24,31 +24,62 @@ func _process(delta):
 		
 		if phase == "lock":
 			for i in range(enemy.dm.soul_areas.size()):
-				enemy.dm.soul_areas[i].rot_angle += delta * enemy.dm.soul_areas[i].move_speed
-				enemy.dm.soul_areas[i].rot_angle = fmod(enemy.dm.soul_areas[i].rot_angle, 360)
-				$Areas.get_child(i).rotation_degrees = enemy.dm.soul_areas[i].rot_angle
+				var new_rot_angle = _rotate(
+					enemy.dm.soul_areas[i].rot_angle,
+					enemy.dm.soul_areas[i].move_speed,
+					delta
+				)
+				
+				enemy.dm.soul_areas[i].rot_angle = new_rot_angle
+				$Areas.get_child(i).rotation_degrees = new_rot_angle
 		
 		elif phase == "strike":
 			for i in range(arrows.size()):
-				arrows[i].rot_angle += delta * arrows[i].move_speed
-				arrows[i].rot_angle = fmod(arrows[i].rot_angle, 360)
-				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
+				var new_rot_angle = _rotate(
+					arrows[i].rot_angle,
+					arrows[i].move_speed,
+					delta
+				)
+				
+				arrows[i].rot_angle = new_rot_angle
+				$Arrows.get_child(i).rotation_degrees = new_rot_angle
 		
 		else:
 			for i in range(enemy.dm.damage_areas.size()):
-				enemy.dm.damage_areas[i].rot_angle += delta * enemy.dm.damage_areas[i].move_speed
-				enemy.dm.damage_areas[i].rot_angle = fmod(enemy.dm.damage_areas[i].rot_angle, 360)
-				$DamageAreas.get_child(i).rotation_degrees = enemy.dm.damage_areas[i].rot_angle
+				var new_rot_angle = _rotate(
+					enemy.dm.damage_areas[i].rot_angle,
+					enemy.dm.damage_areas[i].move_speed,
+					delta
+				)
+				
+				enemy.dm.damage_areas[i].rot_angle = new_rot_angle
+				$DamageAreas.get_child(i).rotation_degrees = new_rot_angle
 			
 			for i in range(arrows.size()):
-				arrows[i].rot_angle += -delta * arrows[i].move_speed
-				arrows[i].rot_angle = fmod(arrows[i].rot_angle, 360)
-				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
+				var new_rot_angle = _rotate(
+					arrows[i].rot_angle,
+					arrows[i].move_speed,
+					delta
+				)
+				
+				arrows[i].rot_angle = new_rot_angle
+				$Arrows.get_child(i).rotation_degrees = new_rot_angle
 		
 		time_elapsed += delta
 		
 		if time_elapsed > soul_lock_duration or Input.is_action_pressed("ui_accept"):
 			emit_signal("stop_running")
+
+
+func _rotate(rot_angle, move_speed, delta):
+	var new_rot_angle = rot_angle
+	
+	new_rot_angle += delta * move_speed
+	
+	new_rot_angle = fmod(new_rot_angle, 360)
+	if new_rot_angle < 0: new_rot_angle += 360
+	
+	return new_rot_angle
 
 
 func initialize(_phase):
@@ -83,9 +114,14 @@ func set_enemy(_enemy):
 		for soul in _enemy.dm.soul_areas:
 			var tmp_soul = soul.duplicate()
 			tmp_soul.thickness = _thickness_preprocess(tmp_soul.thickness)
+			
 			tmp_soul.move_speed += rng.randf_range(-20, 20)
+			tmp_soul.move_speed = max(10, tmp_soul.move_speed)
+			
 			tmp_soul.rot_angle += rng.randf_range(-180, 180)
+			tmp_soul.rot_angle = fmod(tmp_soul.rot_angle, 360)
 			if tmp_soul.rot_angle < 0: tmp_soul.rot_angle += 360
+			
 			processed_souls.append(tmp_soul)
 		
 		_enemy.dm.soul_areas = processed_souls
@@ -110,7 +146,6 @@ func set_arrows(_arrows):
 	yield(get_tree(), "idle_frame")
 	
 	if phase == "strike":
-		print(_arrows)
 		var processed_arrows = []
 		
 		var rot_angle_variation = rng.randf_range(-180, 180)
@@ -190,11 +225,11 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 
 
 func _draw_saved_area():
-	for enemy in Globals.saved_areas:
+	for cur_enemy in Globals.saved_areas:
 		var area_container = Node2D.new()
 		area_container.modulate.a = 0.5
 		
-		for area in enemy.dm.soul_areas:
+		for area in cur_enemy.dm.soul_areas:
 			var saved_area = _create_area(area.rot_angle)
 			area_container.add_child(saved_area)
 			_draw_area(saved_area, 72, area.thickness)
@@ -221,28 +256,22 @@ func _create_area(rot_angle):
 	return area
 
 
-func _create_arrow(thickness : int, rot_angle : int):
-	thickness = _thickness_preprocess(thickness)
-	
+func _create_arrow(thickness: int, rot_angle : int):
 	var new_polygon = Polygon2D.new()
 	new_polygon.color = Color(0, 1, 1, 1)
 	new_polygon.rotation_degrees = rot_angle
-	
-	var origin_point = Vector2.ZERO
 	var points = [Vector2.ZERO]
 	
 	for i in range(-thickness, thickness + 1):
 		var radian = deg2rad(1.0 * i)
-		var point = _calculate_point_on_circle(radian, 80)
-		points.append(point)
+		points.append(_calculate_point_on_circle(radian, 80))
 	
 	new_polygon.polygon = points
-	
 	return new_polygon
 
 
 func _thickness_preprocess(thickness):
-	thickness = fmod(abs(thickness), 361)
+	thickness = fmod(abs(thickness), 360)
 	thickness = floor(clamp(thickness, 2, 360) / 2)
 	return thickness
 
@@ -257,9 +286,11 @@ func _on_stop_running():
 	
 	if phase == "lock":
 		Globals.saved_areas.append(enemy)
+	
 	elif phase == "strike":
 		for arrow in arrows:
 			Globals.saved_arrow.append(arrow)
+	
 	else:
 		Globals.saved_areas.append(enemy)
 		

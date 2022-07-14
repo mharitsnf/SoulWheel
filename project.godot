@@ -27,7 +27,7 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "DamageArea",
 "language": "GDScript",
-"path": "res://Resources/Damage Area/damage_area.gd"
+"path": "res://Resources/Damage Areas/damage_area.gd"
 }, {
 "base": "Character",
 "class": "Enemy",

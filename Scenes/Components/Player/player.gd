@@ -11,7 +11,6 @@ var chosen_skill : AttackSkill = null
 var skill_hud_ins : Control = null
 
 onready var root : Node = get_parent().get_parent()
-onready var turn_manager : Node2D = get_parent()
 
 signal skill_button_pressed
 
@@ -19,13 +18,26 @@ signal skill_button_pressed
 func _ready():
 	assert(player_data_model)
 	assert(player_data_model is PlayerDataModel)
+	
 	Globals.player = self
+	player_data_model.current_health = player_data_model.max_health
+	
 	rng.randomize()
 	
 	if Globals.current_area == 1 and Globals.current_round == 1:
 		_put_card_on_deck(Globals.skill_resource_paths.basic)
 		_put_card_on_deck(Globals.skill_resource_paths.double)
 		_put_card_on_deck(Globals.skill_resource_paths.trinity)
+
+
+func take_damage(damage):
+	var new_health = player_data_model.current_health - damage
+	player_data_model.current_health = max(0, new_health)
+	
+	if new_health <= 0:
+		return true
+	
+	return false
 
 
 func play_turn():
@@ -59,24 +71,29 @@ func play_turn():
 		# TODO: Add transition
 		var defeateds = _check_result()
 		for enemy in defeateds:
-			_defeat_enemy(enemy)
+			yield(_defeat_enemy(enemy), "completed")
 		
 		Globals.saved_arrow = []
+		
+		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
+			yield(get_tree().create_timer(0.5), "timeout")
+			yield(_destroy_wheel(), "completed")
+			_end_turn()
+			return true
 		
 		yield(get_tree().create_timer(0.5), "timeout")
 		yield(_destroy_wheel(), "completed")
 		yield(get_tree().create_timer(0.5), "timeout")
 	
 	_end_turn()
+	return false
 
 
 func _check_result():
 	var defeated_enemies = []
 	
 	if !Globals.saved_areas.empty() and !Globals.saved_arrow.empty():
-		
 		for enemy in Globals.saved_areas:
-
 			for arrow in Globals.saved_arrow:
 				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
 
@@ -87,7 +104,7 @@ func _check_result():
 						var is_defeated = enemy.node.take_damage(chosen_skill.damage)
 						print(enemy.node, " hit! health: ", enemy.node.current_health)
 						
-						if is_defeated: defeated_enemies.append(enemy)
+						if is_defeated and !defeated_enemies.has(enemy): defeated_enemies.append(enemy)
 						
 	return defeated_enemies
 
@@ -95,10 +112,13 @@ func _check_result():
 func _defeat_enemy(enemy_data):
 	Globals.saved_areas.erase(enemy_data)
 	enemy_data.node.queue_free()
+	yield(get_tree(), "idle_frame")
 
 
 func _end_turn():
 	Globals.saved_areas = []
+	
+	._end_turn()
 
 
 func _put_card_on_deck(path):

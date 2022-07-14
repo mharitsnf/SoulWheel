@@ -10,7 +10,12 @@ func initialize():
 
 
 func play_turn():
-	yield(active_character.play_turn(), "completed")
+	var result = yield(active_character.play_turn(), "completed")
+	
+	if result:
+		print(active_character, " wins!")
+		return
+	
 	var new_index = (active_character.get_index() + 1) % get_child_count()
 	active_character = get_child(new_index)
 	play_turn()
