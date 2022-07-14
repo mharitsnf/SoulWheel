@@ -1,6 +1,6 @@
 [gd_resource type="Resource" load_steps=3 format=2]
 
-[ext_resource path="res://Resources/Arrow/NormalArrow.tres" type="Resource" id=1]
+[ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=1]
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=2]
 
 [resource]

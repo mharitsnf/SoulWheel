@@ -34,6 +34,8 @@ func take_damage(damage):
 	var new_health = player_data_model.current_health - damage
 	player_data_model.current_health = max(0, new_health)
 	
+	Globals.hp_hud.hp_label.text = "HP: " + str(new_health)
+	
 	if new_health <= 0:
 		return true
 	
@@ -128,11 +130,15 @@ func _put_card_on_deck(path):
 func _summon_skill_hud():
 	skill_hud_ins = skill_hud.instance()
 	Globals.root.add_child(skill_hud_ins)
-	yield(skill_hud_ins.initialize(Globals.skill_deck), "completed")
+	skill_hud_ins.initialize(Globals.skill_deck)
+	
+	Globals.hp_hud.move_up()
+	yield(skill_hud_ins.show(), "completed")
 
 
 func _destroy_skill_hud():
-	yield(skill_hud_ins.destroy(), "completed")
+	Globals.hp_hud.move_down()
+	yield(skill_hud_ins.hide_and_destroy(), "completed")
 	skill_hud_ins = null
 
 

@@ -4,6 +4,6 @@
 
 [resource]
 script = ExtResource( 1 )
-move_speed = 140
-rot_angle = 0
-thickness = 80
+move_speed = 160
+rot_angle = 240
+thickness = 4

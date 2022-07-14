@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scenes/Main/turn_manager.gd" type="Script" id=1]
 [ext_resource path="res://Scenes/Components/Enemy/Enemy.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/UI/HUD.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scenes/Components/Player/Player.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scenes/Main/root.gd" type="Script" id=5]
 
@@ -18,3 +19,5 @@ position = Vector2( 64, 32 )
 
 [node name="Enemy2" parent="TurnManager" instance=ExtResource( 2 )]
 position = Vector2( 128, 32 )
+
+[node name="HUD" parent="." instance=ExtResource( 3 )]

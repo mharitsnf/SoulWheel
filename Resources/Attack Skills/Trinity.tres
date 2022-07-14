@@ -1,25 +1,14 @@
-[gd_resource type="Resource" load_steps=6 format=2]
+[gd_resource type="Resource" load_steps=5 format=2]
 
-[ext_resource path="res://Resources/Arrow/NormalArrow.tres" type="Resource" id=1]
+[ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=1]
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=2]
-[ext_resource path="res://Resources/Arrow/arrow_template.gd" type="Script" id=3]
-
-[sub_resource type="Resource" id=1]
-script = ExtResource( 3 )
-move_speed = 160
-rot_angle = 120
-thickness = 4
-
-[sub_resource type="Resource" id=2]
-script = ExtResource( 3 )
-move_speed = 160
-rot_angle = 240
-thickness = 4
+[ext_resource path="res://Resources/Arrow/4-160-120.tres" type="Resource" id=3]
+[ext_resource path="res://Resources/Arrow/4-160-240.tres" type="Resource" id=4]
 
 [resource]
 script = ExtResource( 2 )
 name = "Trinity"
-data = [ [ ExtResource( 1 ), SubResource( 1 ), SubResource( 2 ) ] ]
+data = [ [ ExtResource( 1 ), ExtResource( 3 ), ExtResource( 4 ) ] ]
 damage = 5
 hp_cost = 0
 is_cost_percentage = false

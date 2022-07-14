@@ -1,7 +1,11 @@
 extends Node
 
 var root : Node
+var hp_hud : Control
 var player : Player
+
+var hud_move_amount = 56
+var hud_tween_speed = 0.4
 
 var current_area = 1
 var current_round = 1
