@@ -14,12 +14,14 @@ var skill_deck := []
 var skill_resource_paths = {
 	"basic": "res://Resources/Attack Skills/Basic.tres",
 	"double": "res://Resources/Attack Skills/Double.tres",
-	"trinity": "res://Resources/Attack Skills/Trinity.tres"
+	"trinity": "res://Resources/Attack Skills/Trinity.tres",
+	"fan": "res://Resources/Attack Skills/Fan.tres"
 }
 
 
 func attack_loader(path : String):
 	var AS = load(path)
+	AS.conditions_ins = AS.conditions.new()
 	return AS
 
 
@@ -28,6 +30,7 @@ func enemy_loader(enemy : Enemy):
 	var enemy_object = {}
 	
 	enemy_object.node = enemy
+	enemy_object.is_defeated = false
 	enemy_object.dm = dm.duplicate(true)
 	
 	return enemy_object

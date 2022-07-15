@@ -6,8 +6,13 @@ export(PackedScene) var wheel : PackedScene
 
 var wheel_ins : Node2D = null
 var turn_count : int = 0
+var is_hit = null
 
 onready var turn_manager : Node2D = get_parent()
+
+
+func _ready():
+	is_hit = funcref(self, '_is_hit')
 
 
 func _summon_wheel(phase, enemies_to_process):

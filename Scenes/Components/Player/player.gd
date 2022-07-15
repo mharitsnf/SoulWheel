@@ -18,10 +18,16 @@ signal skill_button_pressed
 
 
 func _ready():
+	._ready()
+	
 	assert(player_data_model)
 	assert(player_data_model is PlayerDataModel)
 	
 	Globals.player = self
+	
+	# Note: I'm storing the current health data in the data model so it
+	# persists over many rounds. It's a resource property. If I store
+	# it here in the node script it will not persist to the next round.
 	player_data_model.current_health = player_data_model.max_health
 	
 	rng.randomize()
@@ -30,6 +36,7 @@ func _ready():
 		_put_card_on_deck(Globals.skill_resource_paths.basic)
 		_put_card_on_deck(Globals.skill_resource_paths.double)
 		_put_card_on_deck(Globals.skill_resource_paths.trinity)
+		_put_card_on_deck(Globals.skill_resource_paths.fan)
 
 
 func take_damage(damage):
@@ -70,6 +77,7 @@ func play_turn():
 			yield(get_tree().create_timer(1), "timeout")
 	
 	# Soul strike phase
+	var i = 0
 	for wheel_phase in chosen_skill.data:
 		yield(_summon_wheel("strike", enemies_to_process), "completed")
 		yield(wheel_ins.set_arrows(wheel_phase), "completed")
@@ -78,9 +86,13 @@ func play_turn():
 		var processed_arrows = yield(wheel_ins.action(), "completed")
 		
 		# TODO: Add transition
-		var defeateds = _check_result(processed_arrows)
-		for enemy in defeateds:
-			yield(_defeat_enemy(enemy), "completed")
+		_check_result(processed_arrows)
+		_deal_damage(processed_arrows)
+		
+		var conditions = chosen_skill.conditions_ins.check_condition(processed_arrows)
+		
+		
+		yield(_remove_defeated_enemies(), "completed")
 		
 		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
 			yield(get_tree().create_timer(0.5), "timeout")
@@ -90,34 +102,45 @@ func play_turn():
 		
 		yield(get_tree().create_timer(0.5), "timeout")
 		yield(_destroy_wheel(), "completed")
-		yield(get_tree().create_timer(0.5), "timeout")
+		
+		i += 1
 	
 	_end_turn()
 	return false
 
 
+# Append enemies struck by an arrow into the arrow's list
 func _check_result(processed_arrows):
-	var defeated_enemies = []
-	
 	for enemy in enemies_to_process:
-		for arrow in processed_arrows:
-			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+		for area in enemy.dm.soul_areas:
+			var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 
-			for area in enemy.dm.soul_areas:
-				var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
-
+			for arrow in processed_arrows:
+				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+				
 				if _is_hit(arrow_angle, area_angle):
-					var is_defeated = enemy.node.take_damage(chosen_skill.damage)
-					print(enemy.node, " hit! health: ", enemy.node.current_health)
-					
-					if is_defeated and !defeated_enemies.has(enemy): defeated_enemies.append(enemy)
-						
-	return defeated_enemies
+					arrow.enemies_struck.append(enemy)
 
 
-func _defeat_enemy(enemy_data):
-	enemies_to_process.erase(enemy_data)
-	enemy_data.node.queue_free()
+# Deal damage based on the updated arrow's list
+func _deal_damage(processed_arrows):
+	for arrow in processed_arrows:
+		
+		for enemy in arrow.enemies_struck:
+			enemy.is_defeated = enemy.node.take_damage(chosen_skill.damage)
+			print(arrow, " struck ", enemy.node.name, "! enemy health: ", enemy.node.current_health)
+
+
+func _remove_defeated_enemies():
+	yield(get_tree(), "idle_frame")
+	for enemy in enemies_to_process:
+		if enemy.is_defeated:
+			yield(_defeat_enemy(enemy), "completed")
+
+
+func _defeat_enemy(enemy):
+	enemies_to_process.erase(enemy)
+	enemy.node.queue_free()
 	yield(get_tree(), "idle_frame")
 
 

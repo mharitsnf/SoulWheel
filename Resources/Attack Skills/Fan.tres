@@ -2,8 +2,8 @@
 
 [ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=1]
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=2]
-[ext_resource path="res://Resources/Arrow/4-160-120.tres" type="Resource" id=3]
-[ext_resource path="res://Resources/Arrow/4-160-240.tres" type="Resource" id=4]
+[ext_resource path="res://Resources/Arrow/4-160-30.tres" type="Resource" id=3]
+[ext_resource path="res://Resources/Arrow/4-160-15.tres" type="Resource" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -27,8 +27,8 @@ func _second_condition(processed_arrows):
 
 [resource]
 script = ExtResource( 2 )
-name = "Trinity"
-data = [ [ ExtResource( 1 ), ExtResource( 3 ), ExtResource( 4 ) ] ]
+name = "Fan"
+data = [ [ ExtResource( 1 ), ExtResource( 4 ), ExtResource( 3 ) ] ]
 damage = 5
 hp_cost = 0
 is_cost_percentage = false

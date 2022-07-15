@@ -20,6 +20,6 @@ func process(delta, move_speed, rot_angle):
 [resource]
 script = ExtResource( 1 )
 move_speed = 160
-rot_angle = 0
+rot_angle = 30
 thickness = 4
 behavior = SubResource( 1 )

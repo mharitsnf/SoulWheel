@@ -13,6 +13,8 @@ signal input_signal
 
 
 func _ready():
+	._ready()
+	
 	assert(enemy_data_model)
 	assert(enemy_data_model is EnemyDataModel)
 

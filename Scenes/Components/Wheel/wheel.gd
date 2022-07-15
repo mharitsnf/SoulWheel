@@ -35,10 +35,10 @@ func _process(delta):
 		
 		elif phase == "strike":
 			for i in range(arrows.size()):
-				var new_rot_angle = _rotate(
-					arrows[i].rot_angle,
+				var new_rot_angle = arrows[i].behavior_ins.process(
+					delta,
 					arrows[i].move_speed,
-					delta
+					arrows[i].rot_angle
 				)
 				
 				arrows[i].rot_angle = new_rot_angle
@@ -153,12 +153,14 @@ func set_arrows(_arrows):
 		
 		for arrow in _arrows:
 			var tmp_arrow = arrow.duplicate()
+			tmp_arrow.behavior_ins = tmp_arrow.behavior.new()
 			tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
 			tmp_arrow.rot_angle += rot_angle_variation
 			tmp_arrow.move_speed += move_speed_variation
 			processed_arrows.append(tmp_arrow)
 		
 		_arrows = processed_arrows
+		
 	
 	else:
 		var processed_arrows = []
@@ -174,7 +176,7 @@ func set_arrows(_arrows):
 			processed_arrows.append(tmp_arrow)
 		
 		_arrows = processed_arrows
-	
+		
 	arrows = _arrows
 
 

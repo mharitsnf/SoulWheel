@@ -1,9 +1,25 @@
-[gd_resource type="Resource" load_steps=2 format=2]
+[gd_resource type="Resource" load_steps=3 format=2]
 
 [ext_resource path="res://Resources/Arrow/arrow_template.gd" type="Script" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+
+func process(delta, move_speed, rot_angle):
+	var new_rot_angle = rot_angle
+	
+	new_rot_angle += delta * move_speed
+	
+	new_rot_angle = fmod(new_rot_angle, 360)
+	if new_rot_angle < 0: new_rot_angle += 360
+	
+	return new_rot_angle
+"
 
 [resource]
 script = ExtResource( 1 )
 move_speed = 240
 rot_angle = 0
 thickness = 4
+behavior = SubResource( 1 )

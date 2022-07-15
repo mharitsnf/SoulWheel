@@ -20,6 +20,6 @@ func play_turn():
 	active_character = get_child(new_index)
 	
 	if active_character is Enemy:
-		print("enemy playing")
+		pass
 	
 	play_turn()
