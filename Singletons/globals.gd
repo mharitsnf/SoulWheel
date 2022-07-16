@@ -13,15 +13,13 @@ var current_round = 1
 var skill_deck := []
 var skill_resource_paths = {
 	"basic": "res://Resources/Attack Skills/Basic.tres",
-	"double": "res://Resources/Attack Skills/Double.tres",
-	"trinity": "res://Resources/Attack Skills/Trinity.tres",
-	"fan": "res://Resources/Attack Skills/Fan.tres"
 }
 
 
 func attack_loader(path : String):
-	var AS = load(path)
+	var AS : AttackSkill = load(path)
 	AS.conditions_ins = AS.conditions.new()
+	AS.behaviors_ins = AS.behaviors.new()
 	return AS
 
 

@@ -8,6 +8,9 @@ onready var inner_line = $InnerLine
 
 var rng = RandomNumberGenerator.new()
 
+var area_behavior = null
+var arrow_behavior = null
+
 var enemy = null
 var arrows = []
 
@@ -34,15 +37,11 @@ func _process(delta):
 				$Areas.get_child(i).rotation_degrees = new_rot_angle
 		
 		elif phase == "strike":
+			arrows = arrow_behavior.call_func(delta, arrows)
+			
+			# Updating the visuals
 			for i in range(arrows.size()):
-				var new_rot_angle = arrows[i].behavior_ins.process(
-					delta,
-					arrows[i].move_speed,
-					arrows[i].rot_angle
-				)
-				
-				arrows[i].rot_angle = new_rot_angle
-				$Arrows.get_child(i).rotation_degrees = new_rot_angle
+				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
 		
 		else:
 			for i in range(enemy.dm.damage_areas.size()):
@@ -82,7 +81,7 @@ func _rotate(rot_angle, move_speed, delta):
 	return new_rot_angle
 
 
-func initialize(_phase, processed_enemies = []):
+func initialize(_phase):
 	yield(get_tree(), "idle_frame")
 	
 	phase = _phase
@@ -95,9 +94,6 @@ func initialize(_phase, processed_enemies = []):
 	_e = connect("start_running", self, "_on_start_running")
 	
 	_draw_outline()
-	
-	if phase != "enemy_attack":
-		_draw_saved_area(processed_enemies)
 
 
 func destroy():
@@ -105,9 +101,15 @@ func destroy():
 	queue_free()
 
 
+func set_area_behavior(_area_behavior):
+	area_behavior = _area_behavior
+
+
+func set_arrow_behavior(_arrow_behavior):
+	arrow_behavior = _arrow_behavior
+
+
 func set_enemy(_enemy):
-	yield(get_tree(), "idle_frame")
-	
 	if phase == "lock":
 		var processed_souls = []
 			
@@ -142,47 +144,36 @@ func set_enemy(_enemy):
 	enemy = _enemy
 
 
-func set_arrows(_arrows):
-	yield(get_tree(), "idle_frame")
+func set_arrows(attack_phase):
+	var processed_arrows = []
 	
 	if phase == "strike":
-		var processed_arrows = []
-		
 		var rot_angle_variation = rng.randf_range(-180, 180)
 		var move_speed_variation = rng.randf_range(-20, 20)
 		
-		for arrow in _arrows:
+		for arrow in attack_phase:
 			var tmp_arrow = arrow.duplicate()
 			tmp_arrow.behavior_ins = tmp_arrow.behavior.new()
 			tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
 			tmp_arrow.rot_angle += rot_angle_variation
 			tmp_arrow.move_speed += move_speed_variation
 			processed_arrows.append(tmp_arrow)
-		
-		_arrows = processed_arrows
-		
 	
 	else:
-		var processed_arrows = []
-		
 		var rot_angle_variation = rng.randf_range(-180, 180)
 		var move_speed_variation = rng.randf_range(-20, 20)
 		
-		for arrow in _arrows:
+		for arrow in attack_phase:
 			var tmp_arrow = arrow.duplicate()
 			tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
 			tmp_arrow.rot_angle += rot_angle_variation
 			tmp_arrow.move_speed += move_speed_variation
 			processed_arrows.append(tmp_arrow)
 		
-		_arrows = processed_arrows
-		
-	arrows = _arrows
+	arrows = processed_arrows
 
 
 func draw_areas():
-	yield(get_tree(), "idle_frame")
-	
 	if phase == "lock":
 		for soul in enemy.dm.soul_areas:
 			var new_area = _create_area(soul.rot_angle)
@@ -197,8 +188,6 @@ func draw_areas():
 
 
 func draw_arrows():
-	yield(get_tree(), "idle_frame")
-	
 	for arrow in arrows:
 		var arrow_display = _create_arrow(arrow.thickness, arrow.rot_angle)
 		$Arrows.add_child(arrow_display)
@@ -235,7 +224,7 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 		line_node.add_point(_calculate_point_on_circle(radian, radius))
 
 
-func _draw_saved_area(processed_enemies):
+func draw_saved_areas(processed_enemies):
 	for cur_enemy in processed_enemies:
 		var area_container = Node2D.new()
 		area_container.modulate.a = 0.5

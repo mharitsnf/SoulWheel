@@ -34,9 +34,6 @@ func _ready():
 	
 	if Globals.current_area == 1 and Globals.current_round == 1:
 		_put_card_on_deck(Globals.skill_resource_paths.basic)
-		_put_card_on_deck(Globals.skill_resource_paths.double)
-		_put_card_on_deck(Globals.skill_resource_paths.trinity)
-		_put_card_on_deck(Globals.skill_resource_paths.fan)
 
 
 func take_damage(damage):
@@ -64,9 +61,10 @@ func play_turn():
 		if character is Enemy:
 			var current_enemy = Globals.enemy_loader(character)
 			
-			yield(_summon_wheel("lock", enemies_to_process), "completed")
-			yield(wheel_ins.set_enemy(current_enemy), "completed")
-			yield(wheel_ins.draw_areas(), "completed")
+			yield(_summon_wheel("lock"), "completed")
+			wheel_ins.draw_saved_areas(enemies_to_process)
+			wheel_ins.set_enemy(current_enemy)
+			wheel_ins.draw_areas()
 			
 			current_enemy = yield(wheel_ins.action(), "completed")
 			enemies_to_process.append(current_enemy)
@@ -78,10 +76,12 @@ func play_turn():
 	
 	# Soul strike phase
 	var i = 0
-	for wheel_phase in chosen_skill.data:
-		yield(_summon_wheel("strike", enemies_to_process), "completed")
-		yield(wheel_ins.set_arrows(wheel_phase), "completed")
-		yield(wheel_ins.draw_arrows(), "completed")
+	for attack_phase in chosen_skill.attack_arrows:
+		yield(_summon_wheel("strike"), "completed")
+		wheel_ins.draw_saved_areas(enemies_to_process)
+		wheel_ins.set_arrows(attack_phase)
+		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
+		wheel_ins.draw_arrows()
 		
 		var processed_arrows = yield(wheel_ins.action(), "completed")
 		
@@ -89,9 +89,7 @@ func play_turn():
 		_check_result(processed_arrows)
 		_deal_damage(processed_arrows)
 		
-		var conditions = chosen_skill.conditions_ins.check_condition(processed_arrows)
-		if conditions.fc: _add_hp(chosen_skill.hp_cost)
-		if conditions.sc: _add_hp(chosen_skill.hp_bonus)
+		if chosen_skill.conditions_ins.first_condition(processed_arrows): _add_hp(chosen_skill.hp_cost)
 		
 		yield(_remove_defeated_enemies(), "completed")
 		

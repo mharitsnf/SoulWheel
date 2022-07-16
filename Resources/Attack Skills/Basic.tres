@@ -1,32 +1,53 @@
-[gd_resource type="Resource" load_steps=4 format=2]
+[gd_resource type="Resource" load_steps=5 format=2]
 
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=1]
 [ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=2]
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends Node
+
+
+var attack_behavior = null
+var defend_behavior = null
+
+
+# Attack:
+# Basic has one phase with one arrow only. It moves at constant speed.
+
+# Defend:
+# Basic has one arrow only. It moves at constant speed.
+
+
+func _init():
+	attack_behavior = funcref(self, \"func_attack_behavior\")
+	defend_behavior = funcref(self, \"func_attack_behavior\")
+
+
+# Processing for each phase.
+func func_attack_behavior(delta, arrows):
+	for arrow in arrows:
+		var new_rot_angle = arrow.rot_angle
+		
+		new_rot_angle += delta * arrow.move_speed
+		new_rot_angle = fmod(new_rot_angle, 360)
+		
+		arrow.rot_angle = new_rot_angle
+	
+	return arrows
+
+
+func func_defend_behavior(delta, arrows):
+	pass
+"
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
 
 
-func check_condition(processed_arrows):
-	var result = {
-		\"fc\": _first_condition(processed_arrows),
-		\"sc\": _second_condition(processed_arrows)
-	}
-	return result
-
-
-func _first_condition(processed_arrows):
+func first_condition(processed_arrows):
 	for arrow in processed_arrows:
 		if !arrow.enemies_struck.empty():
 			return true
-	
-	return false
-
-
-func _second_condition(processed_arrows):
-	for arrow in processed_arrows:
-		for enemy in arrow.enemies_struck:
-			if arrow.enemies_struck.count(enemy) > 1: return true
 	
 	return false
 "
@@ -34,11 +55,12 @@ func _second_condition(processed_arrows):
 [resource]
 script = ExtResource( 1 )
 name = "Basic"
-data = [ [ ExtResource( 2 ) ] ]
+attack_arrows = [ [ ExtResource( 2 ) ] ]
+defend_arrows = [  ]
 damage = 5
 hp_cost = 5
 is_cost_percentage = false
 hp_bonus = 3
 is_bonus_percentage = false
-time_alive = 5
 conditions = SubResource( 1 )
+behaviors = SubResource( 2 )

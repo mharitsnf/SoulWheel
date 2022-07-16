@@ -15,10 +15,10 @@ func _ready():
 	is_hit = funcref(self, '_is_hit')
 
 
-func _summon_wheel(phase, enemies_to_process):
+func _summon_wheel(phase):
 	wheel_ins = wheel.instance()
 	Globals.root.add_child(wheel_ins)
-	yield(wheel_ins.initialize(phase, enemies_to_process), "completed")
+	yield(wheel_ins.initialize(phase), "completed")
 
 
 func _destroy_wheel():
