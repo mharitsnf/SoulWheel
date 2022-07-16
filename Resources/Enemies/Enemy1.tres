@@ -27,7 +27,13 @@ func _init():
 
 
 # Processing for each phase.
-func func_attack_behavior(delta, areas):
+func func_attack_behavior(delta, areas, behavior_idx):
+	match behavior_idx:
+		0:
+			return atk_1(delta, areas)
+
+
+func atk_1(delta, areas):
 	for area in areas:
 		var new_rot_angle = area.rot_angle
 		
@@ -40,7 +46,13 @@ func func_attack_behavior(delta, areas):
 
 
 # Refer to soul areas
-func func_defend_behavior(delta, areas):
+func func_defend_behavior(delta, areas, behavior_idx):
+	match behavior_idx:
+		0:
+			return def_1(delta, areas)
+
+
+func def_1(delta, areas):
 	for area in areas:
 		var new_rot_angle = area.rot_angle
 		

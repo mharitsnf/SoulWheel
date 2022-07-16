@@ -25,12 +25,14 @@ func play_turn():
 	yield(get_tree(), "idle_frame")
 	print("enemy playing")
 	
-#	var current_enemy = Globals.enemy_loader(self)
-#
+	var current_enemy = Globals.enemy_loader(self)
+	var behavior_idx = current_enemy.dm.damage_behavior_idx
+
 #	for arrow_phase in Globals.player.player_data_model.player_soul_arrows:
 #		yield(_summon_wheel("enemy_attack"), "completed")
 #
-#		wheel_ins.set_enemy(current_enemy)
+#		wheel_ins.set_area(current_enemy.dm.damage_areas[behavior_idx])
+#		wheel_ins.set_enemy_behavior_index(behavior_idx)
 #		wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.attack_behavior)
 #
 #		wheel_ins.set_arrows(arrow_phase)

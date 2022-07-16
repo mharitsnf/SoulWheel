@@ -60,14 +60,17 @@ func play_turn():
 	for character in turn_manager.get_children(): 
 		if character is Enemy:
 			var current_enemy = Globals.enemy_loader(character)
+			var behavior_idx = current_enemy.dm.soul_behavior_idx
 			
 			yield(_summon_wheel("lock"), "completed")
-			wheel_ins.draw_saved_areas(enemies_to_process)
-			wheel_ins.set_enemy(current_enemy)
+			
+			wheel_ins.draw_soul_areas(enemies_to_process)
+			wheel_ins.set_area(current_enemy.dm.soul_areas[behavior_idx])
+			wheel_ins.set_enemy_behavior_index(behavior_idx)
 			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
 			wheel_ins.draw_areas()
 			
-			current_enemy = yield(wheel_ins.action(), "completed")
+			current_enemy.dm.soul_areas[behavior_idx] = yield(wheel_ins.action(), "completed")
 			enemies_to_process.append(current_enemy)
 			
 			yield(_destroy_wheel(), "completed")
@@ -79,7 +82,8 @@ func play_turn():
 	var i = 0
 	for attack_phase in chosen_skill.attack_arrows:
 		yield(_summon_wheel("strike"), "completed")
-		wheel_ins.draw_saved_areas(enemies_to_process)
+		
+		wheel_ins.draw_soul_areas(enemies_to_process)
 		wheel_ins.set_arrows(attack_phase)
 		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
 		wheel_ins.draw_arrows()
