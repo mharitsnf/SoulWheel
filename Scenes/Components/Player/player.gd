@@ -43,7 +43,7 @@ func take_damage(damage):
 	var new_health = player_data_model.current_health - damage
 	player_data_model.current_health = max(0, new_health)
 	
-	Globals.hp_hud.hp_label.text = "HP: " + str(new_health)
+	_update_hp_hud()
 	
 	if new_health <= 0:
 		return true
@@ -90,7 +90,8 @@ func play_turn():
 		_deal_damage(processed_arrows)
 		
 		var conditions = chosen_skill.conditions_ins.check_condition(processed_arrows)
-		
+		if conditions.fc: _add_hp(chosen_skill.hp_cost)
+		if conditions.sc: _add_hp(chosen_skill.hp_bonus)
 		
 		yield(_remove_defeated_enemies(), "completed")
 		
@@ -169,6 +170,22 @@ func _destroy_skill_hud():
 	skill_hud_ins = null
 
 
+func _wager_hp(amount):
+	player_data_model.current_health = max(1, player_data_model.current_health - amount)
+	_update_hp_hud()
+
+
+func _add_hp(amount):
+	player_data_model.current_health += amount
+	_update_hp_hud()
+
+
+func _update_hp_hud():
+	Globals.hp_hud.hp_label.text = "HP: " + str(player_data_model.current_health)
+
+
 func _on_skill_button_pressed(btn_idx):
 	chosen_skill = Globals.skill_deck[btn_idx]
+	_wager_hp(chosen_skill.hp_cost)
+	print("skill costs ", chosen_skill.hp_cost, " hp! current hp: ", player_data_model.current_health)
 	emit_signal("skill_button_pressed")

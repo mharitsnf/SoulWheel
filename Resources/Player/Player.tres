@@ -5,5 +5,5 @@
 
 [resource]
 script = ExtResource( 1 )
-max_health = 100
+max_health = 30
 player_soul_arrows = [ [ ExtResource( 2 ) ] ]
