@@ -1,15 +1,60 @@
-[gd_resource type="Resource" load_steps=7 format=2]
+[gd_resource type="Resource" load_steps=5 format=2]
 
 [ext_resource path="res://Resources/Enemies/enemy_data_model.gd" type="Script" id=1]
-[ext_resource path="res://Resources/Soul Areas/20-150-0.tres" type="Resource" id=2]
 [ext_resource path="res://Resources/Soul Areas/60-100-0.tres" type="Resource" id=3]
-[ext_resource path="res://Resources/Damage Areas/60-100-120.tres" type="Resource" id=4]
-[ext_resource path="res://Resources/Damage Areas/60-100-240.tres" type="Resource" id=5]
 [ext_resource path="res://Resources/Damage Areas/60-100-0.tres" type="Resource" id=6]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+
+var attack_behavior = null
+var defend_behavior = null
+
+
+# Attack:
+# Enemy1 has one attack pattern.
+# 1. One area with constant speed.
+
+# Defend:
+# Enemy1 has one defend pattern.
+# 1. One area with constant speed.
+
+
+func _init():
+	attack_behavior = funcref(self, \"func_attack_behavior\")
+	defend_behavior = funcref(self, \"func_defend_behavior\")
+
+
+# Processing for each phase.
+func func_attack_behavior(delta, areas):
+	for area in areas:
+		var new_rot_angle = area.rot_angle
+		
+		new_rot_angle += delta * area.move_speed
+		new_rot_angle = fmod(new_rot_angle, 360)
+		
+		area.rot_angle = new_rot_angle
+	
+	return areas
+
+
+# Refer to soul areas
+func func_defend_behavior(delta, areas):
+	for area in areas:
+		var new_rot_angle = area.rot_angle
+		
+		new_rot_angle += delta * area.move_speed
+		new_rot_angle = fmod(new_rot_angle, 360)
+		
+		area.rot_angle = new_rot_angle
+	
+	return areas
+"
 
 [resource]
 script = ExtResource( 1 )
-enemy_type = 1
 max_health = 30
-soul_areas = [ ExtResource( 3 ), ExtResource( 2 ) ]
-damage_areas = [ ExtResource( 6 ), ExtResource( 4 ), ExtResource( 5 ) ]
+soul_areas = [ [ ExtResource( 3 ) ] ]
+damage_areas = [ [ ExtResource( 6 ) ] ]
+behaviors = SubResource( 1 )

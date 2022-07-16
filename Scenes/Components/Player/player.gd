@@ -64,6 +64,7 @@ func play_turn():
 			yield(_summon_wheel("lock"), "completed")
 			wheel_ins.draw_saved_areas(enemies_to_process)
 			wheel_ins.set_enemy(current_enemy)
+			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
 			wheel_ins.draw_areas()
 			
 			current_enemy = yield(wheel_ins.action(), "completed")
@@ -111,7 +112,7 @@ func play_turn():
 # Append enemies struck by an arrow into the arrow's list
 func _check_result(processed_arrows):
 	for enemy in enemies_to_process:
-		for area in enemy.dm.soul_areas:
+		for area in enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]:
 			var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 
 			for arrow in processed_arrows:
@@ -126,14 +127,14 @@ func _deal_damage(processed_arrows):
 	for arrow in processed_arrows:
 		
 		for enemy in arrow.enemies_struck:
-			enemy.is_defeated = enemy.node.take_damage(chosen_skill.damage)
+			enemy.node.is_defeated = enemy.node.take_damage(chosen_skill.damage)
 			print(arrow, " struck ", enemy.node.name, "! enemy health: ", enemy.node.current_health)
 
 
 func _remove_defeated_enemies():
 	yield(get_tree(), "idle_frame")
 	for enemy in enemies_to_process:
-		if enemy.is_defeated:
+		if enemy.node.is_defeated:
 			yield(_defeat_enemy(enemy), "completed")
 
 

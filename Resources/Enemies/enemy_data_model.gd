@@ -1,7 +1,15 @@
 extends Resource
 class_name EnemyDataModel
 
-export var enemy_type : int
-export var max_health : int
-export var soul_areas : Array
+export(int) var max_health
+
+# Array of array of areas. Each inner array has different behaviors and different areas.
+# Purpose is to provide different pattern and behavior to the enemy.
+export(Array) var soul_areas
 export(Array) var damage_areas
+
+export(GDScript) var behaviors
+var behaviors_ins = null
+
+var soul_behavior_idx = 0
+var damage_behavior_idx = 0

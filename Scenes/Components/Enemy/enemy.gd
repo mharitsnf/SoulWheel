@@ -9,6 +9,8 @@ onready var current_health = enemy_data_model.max_health
 var enemies_to_process = []
 var arrows_to_process = []
 
+var is_defeated = false
+
 signal input_signal
 
 
@@ -20,35 +22,39 @@ func _ready():
 
 
 func play_turn():
+	yield(get_tree(), "idle_frame")
 	print("enemy playing")
 	
-	var current_enemy = Globals.enemy_loader(self)
-	
-	for arrow_phase in Globals.player.player_data_model.player_soul_arrows:
-		yield(_summon_wheel("enemy_attack"), "completed")
-		
-		wheel_ins.set_enemy(current_enemy)
-		wheel_ins.set_arrows(arrow_phase)
-		wheel_ins.draw_areas()
-		wheel_ins.draw_arrows()
-		
-		var result = yield(wheel_ins.action(), "completed")
-		enemies_to_process.append(result[0])
-		arrows_to_process = result[1]
-		
-		yield(_destroy_wheel(), "completed")
-		
-		var is_player_defeated = _check_result()
-		
-		arrows_to_process = []
-		
-		if is_player_defeated:
-			_end_turn()
-			return true
-		
-		yield(get_tree().create_timer(1), "timeout")
-	
-	_end_turn()
+#	var current_enemy = Globals.enemy_loader(self)
+#
+#	for arrow_phase in Globals.player.player_data_model.player_soul_arrows:
+#		yield(_summon_wheel("enemy_attack"), "completed")
+#
+#		wheel_ins.set_enemy(current_enemy)
+#		wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.attack_behavior)
+#
+#		wheel_ins.set_arrows(arrow_phase)
+#
+#		wheel_ins.draw_areas()
+#		wheel_ins.draw_arrows()
+#
+#		var result = yield(wheel_ins.action(), "completed")
+#		enemies_to_process.append(result[0])
+#		arrows_to_process = result[1]
+#
+#		yield(_destroy_wheel(), "completed")
+#
+#		var is_player_defeated = _check_result()
+#
+#		arrows_to_process = []
+#
+#		if is_player_defeated:
+#			_end_turn()
+#			return true
+#
+#		yield(get_tree().create_timer(1), "timeout")
+#
+#	_end_turn()
 	return false
 
 

@@ -24,12 +24,17 @@ func attack_loader(path : String):
 
 
 func enemy_loader(enemy : Enemy):
-	var dm = enemy.enemy_data_model
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
 	var enemy_object = {}
 	
 	enemy_object.node = enemy
-	enemy_object.is_defeated = false
-	enemy_object.dm = dm.duplicate(true)
+	enemy_object.dm = enemy.enemy_data_model.duplicate(true)
+	
+	enemy_object.dm.behaviors_ins = enemy_object.dm.behaviors.new()
+	enemy_object.dm.soul_behavior_idx = rng.randi_range(0, enemy_object.dm.soul_areas.size() - 1)
+	enemy_object.dm.damage_behavior_idx = rng.randi_range(0, enemy_object.dm.damage_areas.size() - 1)
 	
 	return enemy_object
 
