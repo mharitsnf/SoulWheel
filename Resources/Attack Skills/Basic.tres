@@ -44,23 +44,29 @@ func func_defend_behavior(delta, arrows):
 script/source = "extends Node
 
 
-func first_condition(processed_arrows):
-	for arrow in processed_arrows:
-		if !arrow.enemies_struck.empty():
-			return true
+func first_condition(arrows):
+	for arrow in arrows:
+		if !arrow.enemies_struck.empty(): return true
 	
 	return false
+
+
+func second_condition(arrows):
+	for arrow in arrows:
+		if !arrow.struck_by.empty(): return false
+	
+	return true
 "
 
 [resource]
 script = ExtResource( 1 )
 name = "Basic"
 attack_arrows = [ [ ExtResource( 2 ) ] ]
-defend_arrows = [  ]
+defend_arrows = [ [ ExtResource( 2 ) ] ]
 damage = 5
 hp_cost = 5
 is_cost_percentage = false
-hp_bonus = 3
+hp_bonus = 1
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )

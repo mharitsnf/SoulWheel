@@ -60,17 +60,17 @@ func play_turn():
 	for character in turn_manager.get_children(): 
 		if character is Enemy:
 			var current_enemy = Globals.enemy_loader(character)
-			var behavior_idx = current_enemy.dm.soul_behavior_idx
+			var ebi = current_enemy.dm.soul_behavior_idx
 			
 			yield(_summon_wheel("lock"), "completed")
 			
 			wheel_ins.draw_soul_areas(enemies_to_process)
-			wheel_ins.set_area(current_enemy.dm.soul_areas[behavior_idx])
-			wheel_ins.set_enemy_behavior_index(behavior_idx)
+			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi])
+			wheel_ins.set_enemy_behavior_index(ebi)
 			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
 			wheel_ins.draw_areas()
 			
-			current_enemy.dm.soul_areas[behavior_idx] = yield(wheel_ins.action(), "completed")
+			current_enemy.dm.soul_areas[ebi] = yield(wheel_ins.action(), "completed")
 			enemies_to_process.append(current_enemy)
 			
 			yield(_destroy_wheel(), "completed")
@@ -90,11 +90,13 @@ func play_turn():
 		
 		var processed_arrows = yield(wheel_ins.action(), "completed")
 		
-		# TODO: Add transition
-		_check_result(processed_arrows)
+		for enemy in enemies_to_process:
+			var areas_to_check = enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]
+			_check_result(enemy, areas_to_check, processed_arrows)
+		
 		_deal_damage(processed_arrows)
 		
-		if chosen_skill.conditions_ins.first_condition(processed_arrows): _add_hp(chosen_skill.hp_cost)
+		if chosen_skill.conditions_ins.first_condition(processed_arrows): add_hp(chosen_skill.hp_cost)
 		
 		yield(_remove_defeated_enemies(), "completed")
 		
@@ -114,16 +116,15 @@ func play_turn():
 
 
 # Append enemies struck by an arrow into the arrow's list
-func _check_result(processed_arrows):
-	for enemy in enemies_to_process:
-		for area in enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]:
-			var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+func _check_result(enemy, areas, arrows):
+	for area in areas:
+		var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 
-			for arrow in processed_arrows:
-				var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
-				
-				if _is_hit(arrow_angle, area_angle):
-					arrow.enemies_struck.append(enemy)
+		for arrow in arrows:
+			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+			
+			if _is_hit(arrow_angle, area_angle):
+				arrow.enemies_struck.append(enemy)
 
 
 # Deal damage based on the updated arrow's list
@@ -178,7 +179,7 @@ func _wager_hp(amount):
 	_update_hp_hud()
 
 
-func _add_hp(amount):
+func add_hp(amount):
 	player_data_model.current_health += amount
 	_update_hp_hud()
 
@@ -190,5 +191,5 @@ func _update_hp_hud():
 func _on_skill_button_pressed(btn_idx):
 	chosen_skill = Globals.skill_deck[btn_idx]
 	_wager_hp(chosen_skill.hp_cost)
-	print("skill costs ", chosen_skill.hp_cost, " hp! current hp: ", player_data_model.current_health)
+	print("skill costs ", chosen_skill.hp_cost, " hp!")
 	emit_signal("skill_button_pressed")

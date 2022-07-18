@@ -7,3 +7,4 @@ export(int) var rot_angle
 export(int) var thickness
 
 var enemies_struck = []
+var struck_by = []

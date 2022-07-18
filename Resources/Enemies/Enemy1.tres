@@ -1,6 +1,7 @@
-[gd_resource type="Resource" load_steps=5 format=2]
+[gd_resource type="Resource" load_steps=6 format=2]
 
 [ext_resource path="res://Resources/Enemies/enemy_data_model.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Soul Areas/20-150-0.tres" type="Resource" id=2]
 [ext_resource path="res://Resources/Soul Areas/60-100-0.tres" type="Resource" id=3]
 [ext_resource path="res://Resources/Damage Areas/60-100-0.tres" type="Resource" id=6]
 
@@ -67,6 +68,6 @@ func def_1(delta, areas):
 [resource]
 script = ExtResource( 1 )
 max_health = 30
-soul_areas = [ [ ExtResource( 3 ) ] ]
+soul_areas = [ [ ExtResource( 3 ), ExtResource( 2 ) ] ]
 damage_areas = [ [ ExtResource( 6 ) ] ]
 behaviors = SubResource( 1 )
