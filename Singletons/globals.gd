@@ -27,14 +27,16 @@ func enemy_loader(enemy : Enemy):
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
 	
-	var enemy_object = {}
+	var enemy_object = {
+		"node": enemy
+	}
 	
-	enemy_object.node = enemy
-	enemy_object.dm = enemy.enemy_data_model.duplicate(true)
+	var tmp_dm = enemy.enemy_data_model.duplicate(true)
+	tmp_dm.behaviors_ins = tmp_dm.behaviors.new()
+	tmp_dm.soul_behavior_idx = rng.randi_range(0, tmp_dm.soul_areas.size() - 1)
+	tmp_dm.damage_behavior_idx = rng.randi_range(0, tmp_dm.damage_areas.size() - 1)
 	
-	enemy_object.dm.behaviors_ins = enemy_object.dm.behaviors.new()
-	enemy_object.dm.soul_behavior_idx = rng.randi_range(0, enemy_object.dm.soul_areas.size() - 1)
-	enemy_object.dm.damage_behavior_idx = rng.randi_range(0, enemy_object.dm.damage_areas.size() - 1)
+	enemy_object.dm = tmp_dm
 	
 	return enemy_object
 

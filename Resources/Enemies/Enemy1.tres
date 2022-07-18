@@ -1,9 +1,9 @@
-[gd_resource type="Resource" load_steps=6 format=2]
+[gd_resource type="Resource" load_steps=10 format=2]
 
 [ext_resource path="res://Resources/Enemies/enemy_data_model.gd" type="Script" id=1]
 [ext_resource path="res://Resources/Soul Areas/20-150-0.tres" type="Resource" id=2]
 [ext_resource path="res://Resources/Soul Areas/60-100-0.tres" type="Resource" id=3]
-[ext_resource path="res://Resources/Damage Areas/60-100-0.tres" type="Resource" id=6]
+[ext_resource path="res://Resources/Damage Areas/damage_area.gd" type="Script" id=4]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
@@ -37,11 +37,11 @@ func _init():
 # Randomizer preprocessor for enemy attack phase
 func func_randomize_attack(areas, behavior_idx):
 	match behavior_idx:
-		0:
-			return rand_atk_1(areas)
+		0: return rand_atk(areas)
+		1: return rand_atk(areas)
 
 
-func rand_atk_1(areas):
+func rand_atk(areas):
 	var processed_areas = []
 	
 	var rot_angle_variation = rng.randi_range(0, 360)
@@ -49,28 +49,7 @@ func rand_atk_1(areas):
 	for area in areas:
 		var tmp_area = area.duplicate()
 		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
-		tmp_area.rot_angle = rot_angle_variation
-		processed_areas.append(tmp_area)
-	
-	return processed_areas
-
-
-# Randomizer preprocessor for enemy defend phase
-func func_randomize_defend(areas, behavior_idx):
-	match behavior_idx:
-		0:
-			return rand_def_1(areas)
-
-
-func rand_def_1(areas):
-	var processed_areas = []
-	
-	var rot_angle_variation = rng.randi_range(0, 360)
-	
-	for area in areas:
-		var tmp_area = area.duplicate()
-		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
-		tmp_area.rot_angle = rot_angle_variation
+		tmp_area.rot_angle = fmod(tmp_area.rot_angle + rot_angle_variation, 360)
 		processed_areas.append(tmp_area)
 	
 	return processed_areas
@@ -79,11 +58,11 @@ func rand_def_1(areas):
 # Processing for each phase.
 func func_attack_behavior(delta, areas, behavior_idx):
 	match behavior_idx:
-		0:
-			return atk_1(delta, areas)
+		0: return atk(delta, areas)
+		1: return atk(delta, areas)
 
 
-func atk_1(delta, areas):
+func atk(delta, areas):
 	for area in areas:
 		var new_rot_angle = area.rot_angle
 		
@@ -95,11 +74,30 @@ func atk_1(delta, areas):
 	return areas
 
 
+# Randomizer preprocessor for enemy defend phase
+func func_randomize_defend(areas, behavior_idx):
+	match behavior_idx:
+		0: return rand_def_1(areas)
+
+
+func rand_def_1(areas):
+	var processed_areas = []
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for area in areas:
+		var tmp_area = area.duplicate()
+		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
+		tmp_area.rot_angle = fmod(tmp_area.rot_angle + rot_angle_variation, 360)
+		processed_areas.append(tmp_area)
+	
+	return processed_areas
+
+
 # Refer to soul areas
 func func_defend_behavior(delta, areas, behavior_idx):
 	match behavior_idx:
-		0:
-			return def_1(delta, areas)
+		0: return def_1(delta, areas)
 
 
 func def_1(delta, areas):
@@ -114,9 +112,41 @@ func def_1(delta, areas):
 	return areas
 "
 
+[sub_resource type="Resource" id=2]
+script = ExtResource( 4 )
+move_speed = 30
+thickness = 30
+rot_angle = 0
+damage = 10
+is_damage_percentage = false
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 4 )
+move_speed = 30
+thickness = 30
+rot_angle = 120
+damage = 10
+is_damage_percentage = false
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 4 )
+move_speed = 30
+thickness = 30
+rot_angle = 240
+damage = 10
+is_damage_percentage = false
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 4 )
+move_speed = 50
+thickness = 90
+rot_angle = 0
+damage = 10
+is_damage_percentage = false
+
 [resource]
 script = ExtResource( 1 )
 max_health = 30
 soul_areas = [ [ ExtResource( 3 ), ExtResource( 2 ) ] ]
-damage_areas = [ [ ExtResource( 6 ) ] ]
+damage_areas = [ [ SubResource( 2 ), SubResource( 3 ), SubResource( 4 ) ], [ SubResource( 5 ) ] ]
 behaviors = SubResource( 1 )

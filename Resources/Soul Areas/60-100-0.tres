@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource( 1 )
 thickness = 30
-move_speed = 100
+move_speed = 50
 rot_angle = 0

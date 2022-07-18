@@ -60,19 +60,37 @@ func func_randomize_defend(arrows):
 
 # Processing for each phase.
 func func_attack_behavior(delta, arrows):
+	var new_arrows = []
+	
 	for arrow in arrows:
-		var new_rot_angle = arrow.rot_angle
+		var new_arrow = arrow
+		var new_rot_angle = new_arrow.rot_angle
 		
-		new_rot_angle += delta * arrow.move_speed
+		new_rot_angle += delta * new_arrow.move_speed
 		new_rot_angle = fmod(new_rot_angle, 360)
 		
-		arrow.rot_angle = new_rot_angle
+		new_arrow.rot_angle = new_rot_angle
+		
+		new_arrows.append(new_arrow)
 	
-	return arrows
+	return new_arrows
 
 
 func func_defend_behavior(delta, arrows):
-	pass
+	var new_arrows = []
+	
+	for arrow in arrows:
+		var new_arrow = arrow
+		var new_rot_angle = new_arrow.rot_angle
+		
+		new_rot_angle += delta * new_arrow.move_speed
+		new_rot_angle = fmod(new_rot_angle, 360)
+		
+		new_arrow.rot_angle = new_rot_angle
+		
+		new_arrows.append(new_arrow)
+	
+	return new_arrows
 "
 
 [sub_resource type="GDScript" id=1]

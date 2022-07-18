@@ -79,7 +79,7 @@ func play_turn():
 			yield(get_tree().create_timer(1), "timeout")
 	
 	# Soul strike phase
-	var i = 0
+	var _i = 0
 	for attack_phase in chosen_skill.attack_arrows:
 		yield(_summon_wheel("strike"), "completed")
 		
@@ -109,7 +109,7 @@ func play_turn():
 		yield(get_tree().create_timer(0.5), "timeout")
 		yield(_destroy_wheel(), "completed")
 		
-		i += 1
+		_i += 1
 	
 	_end_turn()
 	return false

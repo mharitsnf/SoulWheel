@@ -31,7 +31,7 @@ func play_turn():
 		# Setting enemy's damage areas
 		wheel_ins.set_enemy_behavior_index(ebi)
 		wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.attack_behavior)
-		wheel_ins.set_area(current_enemy.dm.damage_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
+		wheel_ins.set_area(current_enemy.dm.damage_areas[ebi], current_enemy.dm.behaviors_ins.randomize_attack)
 		
 		# Setting player's defend arrows
 		wheel_ins.set_arrows(defend_phase, chosen_skill.behaviors_ins.randomize_defend)
