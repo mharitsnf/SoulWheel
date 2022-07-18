@@ -58,17 +58,6 @@ func _process(delta):
 			emit_signal("stop_running")
 
 
-func _rotate(rot_angle, move_speed, delta):
-	var new_rot_angle = rot_angle
-	
-	new_rot_angle += delta * move_speed
-	
-	new_rot_angle = fmod(new_rot_angle, 360)
-	if new_rot_angle < 0: new_rot_angle += 360
-	
-	return new_rot_angle
-
-
 func initialize(_phase):
 	yield(get_tree(), "idle_frame")
 	
@@ -103,30 +92,14 @@ func set_arrow_behavior(_arrow_behavior):
 
 # Put ready-to-process area data in this node. Will be returned later after the action
 # has been done
-func set_area(_areas):
-	var processed_areas = []
-	
-	for area in _areas:
-		var tmp_area = area.duplicate()
-		tmp_area.thickness = _thickness_preprocess(tmp_area.thickness)
-		
-		processed_areas.append(tmp_area)
-	
-	areas = processed_areas
+func set_area(_areas, preprocessor):
+	areas = preprocessor.call_func(_areas, enemy_behavior_idx)
 
 
 # Put ready-to-process arrow data in this node. Will be returned later after the action
 # has been done
-func set_arrows(attack_phase):
-	var processed_arrows = []
-	
-	for arrow in attack_phase:
-		var tmp_arrow = arrow.duplicate()
-		tmp_arrow.thickness = _thickness_preprocess(tmp_arrow.thickness)
-		
-		processed_arrows.append(tmp_arrow)
-	
-	arrows = processed_arrows
+func set_arrows(attack_phase, preprocessor):
+	arrows = preprocessor.call_func(attack_phase)
 
 
 func draw_areas():
@@ -217,10 +190,6 @@ func _create_arrow(thickness: int, rot_angle : int):
 	
 	new_polygon.polygon = points
 	return new_polygon
-
-
-func _thickness_preprocess(thickness):
-	return max(2, fmod(abs(thickness), 360))
 
 
 func _on_start_running():

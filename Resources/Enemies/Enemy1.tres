@@ -11,6 +11,10 @@ script/source = "extends Node
 
 var attack_behavior = null
 var defend_behavior = null
+var randomize_attack = null
+var randomize_defend = null
+
+var rng = RandomNumberGenerator.new()
 
 
 # Attack:
@@ -25,6 +29,51 @@ var defend_behavior = null
 func _init():
 	attack_behavior = funcref(self, \"func_attack_behavior\")
 	defend_behavior = funcref(self, \"func_defend_behavior\")
+	randomize_attack = funcref(self, \"func_randomize_attack\")
+	randomize_defend = funcref(self, \"func_randomize_defend\")
+	
+	rng.randomize()
+
+# Randomizer preprocessor for enemy attack phase
+func func_randomize_attack(areas, behavior_idx):
+	match behavior_idx:
+		0:
+			return rand_atk_1(areas)
+
+
+func rand_atk_1(areas):
+	var processed_areas = []
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for area in areas:
+		var tmp_area = area.duplicate()
+		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
+		tmp_area.rot_angle = rot_angle_variation
+		processed_areas.append(tmp_area)
+	
+	return processed_areas
+
+
+# Randomizer preprocessor for enemy defend phase
+func func_randomize_defend(areas, behavior_idx):
+	match behavior_idx:
+		0:
+			return rand_def_1(areas)
+
+
+func rand_def_1(areas):
+	var processed_areas = []
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for area in areas:
+		var tmp_area = area.duplicate()
+		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
+		tmp_area.rot_angle = rot_angle_variation
+		processed_areas.append(tmp_area)
+	
+	return processed_areas
 
 
 # Processing for each phase.

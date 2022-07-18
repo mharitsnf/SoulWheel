@@ -65,9 +65,9 @@ func play_turn():
 			yield(_summon_wheel("lock"), "completed")
 			
 			wheel_ins.draw_soul_areas(enemies_to_process)
-			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi])
 			wheel_ins.set_enemy_behavior_index(ebi)
 			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
+			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
 			wheel_ins.draw_areas()
 			
 			current_enemy.dm.soul_areas[ebi] = yield(wheel_ins.action(), "completed")
@@ -84,8 +84,8 @@ func play_turn():
 		yield(_summon_wheel("strike"), "completed")
 		
 		wheel_ins.draw_soul_areas(enemies_to_process)
-		wheel_ins.set_arrows(attack_phase)
 		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
+		wheel_ins.set_arrows(attack_phase, chosen_skill.behaviors_ins.randomize_attack)
 		wheel_ins.draw_arrows()
 		
 		var processed_arrows = yield(wheel_ins.action(), "completed")

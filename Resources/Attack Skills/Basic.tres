@@ -9,6 +9,9 @@ script/source = "extends Node
 
 var attack_behavior = null
 var defend_behavior = null
+var randomize_attack = null
+var randomize_defend = null
+var rng = RandomNumberGenerator.new()
 
 
 # Attack:
@@ -21,6 +24,38 @@ var defend_behavior = null
 func _init():
 	attack_behavior = funcref(self, \"func_attack_behavior\")
 	defend_behavior = funcref(self, \"func_attack_behavior\")
+	randomize_attack = funcref(self, \"func_randomize_attack\")
+	randomize_defend = funcref(self, \"func_randomize_defend\")
+	
+	rng.randomize()
+
+
+func func_randomize_attack(arrows):
+	var processed_arrows = []
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for arrow in arrows:
+		var tmp_arrow = arrow.duplicate()
+		tmp_arrow.thickness = max(2, fmod(abs(tmp_arrow.thickness), 360))
+		tmp_arrow.rot_angle = rot_angle_variation
+		processed_arrows.append(tmp_arrow)
+		
+	return processed_arrows
+
+
+func func_randomize_defend(arrows):
+	var processed_arrows = []
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for arrow in arrows:
+		var tmp_arrow = arrow.duplicate()
+		tmp_arrow.thickness = max(2, fmod(abs(tmp_arrow.thickness), 360))
+		tmp_arrow.rot_angle = rot_angle_variation
+		processed_arrows.append(tmp_arrow)
+		
+	return processed_arrows
 
 
 # Processing for each phase.
