@@ -24,18 +24,22 @@ func play_turn():
 	var current_enemy = Globals.enemy_loader(self)
 	var ebi = current_enemy.dm.damage_behavior_idx
 	var chosen_skill = Globals.player.chosen_skill
+	var skill_data = Globals.player.skill_data
 	
 	for defend_phase in chosen_skill.defend_arrows:
 		yield(_summon_wheel("enemy_attack"), "completed")
 		
 		# Setting enemy's damage areas
-		wheel_ins.set_enemy_behavior_index(ebi)
 		wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.attack_behavior)
-		wheel_ins.set_area(current_enemy.dm.damage_areas[ebi], current_enemy.dm.behaviors_ins.randomize_attack)
+		wheel_ins.set_enemy_behavior_index(ebi)
 		
 		# Setting player's defend arrows
-		wheel_ins.set_arrows(defend_phase, chosen_skill.behaviors_ins.randomize_defend)
 		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.defend_behavior)
+		wheel_ins.set_skill_data(skill_data)
+		
+		# Set the actual areas and arrows
+		wheel_ins.set_area(current_enemy.dm.damage_areas[ebi], current_enemy.dm.behaviors_ins.randomize_attack)
+		wheel_ins.set_arrows(defend_phase, chosen_skill.behaviors_ins.randomize_defend)
 		
 		# Draw arrows and areas
 		wheel_ins.draw_areas()
@@ -44,9 +48,10 @@ func play_turn():
 		var result = yield(wheel_ins.action(), "completed")
 		current_enemy.dm.damage_areas[ebi] = result[0]
 		var processed_arrows = result[1]
+		skill_data = result[2]
 		
 		_check_result(current_enemy.dm.damage_areas[ebi], processed_arrows)
-		if chosen_skill.conditions_ins.second_condition(processed_arrows):
+		if chosen_skill.conditions_ins.second_condition(processed_arrows, skill_data):
 			print("gained ", chosen_skill.hp_bonus," hp!")
 			Globals.player.add_hp(chosen_skill.hp_bonus)
 		

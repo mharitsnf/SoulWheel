@@ -1,7 +1,14 @@
-[gd_resource type="Resource" load_steps=5 format=2]
+[gd_resource type="Resource" load_steps=6 format=2]
 
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=1]
-[ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=2]
+[ext_resource path="res://Resources/Arrow/arrow_template.gd" type="Script" id=2]
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 2 )
+move_speed = 0
+rot_angle = 0
+thickness = 2
+damage = 0
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Node
@@ -30,49 +37,61 @@ func _init():
 	rng.randomize()
 
 
-func func_randomize(arrows, _skill_data):
+func func_randomize(arrows, skill_data : Dictionary):
 	var processed_arrows = []
+	skill_data.init_rot_angles = []
 	
 	var rot_angle_variation = rng.randi_range(0, 360)
 	
 	for arrow in arrows:
 		var tmp_arrow = arrow.duplicate()
 		tmp_arrow.thickness = max(2, fmod(abs(tmp_arrow.thickness), 360))
-		tmp_arrow.rot_angle = rot_angle_variation
+		tmp_arrow.rot_angle += rot_angle_variation
+		
+		skill_data.init_rot_angles.append(tmp_arrow.rot_angle)
 		processed_arrows.append(tmp_arrow)
 		
-	return [processed_arrows, _skill_data]
-
+	return [processed_arrows, skill_data]
 
 # Processing for each phase.
-func func_attack_behavior(delta, arrows, _skill_data):
+# Skill data is read only.
+
+func func_attack_behavior(delta, arrows, skill_data):
 	var new_arrows = []
 	
 	for arrow in arrows:
 		var new_arrow = arrow
 		var new_rot_angle = new_arrow.rot_angle
+		var new_move_speed = new_arrow.move_speed
 		
-		new_rot_angle += delta * new_arrow.move_speed
+		new_rot_angle += delta * new_move_speed
 		new_rot_angle = fmod(new_rot_angle, 360)
 		
+		new_move_speed += skill_data.acceleration
+		
 		new_arrow.rot_angle = new_rot_angle
+		new_arrow.move_speed = new_move_speed
 		
 		new_arrows.append(new_arrow)
 	
 	return new_arrows
 
 
-func func_defend_behavior(delta, arrows, _skill_data):
+func func_defend_behavior(delta, arrows, skill_data):
 	var new_arrows = []
 	
 	for arrow in arrows:
 		var new_arrow = arrow
 		var new_rot_angle = new_arrow.rot_angle
+		var new_move_speed = new_arrow.move_speed
 		
-		new_rot_angle += delta * new_arrow.move_speed
+		new_rot_angle -= delta * new_move_speed
 		new_rot_angle = fmod(new_rot_angle, 360)
 		
+		new_move_speed += skill_data.acceleration
+		
 		new_arrow.rot_angle = new_rot_angle
+		new_arrow.move_speed = new_move_speed
 		
 		new_arrows.append(new_arrow)
 	
@@ -99,9 +118,9 @@ func second_condition(arrows, _skill_data):
 
 [resource]
 script = ExtResource( 1 )
-name = "Basic"
-attack_arrows = [ [ ExtResource( 2 ) ] ]
-defend_arrows = [ [ ExtResource( 2 ) ] ]
+name = "Accelerate"
+attack_arrows = [ [ SubResource( 3 ) ] ]
+defend_arrows = [ [ SubResource( 3 ) ] ]
 damage = 5
 hp_cost = 5
 is_cost_percentage = false
@@ -110,4 +129,5 @@ is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
 skill_data = {
+"acceleration": 2.5
 }

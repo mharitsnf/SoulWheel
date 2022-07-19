@@ -30,3 +30,5 @@ var conditions_ins = null
 # Script that handles the behavior of the attack and defend arrows.
 export(GDScript) var behaviors
 var behaviors_ins = null
+
+export(Dictionary) var skill_data

@@ -13,6 +13,7 @@ var current_round = 1
 var skill_deck := []
 var skill_resource_paths = {
 	"basic": "res://Resources/Attack Skills/Basic.tres",
+	"accelerate": "res://Resources/Attack Skills/Accelerate.tres",
 }
 
 

@@ -7,3 +7,4 @@ script = ExtResource( 1 )
 move_speed = 200
 rot_angle = 0
 thickness = 2
+damage = 0

@@ -9,6 +9,7 @@ var skill_hud_ins : Control = null
 
 var rng = RandomNumberGenerator.new()
 var chosen_skill : AttackSkill = null
+var skill_data = {}
 
 var enemies_to_process = []
 
@@ -34,6 +35,7 @@ func _ready():
 	
 	if Globals.current_area == 1 and Globals.current_round == 1:
 		_put_card_on_deck(Globals.skill_resource_paths.basic)
+		_put_card_on_deck(Globals.skill_resource_paths.accelerate)
 
 
 func take_damage(damage):
@@ -65,8 +67,10 @@ func play_turn():
 			yield(_summon_wheel("lock"), "completed")
 			
 			wheel_ins.draw_soul_areas(enemies_to_process)
+			
 			wheel_ins.set_enemy_behavior_index(ebi)
 			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
+			
 			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
 			wheel_ins.draw_areas()
 			
@@ -84,11 +88,16 @@ func play_turn():
 		yield(_summon_wheel("strike"), "completed")
 		
 		wheel_ins.draw_soul_areas(enemies_to_process)
+		
 		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
+		wheel_ins.set_skill_data(chosen_skill.skill_data)
+		
 		wheel_ins.set_arrows(attack_phase, chosen_skill.behaviors_ins.randomize_attack)
 		wheel_ins.draw_arrows()
 		
-		var processed_arrows = yield(wheel_ins.action(), "completed")
+		var result = yield(wheel_ins.action(), "completed")
+		var processed_arrows = result[0]
+		skill_data = result[1]
 		
 		for enemy in enemies_to_process:
 			var areas_to_check = enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]
@@ -96,7 +105,7 @@ func play_turn():
 		
 		_deal_damage(processed_arrows)
 		
-		if chosen_skill.conditions_ins.first_condition(processed_arrows): add_hp(chosen_skill.hp_cost)
+		if chosen_skill.conditions_ins.first_condition(processed_arrows, skill_data): add_hp(chosen_skill.hp_cost)
 		
 		yield(_remove_defeated_enemies(), "completed")
 		
@@ -190,6 +199,9 @@ func _update_hp_hud():
 
 func _on_skill_button_pressed(btn_idx):
 	chosen_skill = Globals.skill_deck[btn_idx]
+	skill_data = chosen_skill.skill_data.duplicate(true)
+	
 	_wager_hp(chosen_skill.hp_cost)
+	
 	print("skill costs ", chosen_skill.hp_cost, " hp!")
 	emit_signal("skill_button_pressed")

@@ -14,6 +14,7 @@ var arrow_behavior = null
 var enemy_behavior_idx = 0
 var areas = []
 var arrows = []
+var skill_data = {}
 
 var phase = null
 var running : bool = false
@@ -34,7 +35,7 @@ func _process(delta):
 				$Areas.get_child(i).rotation_degrees = areas[i].rot_angle
 		
 		elif phase == "strike":
-			arrows = arrow_behavior.call_func(delta, arrows)
+			arrows = arrow_behavior.call_func(delta, arrows, skill_data)
 			
 			# Update visuals
 			for i in range(arrows.size()):
@@ -42,7 +43,7 @@ func _process(delta):
 		
 		else:
 			areas = area_behavior.call_func(delta, areas, enemy_behavior_idx)
-			arrows = arrow_behavior.call_func(delta, arrows)
+			arrows = arrow_behavior.call_func(delta, arrows, skill_data)
 			
 			# Update area visuals
 			for i in range(areas.size()):
@@ -90,6 +91,10 @@ func set_arrow_behavior(_arrow_behavior):
 	arrow_behavior = _arrow_behavior
 
 
+func set_skill_data(_skill_data : Dictionary):
+	skill_data = _skill_data.duplicate(true)
+
+
 # Put ready-to-process area data in this node. Will be returned later after the action
 # has been done
 func set_area(_areas, preprocessor):
@@ -99,7 +104,9 @@ func set_area(_areas, preprocessor):
 # Put ready-to-process arrow data in this node. Will be returned later after the action
 # has been done
 func set_arrows(attack_phase, preprocessor):
-	arrows = preprocessor.call_func(attack_phase)
+	var result = preprocessor.call_func(attack_phase, skill_data)
+	arrows = result[0]
+	skill_data = result[1]
 
 
 func draw_areas():
@@ -123,10 +130,10 @@ func action():
 		return areas
 	
 	elif phase == "strike":
-		return arrows
+		return [arrows, skill_data]
 	
 	else:
-		return [areas, arrows]
+		return [areas, arrows, skill_data]
 
 
 # Function for drawing the wheel's outline.
@@ -149,7 +156,6 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 func draw_soul_areas(processed_enemies):
 	for cur_enemy in processed_enemies:
 		var area_container = Node2D.new()
-		area_container.modulate.a = 0.5
 		
 		for area in cur_enemy.dm.soul_areas[cur_enemy.dm.soul_behavior_idx]:
 			var saved_area = _create_area(area.rot_angle)
@@ -171,6 +177,7 @@ func _create_area(rot_angle):
 	var area : Line2D = Line2D.new()
 	area.width = 8
 	area.rotation_degrees = rot_angle
+	area.default_color = Color(1, 1, 1, .5)
 	
 	if phase == "enemy_attack":
 		area.default_color = Color(1, 0, 0, 1)
