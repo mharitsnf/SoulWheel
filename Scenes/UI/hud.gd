@@ -6,8 +6,10 @@ onready var hp_label = $MarginContainer/Label
 
 func _ready():
 	Globals.hp_hud = self
-	
-	hp_label.text = "HP: " + str(Globals.player.player_data_model.current_health)
+
+
+func update_health(new_health):
+	hp_label.text = "HP: " + str(new_health)
 
 
 func move_down():

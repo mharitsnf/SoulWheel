@@ -9,7 +9,3 @@ export(Array) var soul_areas
 export(Array) var damage_areas
 
 export(GDScript) var behaviors
-var behaviors_ins = null
-
-var soul_behavior_idx = 0
-var damage_behavior_idx = 0

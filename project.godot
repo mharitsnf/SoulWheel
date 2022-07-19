@@ -10,11 +10,6 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Resource",
-"class": "ArrowTemplate",
-"language": "GDScript",
-"path": "res://Resources/Arrow/arrow_template.gd"
-}, {
-"base": "Resource",
 "class": "AttackSkill",
 "language": "GDScript",
 "path": "res://Resources/Attack Skills/attack_skill.gd"
@@ -50,11 +45,6 @@ _global_script_classes=[ {
 "path": "res://Resources/Player/player_data_model.gd"
 }, {
 "base": "Resource",
-"class": "PlayerSoulArrow",
-"language": "GDScript",
-"path": "res://Resources/Player/player_soul_arrow.gd"
-}, {
-"base": "Resource",
 "class": "SoulArea",
 "language": "GDScript",
 "path": "res://Resources/Soul Areas/soul_area.gd"
@@ -65,7 +55,6 @@ _global_script_classes=[ {
 "path": "res://Scenes/Main/turn_manager.gd"
 } ]
 _global_script_class_icons={
-"ArrowTemplate": "",
 "AttackSkill": "",
 "Character": "",
 "DamageArea": "",
@@ -73,7 +62,6 @@ _global_script_class_icons={
 "EnemyDataModel": "",
 "Player": "",
 "PlayerDataModel": "",
-"PlayerSoulArrow": "",
 "SoulArea": "",
 "TurnManager": ""
 }
@@ -89,6 +77,7 @@ config/icon="res://icon.png"
 Configurations="*res://Singletons/configurations.gd"
 Globals="*res://Singletons/globals.gd"
 EnemyProcessor="*res://Singletons/enemy_processor.gd"
+Round="*res://Singletons/round.gd"
 
 [display]
 

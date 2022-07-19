@@ -10,7 +10,7 @@ func initialize(_skills):
 		btn.text = skill.name
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn_container.add_child(btn)
-		btn.connect("pressed", Globals.player, "_on_skill_button_pressed", [btn.get_index()])
+		btn.connect("pressed", Round.player, "_on_skill_button_pressed", [btn.get_index()])
 
 
 func show():

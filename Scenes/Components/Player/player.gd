@@ -2,7 +2,7 @@ extends Character
 class_name Player
 
 
-export var player_data_model : Resource
+export var data_model : Resource
 export(PackedScene) var skill_hud : PackedScene
 
 var skill_hud_ins : Control = null
@@ -21,26 +21,18 @@ signal skill_button_pressed
 func _ready():
 	._ready()
 	
-	assert(player_data_model)
-	assert(player_data_model is PlayerDataModel)
-	
-	Globals.player = self
-	
-	# Note: I'm storing the current health data in the data model so it
-	# persists over many rounds. It's a resource property. If I store
-	# it here in the node script it will not persist to the next round.
-	player_data_model.current_health = player_data_model.max_health
-	
+	assert(data_model)
+	assert(data_model is PlayerDataModel)
 	rng.randomize()
 	
-	if Globals.current_area == 1 and Globals.current_round == 1:
-		_put_card_on_deck(Globals.skill_resource_paths.basic)
-		_put_card_on_deck(Globals.skill_resource_paths.accelerate)
+	Round.player = self
+	
+	_update_hp_hud()
 
 
 func take_damage(damage):
-	var new_health = player_data_model.current_health - damage
-	player_data_model.current_health = max(0, new_health)
+	var new_health = data_model.current_health - damage
+	data_model.current_health = max(0, new_health)
 	
 	_update_hp_hud()
 	
@@ -58,67 +50,78 @@ func play_turn():
 	yield(self, "skill_button_pressed") # Wait for player to select a skill
 	yield(_destroy_skill_hud(), "completed")
 	
-	# Soul lock phase
-	for character in turn_manager.get_children(): 
+	for character in turn_manager.get_children():
 		if character is Enemy:
-			var current_enemy = Globals.enemy_loader(character)
-			var ebi = current_enemy.dm.soul_behavior_idx
+			pass
 			
-			yield(_summon_wheel("lock"), "completed")
+			character.data_model.soul_areas[0][0].rot_angle += 10
+			print(character.data_model.soul_areas[0][0].rot_angle)
+	
+	# Soul lock phase
+#	for character in turn_manager.get_children(): 
+#		if character is Enemy:
+#			pass
 			
-			wheel_ins.draw_soul_areas(enemies_to_process)
-			
-			wheel_ins.set_enemy_behavior_index(ebi)
-			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
-			
-			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
-			wheel_ins.draw_areas()
-			
-			current_enemy.dm.soul_areas[ebi] = yield(wheel_ins.action(), "completed")
-			enemies_to_process.append(current_enemy)
-			
-			yield(_destroy_wheel(), "completed")
-			
-			# TODO: Add transition
-			yield(get_tree().create_timer(1), "timeout")
+#			var current_enemy = Globals.enemy_loader(character)
+#			var ebi = current_enemy.dm.soul_behavior_idx
+#
+#			yield(_summon_wheel("lock"), "completed")
+#
+#			wheel_ins.draw_soul_areas(enemies_to_process)
+#
+#			wheel_ins.set_enemy_behavior_index(ebi)
+#			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
+#
+#			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
+#			wheel_ins.draw_areas()
+#
+#			current_enemy.dm.soul_areas[ebi] = yield(wheel_ins.action(), "completed")
+#			enemies_to_process.append(current_enemy)
+#
+#			yield(_destroy_wheel(), "completed")
+#
+#			# TODO: Add transition
+#			yield(get_tree().create_timer(1), "timeout")
 	
 	# Soul strike phase
-	var _i = 0
-	for attack_phase in chosen_skill.attack_arrows:
-		yield(_summon_wheel("strike"), "completed")
+#	var _i = 0
+#	for attack_phase in chosen_skill.attack_arrows:
+#		pass 
 		
-		wheel_ins.draw_soul_areas(enemies_to_process)
-		
-		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
-		wheel_ins.set_skill_data(chosen_skill.skill_data)
-		
-		wheel_ins.set_arrows(attack_phase, chosen_skill.behaviors_ins.randomize_attack)
-		wheel_ins.draw_arrows()
-		
-		var result = yield(wheel_ins.action(), "completed")
-		var processed_arrows = result[0]
-		skill_data = result[1]
-		
-		for enemy in enemies_to_process:
-			var areas_to_check = enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]
-			_check_result(enemy, areas_to_check, processed_arrows)
-		
-		_deal_damage(processed_arrows)
-		
-		if chosen_skill.conditions_ins.first_condition(processed_arrows, skill_data): add_hp(chosen_skill.hp_cost)
-		
-		yield(_remove_defeated_enemies(), "completed")
-		
-		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
-			yield(get_tree().create_timer(0.5), "timeout")
-			yield(_destroy_wheel(), "completed")
-			_end_turn()
-			return true
-		
-		yield(get_tree().create_timer(0.5), "timeout")
-		yield(_destroy_wheel(), "completed")
-		
-		_i += 1
+#		yield(_summon_wheel("strike"), "completed")
+#
+#		wheel_ins.draw_soul_areas(enemies_to_process)
+#
+#		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
+#		wheel_ins.set_skill_data(chosen_skill.skill_data)
+#
+#		wheel_ins.set_arrows(attack_phase, chosen_skill.behaviors_ins.randomize_attack)
+#		wheel_ins.draw_arrows()
+#
+#		var result = yield(wheel_ins.action(), "completed")
+#		var processed_arrows = result[0]
+#		skill_data = result[1]
+#
+#		for enemy in enemies_to_process:
+#			var areas_to_check = enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]
+#			_check_result(enemy, areas_to_check, processed_arrows)
+#
+#		_deal_damage(processed_arrows)
+#
+#		if chosen_skill.conditions_ins.first_condition(processed_arrows, skill_data): add_hp(chosen_skill.hp_cost)
+#
+#		yield(_remove_defeated_enemies(), "completed")
+#
+#		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
+#			yield(get_tree().create_timer(0.5), "timeout")
+#			yield(_destroy_wheel(), "completed")
+#			_end_turn()
+#			return true
+#
+#		yield(get_tree().create_timer(0.5), "timeout")
+#		yield(_destroy_wheel(), "completed")
+#
+#		_i += 1
 	
 	_end_turn()
 	return false
@@ -159,7 +162,12 @@ func _defeat_enemy(enemy):
 
 
 func _end_turn():
-	enemies_to_process = []
+	
+	# Reset any values that were updated this round,
+	# most notably the soul areas, damage areas, etc.
+	for character in turn_manager.get_children():
+		if character is Enemy:
+			character.reset_data_model()
 	
 	._end_turn()
 
@@ -171,7 +179,7 @@ func _put_card_on_deck(path):
 func _summon_skill_hud():
 	skill_hud_ins = skill_hud.instance()
 	Globals.root.add_child(skill_hud_ins)
-	skill_hud_ins.initialize(Globals.skill_deck)
+	skill_hud_ins.initialize(data_model.skills)
 	
 	Globals.hp_hud.move_up()
 	yield(skill_hud_ins.show(), "completed")
@@ -184,24 +192,27 @@ func _destroy_skill_hud():
 
 
 func _wager_hp(amount):
-	player_data_model.current_health = max(1, player_data_model.current_health - amount)
+	data_model.current_health = max(1, data_model.current_health - amount)
 	_update_hp_hud()
 
 
 func add_hp(amount):
-	player_data_model.current_health += amount
+	data_model.current_health += amount
 	_update_hp_hud()
 
 
 func _update_hp_hud():
-	Globals.hp_hud.hp_label.text = "HP: " + str(player_data_model.current_health)
+	Globals.hp_hud.update_health(data_model.current_health)
 
 
 func _on_skill_button_pressed(btn_idx):
-	chosen_skill = Globals.skill_deck[btn_idx]
-	skill_data = chosen_skill.skill_data.duplicate(true)
+	Round.chosen_skill = data_model.skills[btn_idx]
 	
-	_wager_hp(chosen_skill.hp_cost)
-	
-	print("skill costs ", chosen_skill.hp_cost, " hp!")
+#	chosen_skill = Globals.skill_deck[btn_idx]
+#	skill_data = chosen_skill.skill_data.duplicate(true)
+#
+#	_wager_hp(chosen_skill.hp_cost)
+#
+#	print("skill costs ", chosen_skill.hp_cost, " hp!")
+
 	emit_signal("skill_button_pressed")

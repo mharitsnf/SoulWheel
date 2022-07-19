@@ -1,7 +1,6 @@
-[gd_resource type="Resource" load_steps=5 format=2]
+[gd_resource type="Resource" load_steps=4 format=2]
 
 [ext_resource path="res://Resources/Attack Skills/attack_skill.gd" type="Script" id=1]
-[ext_resource path="res://Resources/Arrow/4-160-0.tres" type="Resource" id=2]
 
 [sub_resource type="GDScript" id=2]
 script/source = "extends Node
@@ -100,14 +99,20 @@ func second_condition(arrows, _skill_data):
 [resource]
 script = ExtResource( 1 )
 name = "Basic"
-attack_arrows = [ [ ExtResource( 2 ) ] ]
-defend_arrows = [ [ ExtResource( 2 ) ] ]
-damage = 5
+attack_arrows = [ [ {
+"damage": 5,
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 2
+} ] ]
+defend_arrows = [ [ {
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 2
+} ] ]
 hp_cost = 5
 is_cost_percentage = false
 hp_bonus = 1
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-skill_data = {
-}
