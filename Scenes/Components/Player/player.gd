@@ -2,18 +2,10 @@ extends Character
 class_name Player
 
 
-export var data_model : Resource
 export(PackedScene) var skill_hud : PackedScene
-
 var skill_hud_ins : Control = null
 
-var rng = RandomNumberGenerator.new()
-var chosen_skill : AttackSkill = null
-var skill_data = {}
-
-var enemies_to_process = []
-
-onready var root : Node = get_parent().get_parent()
+export var data_model : Resource
 
 signal skill_button_pressed
 
@@ -45,43 +37,115 @@ func take_damage(damage):
 func play_turn():
 	print("player playing")
 	
-	# Skill selection phase
+	# PHASE 0: Reset previous round status
+	_start_turn()
+	
+	# PHASE 1: Skill selection
 	yield(_summon_skill_hud(), "completed")
 	yield(self, "skill_button_pressed") # Wait for player to select a skill
 	yield(_destroy_skill_hud(), "completed")
 	
+	# PHASE 2: Soul lock phase
 	for character in turn_manager.get_children():
 		if character is Enemy:
-			pass
 			
-			character.data_model.soul_areas[0][0].rot_angle += 10
-			print(character.data_model.soul_areas[0][0].rot_angle)
+			# summon the wheel and draw the outlines
+			_summon_wheel(Wheel.Phases.SOUL_LOCK)
+			
+			# draw locked areas
+			wheel_ins.draw_locked_areas(turn_manager.get_children())
+			
+			# set the enemy current behavior for defend (soul areas)
+			character.select_behavior(Character.Behavior.DEFEND)
+			
+			# set temporary variables
+			var soul_areas = character.data_model.soul_areas[character.behavior_idx]
+			var enemy_behavior_idx = character.behavior_idx
+			
+			# preprocess the areas
+			soul_areas = character.data_model.behaviors.preprocess.call_func(soul_areas, enemy_behavior_idx)
+			
+			# draw the areas
+			wheel_ins.draw_areas(soul_areas)
+			
+			# process the areas
+			soul_areas = yield(wheel_ins.action(
+				character.data_model.behaviors.process,
+				[soul_areas],
+				{ "ebi": enemy_behavior_idx }
+			), "completed")
+			
+			# postprocess the areas (if any)
+			soul_areas = character.data_model.behaviors.postprocess.call_func(soul_areas, enemy_behavior_idx)
+			
+			# set the updated soul areas to the enemy data model
+			character.data_model.soul_areas[character.behavior_idx] = soul_areas
+			character.is_locked = true
+			
+			# Destroy
+			_destroy_wheel()
+			
+			yield(get_tree().create_timer(1), "timeout")
 	
-	# Soul lock phase
-#	for character in turn_manager.get_children(): 
-#		if character is Enemy:
-#			pass
-			
-#			var current_enemy = Globals.enemy_loader(character)
-#			var ebi = current_enemy.dm.soul_behavior_idx
-#
-#			yield(_summon_wheel("lock"), "completed")
-#
-#			wheel_ins.draw_soul_areas(enemies_to_process)
-#
-#			wheel_ins.set_enemy_behavior_index(ebi)
-#			wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.defend_behavior)
-#
-#			wheel_ins.set_area(current_enemy.dm.soul_areas[ebi], current_enemy.dm.behaviors_ins.randomize_defend)
-#			wheel_ins.draw_areas()
-#
-#			current_enemy.dm.soul_areas[ebi] = yield(wheel_ins.action(), "completed")
-#			enemies_to_process.append(current_enemy)
-#
-#			yield(_destroy_wheel(), "completed")
-#
-#			# TODO: Add transition
-#			yield(get_tree().create_timer(1), "timeout")
+	# PHASE 3: Soul Strike phase
+	# Loop for each attacking phases
+	for phase_number in range(Round.chosen_skill.attack_arrows.size()):
+		
+		# summon the wheel and draw the outlines
+		_summon_wheel(Wheel.Phases.SOUL_STRIKE)
+		
+		# draw locked areas
+		wheel_ins.draw_locked_areas(turn_manager.get_children())
+		
+		# set the current player behavior for attack
+		select_behavior(Behavior.ATTACK)
+		
+		# set temporary variables
+		var arrows = Round.chosen_skill.attack_arrows[phase_number]
+		
+		# preprocess the arrows for each round
+		arrows = Round.chosen_skill.behaviors.preprocess.call_func(
+			arrows,
+			phase_number
+		)
+		
+		# draw the arrows
+		wheel_ins.draw_arrows(arrows)
+		
+		# process the arrows
+		arrows = yield(wheel_ins.action(
+			Round.chosen_skill.behaviors.process,
+			[arrows],
+			{ "phase_number": phase_number }
+		), "completed")
+		
+		# postprocess the arrows (if any)
+		arrows = Round.chosen_skill.behaviors.postprocess.call_func(
+			arrows,
+			phase_number
+		)
+		
+		# check overlapping areas between arrows and areas for each enemies
+		for character in turn_manager.get_children():
+			if character is Enemy:
+				var areas = character.data_model.soul_areas[character.behavior_idx]
+				_check_and_append_result(character, areas, arrows)
+		
+		# deal damage to the enemies
+		_deal_damage(arrows)
+		
+		# remove defeated enemies
+		yield(_remove_defeated_enemies(turn_manager.get_children()), "completed")
+		
+		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
+			yield(get_tree().create_timer(0.5), "timeout")
+			_destroy_wheel()
+			_end_turn()
+			return true
+		
+		# destroy wheel
+		yield(get_tree().create_timer(0.5), "timeout")
+		_destroy_wheel()
 	
 	# Soul strike phase
 #	var _i = 0
@@ -127,46 +191,57 @@ func play_turn():
 	return false
 
 
+func select_behavior(behavior):
+	.select_behavior(behavior)
+	Round.chosen_skill.behaviors = Round.chosen_skill.behaviors.new(current_behavior)
+
+
 # Append enemies struck by an arrow into the arrow's list
-func _check_result(enemy, areas, arrows):
+func _check_and_append_result(enemy, areas, arrows):
 	for area in areas:
 		var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 
 		for arrow in arrows:
 			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
-			
+
 			if _is_hit(arrow_angle, area_angle):
 				arrow.enemies_struck.append(enemy)
 
 
 # Deal damage based on the updated arrow's list
-func _deal_damage(processed_arrows):
-	for arrow in processed_arrows:
-		
+func _deal_damage(arrows):
+	for arrow in arrows:
 		for enemy in arrow.enemies_struck:
-			enemy.node.is_defeated = enemy.node.take_damage(chosen_skill.damage)
-			print(arrow, " struck ", enemy.node.name, "! enemy health: ", enemy.node.current_health)
+			enemy.is_defeated = enemy.take_damage(arrow.damage)
+			print(arrow, " struck ", enemy.name, "! enemy health: ", enemy.current_health)
 
 
-func _remove_defeated_enemies():
+func _remove_defeated_enemies(characters):
 	yield(get_tree(), "idle_frame")
-	for enemy in enemies_to_process:
-		if enemy.node.is_defeated:
-			yield(_defeat_enemy(enemy), "completed")
+	for character in characters:
+		if character is Enemy and character.is_defeated:
+				yield(_defeat_enemy(character), "completed")
 
 
 func _defeat_enemy(enemy):
-	enemies_to_process.erase(enemy)
-	enemy.node.queue_free()
+	enemy.queue_free()
 	yield(get_tree(), "idle_frame")
 
 
-func _end_turn():
+func _start_turn():
+	Round.chosen_skill = null
+	data_model.skills = []
 	
+	for skill_path in data_model.skill_paths:
+		data_model.skills.append(Round.load_skill(skill_path))
+
+
+func _end_turn():
 	# Reset any values that were updated this round,
 	# most notably the soul areas, damage areas, etc.
 	for character in turn_manager.get_children():
 		if character is Enemy:
+			character.is_locked = false
 			character.reset_data_model()
 	
 	._end_turn()

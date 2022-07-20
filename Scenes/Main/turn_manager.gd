@@ -11,13 +11,6 @@ func initialize():
 	var player : Player = Round.create_player_node()
 	add_child(player)
 	
-	# TEMPORARY
-	# Set the skills to play
-	var skill_basic = Round.load_skill("res://Resources/Attack Skills/Basic.tres")
-	var skill_accelerate = Round.load_skill("res://Resources/Attack Skills/Accelerate.tres")
-	player.data_model.skills.append(skill_basic)
-	player.data_model.skills.append(skill_accelerate)
-	
 	# Add enemies to the tree. Randomization
 	# happens here, depending on the level
 	var enemy1 = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres")

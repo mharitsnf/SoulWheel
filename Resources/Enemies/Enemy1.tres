@@ -6,13 +6,10 @@
 script/source = "extends Node
 
 
-var attack_behavior = null
-var defend_behavior = null
-var randomize_attack = null
-var randomize_defend = null
-
+var preprocess
+var process
+var postprocess
 var rng = RandomNumberGenerator.new()
-
 
 # Attack:
 # Enemy1 has one attack pattern.
@@ -23,95 +20,128 @@ var rng = RandomNumberGenerator.new()
 # 1. One area with constant speed.
 
 
-func _init():
-	attack_behavior = funcref(self, \"func_attack_behavior\")
-	defend_behavior = funcref(self, \"func_defend_behavior\")
-	randomize_attack = funcref(self, \"func_randomize_attack\")
-	randomize_defend = funcref(self, \"func_randomize_defend\")
-	
+func _init(current_behavior):
 	rng.randomize()
-
-# Randomizer preprocessor for enemy attack phase
-func func_randomize_attack(areas, behavior_idx):
-	match behavior_idx:
-		0: return rand_atk(areas)
-		1: return rand_atk(areas)
-
-
-func rand_atk(areas):
-	var processed_areas = []
 	
-	var rot_angle_variation = rng.randi_range(0, 360)
-	
-	for area in areas:
-		var tmp_area = area.duplicate()
-		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
-		tmp_area.rot_angle = fmod(tmp_area.rot_angle + rot_angle_variation, 360)
-		processed_areas.append(tmp_area)
-	
-	return processed_areas
-
-
-# Processing for each phase.
-func func_attack_behavior(delta, areas, behavior_idx):
-	match behavior_idx:
-		0: return atk(delta, areas)
-		1: return atk(delta, areas)
-
-
-func atk(delta, areas):
-	for area in areas:
-		var new_rot_angle = area.rot_angle
+	match current_behavior:
+		Character.Behavior.ATTACK:
+			preprocess = funcref(self, \"preprocess_a\")
+			process = funcref(self, \"process_a\")
+			postprocess = funcref(self, \"postprocess_a\")
 		
-		new_rot_angle += delta * area.move_speed
-		new_rot_angle = fmod(new_rot_angle, 360)
+		Character.Behavior.DEFEND:
+			preprocess = funcref(self, \"preprocess_d\")
+			process = funcref(self, \"process_d\")
+			postprocess = funcref(self, \"postprocess_d\")
+
+
+# ===== ATTACK =====
+func preprocess_a(areas, behavior_idx):
+	match behavior_idx:
+		0: return preprocess_a1(areas)
+
+
+func preprocess_a1(areas):
+	return areas
+
+
+func process_a(areas, delta, behavior_idx):
+	match behavior_idx:
+		0: return process_a1(areas, delta)
+
+
+func process_a1(areas, delta):
+	return areas
+
+
+func postprocess_a(areas, behavior_idx):
+	match behavior_idx:
+		0: return postprocess_a1(areas)
+
+
+func postprocess_a1(areas):
+	return areas
+# ==================
+
+
+# ===== DEFEND =====
+func preprocess_d(areas, behavior_idx):
+	match behavior_idx:
+		0: return preprocess_d1(areas)
+
+
+func preprocess_d1(areas):
+	for area in areas:
+		# process rotation angle
+		area.rot_angle += rng.randi_range(0, 360)
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
 		
-		area.rot_angle = new_rot_angle
+		# process thickness
+		area.thickness = clamp(area.thickness, 2, 360)
+		area.thickness = floor(area.thickness / 2)
 	
 	return areas
 
 
-# Randomizer preprocessor for enemy defend phase
-func func_randomize_defend(areas, behavior_idx):
+func process_d(areas, delta, behavior_idx):
 	match behavior_idx:
-		0: return rand_def_1(areas)
+		0: return process_d1(areas, delta)
 
 
-func rand_def_1(areas):
-	var processed_areas = []
-	
-	var rot_angle_variation = rng.randi_range(0, 360)
-	
+func process_d1(areas, delta):
 	for area in areas:
-		var tmp_area = area.duplicate()
-		tmp_area.thickness = max(2, fmod(abs(tmp_area.thickness), 360))
-		tmp_area.rot_angle = fmod(tmp_area.rot_angle + rot_angle_variation, 360)
-		processed_areas.append(tmp_area)
-	
-	return processed_areas
-
-
-# Refer to soul areas
-func func_defend_behavior(delta, areas, behavior_idx):
-	match behavior_idx:
-		0: return def_1(delta, areas)
-
-
-func def_1(delta, areas):
-	for area in areas:
-		var new_rot_angle = area.rot_angle
-		
-		new_rot_angle += delta * area.move_speed
-		new_rot_angle = fmod(new_rot_angle, 360)
-		
-		area.rot_angle = new_rot_angle
+		area.rot_angle += delta * area.move_speed
+		area.rot_angle = fmod(area.rot_angle, 360)
 	
 	return areas
+
+
+func postprocess_d(areas, behavior_idx):
+	match behavior_idx:
+		0: return postprocess_d1(areas)
+
+
+func postprocess_d1(areas):
+	return areas
+# ==================
 "
 
 [resource]
 script = ExtResource( 1 )
 max_health = 30
-soul_areas = [ [ "res://Resources/Soul Areas/20-150-0.tres", "res://Resources/Soul Areas/60-100-0.tres" ] ]
-damage_areas = [ [ "res://Resources/Damage Areas/60-100-0.tres", "res://Resources/Damage Areas/60-100-0.tres", "res://Resources/Damage Areas/60-100-0.tres" ], [ "res://Resources/Damage Areas/60-100-0.tres" ] ]
+soul_areas = [ [ {
+"move_speed": 60,
+"rot_angle": 0,
+"thickness": 60
+}, {
+"move_speed": 120,
+"rot_angle": 0,
+"thickness": 15
+} ] ]
+damage_areas = [ [ {
+"damage": 5,
+"is_damage_percentage": false,
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 30
+}, {
+"damage": 5,
+"is_damage_percentage": false,
+"move_speed": 50,
+"rot_angle": 120,
+"thickness": 30
+}, {
+"damage": 5,
+"is_damage_percentage": false,
+"move_speed": 50,
+"rot_angle": 240,
+"thickness": 30
+} ], [ {
+"damage": 5,
+"is_damage_percentage": false,
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 180
+} ] ]
 behaviors = SubResource( 1 )

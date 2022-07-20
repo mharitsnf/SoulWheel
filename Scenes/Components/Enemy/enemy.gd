@@ -1,11 +1,16 @@
 extends Character
 class_name Enemy
 
+
 onready var current_health = data_model.max_health
 
 var data_model = null
 var data_model_path = null
+
 var is_defeated = false
+var is_locked = false
+
+var behavior_idx = 0
 
 signal input_signal
 
@@ -65,6 +70,16 @@ func play_turn():
 		
 	_end_turn()
 	return false
+
+
+func select_behavior(behavior):
+	.select_behavior(behavior)
+	
+	match current_behavior:
+		Behavior.ATTACK: behavior_idx = rng.randi_range(0, data_model.damage_areas.size() - 1)
+		Behavior.DEFEND: behavior_idx = rng.randi_range(0, data_model.soul_areas.size() - 1)
+	
+	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
 
 func _check_result(areas, arrows):

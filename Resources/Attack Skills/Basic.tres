@@ -6,93 +6,111 @@
 script/source = "extends Node
 
 
-var attack_behavior = null
-var defend_behavior = null
-var randomize_attack = null
-var randomize_defend = null
+var preprocess
+var process
+var postprocess
 var rng = RandomNumberGenerator.new()
 
-
 # Attack:
-# Basic has one phase with one arrow only. It moves at constant speed.
+# Enemy1 has one attack pattern.
+# 1. One area with constant speed.
 
 # Defend:
-# Basic has one arrow only. It moves at constant speed.
+# Enemy1 has one defend pattern.
+# 1. One area with constant speed.
 
 
-func _init():
-	attack_behavior = funcref(self, \"func_attack_behavior\")
-	defend_behavior = funcref(self, \"func_defend_behavior\")
-	randomize_attack = funcref(self, \"func_randomize\")
-	randomize_defend = funcref(self, \"func_randomize\")
-	
+func _init(current_behavior):
 	rng.randomize()
+	
+	match current_behavior:
+		Character.Behavior.ATTACK:
+			preprocess = funcref(self, \"preprocess_a\")
+			process = funcref(self, \"process_a\")
+			postprocess = funcref(self, \"postprocess_a\")
+		
+		Character.Behavior.DEFEND:
+			preprocess = funcref(self, \"preprocess_d\")
+			process = funcref(self, \"process_d\")
+			postprocess = funcref(self, \"postprocess_d\")
 
 
-func func_randomize(arrows, _skill_data):
-	var processed_arrows = []
-	
-	var rot_angle_variation = rng.randi_range(0, 360)
-	
+# ===== ATTACK =====
+func preprocess_a(arrows, phase_number):
+	match phase_number:
+		0: return preprocess_a1(arrows)
+
+
+func preprocess_a1(arrows):
 	for arrow in arrows:
-		var tmp_arrow = arrow.duplicate()
-		tmp_arrow.thickness = max(2, fmod(abs(tmp_arrow.thickness), 360))
-		tmp_arrow.rot_angle = rot_angle_variation
-		processed_arrows.append(tmp_arrow)
+		# process rotation angle
+		arrow.rot_angle += rng.randi_range(0, 360)
+		arrow.rot_angle = fmod(arrow.rot_angle, 360)
+		if arrow.rot_angle < 0: arrow.rot_angle += 360
 		
-	return [processed_arrows, _skill_data]
-
-
-# Processing for each phase.
-func func_attack_behavior(delta, arrows, _skill_data):
-	var new_arrows = []
+		# process thickness
+		arrow.thickness = clamp(arrow.thickness, 2, 360)
+		arrow.thickness = floor(arrow.thickness / 2)
 	
+	return arrows
+
+
+func process_a(arrows, delta, phase_number):
+	match phase_number:
+		0: return process_a1(arrows, delta)
+
+
+func process_a1(arrows, delta):
 	for arrow in arrows:
-		var new_arrow = arrow
-		var new_rot_angle = new_arrow.rot_angle
-		
-		new_rot_angle += delta * new_arrow.move_speed
-		new_rot_angle = fmod(new_rot_angle, 360)
-		
-		new_arrow.rot_angle = new_rot_angle
-		
-		new_arrows.append(new_arrow)
+		arrow.rot_angle += delta * arrow.move_speed
+		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 	
-	return new_arrows
+	return arrows
 
 
-func func_defend_behavior(delta, arrows, _skill_data):
-	var new_arrows = []
-	
-	for arrow in arrows:
-		var new_arrow = arrow
-		var new_rot_angle = new_arrow.rot_angle
-		
-		new_rot_angle += delta * new_arrow.move_speed
-		new_rot_angle = fmod(new_rot_angle, 360)
-		
-		new_arrow.rot_angle = new_rot_angle
-		
-		new_arrows.append(new_arrow)
-	
-	return new_arrows
+func postprocess_a(arrows, phase_number):
+	match phase_number:
+		0: return postprocess_a1(arrows)
+
+
+func postprocess_a1(arrows):
+	return arrows
+
+# ==================
+
+
+# ===== DEFEND =====
+func preprocess_d(arrows, phase_number):
+	return arrows
+
+
+func process_d(arrows, delta, phase_number):
+	return arrows
+
+
+func postprocess_d(arrows, phase_number):
+	return arrows
+# ==================
 "
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node
 
 
-func first_condition(arrows, _skill_data):
-	for arrow in arrows:
-		if arrow.enemies_struck.size() > 1: return true
-		
+var first_condition
+var second_condition
+
+
+func _init():
+	first_condition = funcref(self, \"fc\")
+	second_condition = funcref(self, \"sc\")
+
+
+func fc(arrows):
 	return false
 
 
-func second_condition(arrows, _skill_data):
-	for arrow in arrows:
-		if !arrow.struck_by.empty(): return false
-	
+func sc(arrows):
 	return true
 "
 
@@ -101,7 +119,7 @@ script = ExtResource( 1 )
 name = "Basic"
 attack_arrows = [ [ {
 "damage": 5,
-"move_speed": 50,
+"move_speed": 150,
 "rot_angle": 0,
 "thickness": 2
 } ] ]

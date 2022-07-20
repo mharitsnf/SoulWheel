@@ -19,11 +19,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/Components/Character/character.gd"
 }, {
-"base": "Resource",
-"class": "DamageArea",
-"language": "GDScript",
-"path": "res://Resources/Damage Areas/damage_area.gd"
-}, {
 "base": "Character",
 "class": "Enemy",
 "language": "GDScript",
@@ -44,26 +39,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Resources/Player/player_data_model.gd"
 }, {
-"base": "Resource",
-"class": "SoulArea",
-"language": "GDScript",
-"path": "res://Resources/Soul Areas/soul_area.gd"
-}, {
 "base": "Node2D",
 "class": "TurnManager",
 "language": "GDScript",
 "path": "res://Scenes/Main/turn_manager.gd"
+}, {
+"base": "Node2D",
+"class": "Wheel",
+"language": "GDScript",
+"path": "res://Scenes/Components/Wheel/wheel.gd"
 } ]
 _global_script_class_icons={
 "AttackSkill": "",
 "Character": "",
-"DamageArea": "",
 "Enemy": "",
 "EnemyDataModel": "",
 "Player": "",
 "PlayerDataModel": "",
-"SoulArea": "",
-"TurnManager": ""
+"TurnManager": "",
+"Wheel": ""
 }
 
 [application]
