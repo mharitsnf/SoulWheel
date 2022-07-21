@@ -1,5 +1,12 @@
 extends Node
 
+
+enum WheelPhase {
+	SOUL_LOCK,
+	SOUL_STRIKE,
+	DEFEND
+}
+
 var root : Node
 var hp_hud : Control
 var player : Player

@@ -1,6 +1,12 @@
 extends Node
 
 
+enum WheelPhase {
+	SOUL_LOCK,
+	SOUL_STRIKE,
+	DEFEND
+}
+
 var arrow_template = preload("res://Resources/Arrow/arrow.gd")
 var area_template = preload("res://Resources/Area/area.gd")
 
@@ -105,5 +111,6 @@ func load_skill(path_to_skill : String):
 	
 	# instantiate conditions
 	skill.conditions = skill.conditions.new()
+	skill.behaviors = skill.behaviors.new()
 	
 	return skill

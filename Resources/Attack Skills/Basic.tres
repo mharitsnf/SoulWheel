@@ -6,9 +6,14 @@
 script/source = "extends Node
 
 
-var preprocess
-var process
-var postprocess
+var preprocess_a
+var process_a
+var postprocess_a
+
+var preprocess_d
+var process_d
+var postprocess_d
+
 var rng = RandomNumberGenerator.new()
 
 # Attack:
@@ -20,27 +25,27 @@ var rng = RandomNumberGenerator.new()
 # 1. One area with constant speed.
 
 
-func _init(current_behavior):
+func _init():
 	rng.randomize()
 	
-	match current_behavior:
-		Character.Behavior.ATTACK:
-			preprocess = funcref(self, \"preprocess_a\")
-			process = funcref(self, \"process_a\")
-			postprocess = funcref(self, \"postprocess_a\")
-		
-		Character.Behavior.DEFEND:
-			preprocess = funcref(self, \"preprocess_d\")
-			process = funcref(self, \"process_d\")
-			postprocess = funcref(self, \"postprocess_d\")
+	preprocess_a = funcref(self, \"_preprocess_a\")
+	process_a = funcref(self, \"_process_a\")
+	postprocess_a = funcref(self, \"_postprocess_a\")
+
+	preprocess_d = funcref(self, \"_preprocess_d\")
+	process_d = funcref(self, \"_process_d\")
+	postprocess_d = funcref(self, \"_postprocess_d\")
 
 
 # ===== ATTACK =====
-func preprocess_a(arrows, phase_number):
+func _preprocess_a(arrows, phase_number):
+	rng.randomize()
+	
 	match phase_number:
 		0: return preprocess_a1(arrows)
 
 
+# phase 1
 func preprocess_a1(arrows):
 	for arrow in arrows:
 		# process rotation angle
@@ -55,11 +60,12 @@ func preprocess_a1(arrows):
 	return arrows
 
 
-func process_a(arrows, delta, phase_number):
+func _process_a(arrows, delta, phase_number):
 	match phase_number:
 		0: return process_a1(arrows, delta)
 
 
+# phase 1
 func process_a1(arrows, delta):
 	for arrow in arrows:
 		arrow.rot_angle += delta * arrow.move_speed
@@ -68,11 +74,12 @@ func process_a1(arrows, delta):
 	return arrows
 
 
-func postprocess_a(arrows, phase_number):
+func _postprocess_a(arrows, phase_number):
 	match phase_number:
 		0: return postprocess_a1(arrows)
 
 
+# phase 1
 func postprocess_a1(arrows):
 	return arrows
 
@@ -80,16 +87,49 @@ func postprocess_a1(arrows):
 
 
 # ===== DEFEND =====
-func preprocess_d(arrows, phase_number):
+func _preprocess_d(arrows, phase_number):
+	rng.randomize()
+	
+	match phase_number:
+		0: return preprocess_d1(arrows)
+
+
+func preprocess_d1(arrows):
+	for arrow in arrows:
+		# process rotation angle
+		arrow.rot_angle += rng.randi_range(0, 360)
+		arrow.rot_angle = fmod(arrow.rot_angle, 360)
+		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		
+		# process thickness
+		arrow.thickness = clamp(arrow.thickness, 2, 360)
+		arrow.thickness = floor(arrow.thickness / 2)
+	
 	return arrows
 
 
-func process_d(arrows, delta, phase_number):
+func _process_d(arrows, delta, phase_number):
+	match phase_number:
+		0: return process_d1(arrows, delta)
+
+
+func process_d1(arrows, delta):
+	for arrow in arrows:
+		arrow.rot_angle += delta * arrow.move_speed * -1
+		arrow.rot_angle = fmod(arrow.rot_angle, 360)
+		if arrow.rot_angle < 0: arrow.rot_angle += 360
+	
 	return arrows
 
 
-func postprocess_d(arrows, phase_number):
+func _postprocess_d(arrows, phase_number):
+	match phase_number:
+		0: return postprocess_d1(arrows)
+
+
+func postprocess_d1(arrows):
 	return arrows
+
 # ==================
 "
 
@@ -124,7 +164,7 @@ attack_arrows = [ [ {
 "thickness": 2
 } ] ]
 defend_arrows = [ [ {
-"move_speed": 50,
+"move_speed": 150,
 "rot_angle": 0,
 "thickness": 2
 } ] ]

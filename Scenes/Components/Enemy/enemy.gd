@@ -25,53 +25,76 @@ func play_turn():
 	yield(get_tree(), "idle_frame")
 	print("enemy playing")
 	
-#	var current_enemy = Globals.enemy_loader(self)
-#	var ebi = current_enemy.dm.damage_behavior_idx
-#	var chosen_skill = Globals.player.chosen_skill
-#	var skill_data = Globals.player.skill_data
-	
-#	for defend_phase in chosen_skill.defend_arrows:
-#		yield(_summon_wheel("enemy_attack"), "completed")
-#
-#		# Setting enemy's damage areas
-#		wheel_ins.set_area_behavior(current_enemy.dm.behaviors_ins.attack_behavior)
-#		wheel_ins.set_enemy_behavior_index(ebi)
-#
-#		# Setting player's defend arrows
-#		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.defend_behavior)
-#		wheel_ins.set_skill_data(skill_data)
-#
-#		# Set the actual areas and arrows
-#		wheel_ins.set_area(current_enemy.dm.damage_areas[ebi], current_enemy.dm.behaviors_ins.randomize_attack)
-#		wheel_ins.set_arrows(defend_phase, chosen_skill.behaviors_ins.randomize_defend)
-#
-#		# Draw arrows and areas
-#		wheel_ins.draw_areas()
-#		wheel_ins.draw_arrows()
-#
-#		var result = yield(wheel_ins.action(), "completed")
-#		current_enemy.dm.damage_areas[ebi] = result[0]
-#		var processed_arrows = result[1]
-#		skill_data = result[2]
-#
-#		_check_result(current_enemy.dm.damage_areas[ebi], processed_arrows)
-#		if chosen_skill.conditions_ins.second_condition(processed_arrows, skill_data):
-#			print("gained ", chosen_skill.hp_bonus," hp!")
-#			Globals.player.add_hp(chosen_skill.hp_bonus)
-#
-#		if _deal_damage(processed_arrows):
-#			yield(_destroy_wheel(), "completed")
-#			_end_turn()
-#			return true
-#
-#		yield(get_tree().create_timer(.5), "timeout")
-#		yield(_destroy_wheel(), "completed")
-#		yield(get_tree().create_timer(.5), "timeout")
+	for phase_number in range(Round.chosen_skill.defend_arrows.size()):
+		
+		# summon wheel with defend phase for the player
+		_summon_wheel(Round.WheelPhase.DEFEND)
+		
+		# select behavior for attack.
+		select_behavior(Behavior.ATTACK)
+		
+		# set temporary variables
+		var damage_areas = data_model.damage_areas[behavior_idx].duplicate(true)
+		var arrows = Round.chosen_skill.defend_arrows[phase_number].duplicate(true)
+		
+		# preprocess the areas and arrows
+		damage_areas = data_model.behaviors.preprocess.call_func(
+			damage_areas,
+			behavior_idx
+		)
+		arrows = Round.chosen_skill.behaviors.preprocess_d.call_func(
+			arrows,
+			phase_number
+		)
+		
+		# draw the areas and arrows
+		wheel_ins.draw_areas(damage_areas)
+		wheel_ins.draw_arrows(arrows)
+		
+		# process the areas and arrows
+		var result = yield(wheel_ins.action(
+			[data_model.behaviors.process, Round.chosen_skill.behaviors.process_d],
+			[damage_areas, arrows],
+			{ "ebi": behavior_idx, "phase_number": phase_number }
+		), "completed")
+		damage_areas = result[0]
+		arrows = result[1]
+		
+		# postprocess the areas and arrows
+		damage_areas = data_model.behaviors.postprocess.call_func(
+			damage_areas,
+			behavior_idx
+		)
+		arrows = Round.chosen_skill.behaviors.postprocess_d.call_func(
+			arrows,
+			phase_number
+		)
+		
+		# check result
+		_check_and_append_result(damage_areas, arrows)
+		
+		# deal damage to the player and return if the player is defeated
+		if _deal_damage(arrows):
+			yield(get_tree().create_timer(.5), "timeout")
+			_destroy_wheel()
+			
+			_end_turn()
+			return true
+		
+		# reset the arrows struck by array
+		for arrow in arrows:
+			arrow.struck_by = []
+		
+		# destroy wheel
+		yield(get_tree().create_timer(.5), "timeout")
+		_destroy_wheel()
 		
 	_end_turn()
 	return false
 
 
+# Select between two behaviors: attack and defend.
+# Select a random behavior for the processing turn as well
 func select_behavior(behavior):
 	.select_behavior(behavior)
 	
@@ -82,7 +105,7 @@ func select_behavior(behavior):
 	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
 
-func _check_result(areas, arrows):
+func _check_and_append_result(areas, arrows):
 	for area in areas:
 		var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
 		
@@ -96,7 +119,7 @@ func _check_result(areas, arrows):
 func _deal_damage(arrows):
 	for arrow in arrows:
 		for area in arrow.struck_by:
-			if Globals.player.take_damage(area.damage): return true
+			if Round.player.take_damage(area.damage): return true
 	
 	return false
 

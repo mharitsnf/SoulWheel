@@ -37,35 +37,95 @@ func _init(current_behavior):
 
 # ===== ATTACK =====
 func preprocess_a(areas, behavior_idx):
+	rng.randomize()
+	
 	match behavior_idx:
 		0: return preprocess_a1(areas)
+		1: return preprocess_a2(areas)
 
 
+# behavior 1
 func preprocess_a1(areas):
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for area in areas:
+		# process rotation angle
+		area.rot_angle += rot_angle_variation
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
+		
+		# process thickness
+		area.thickness = clamp(area.thickness, 2, 360)
+		area.thickness = floor(area.thickness / 2)
+	
+	return areas
+
+
+# behavior 2
+func preprocess_a2(areas):
+	var rot_angle_variation = rng.randi_range(0, 360)
+	
+	for area in areas:
+		# process rotation angle
+		area.rot_angle += rot_angle_variation
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
+		
+		# process thickness
+		area.thickness = clamp(area.thickness, 2, 360)
+		area.thickness = floor(area.thickness / 2)
+	
 	return areas
 
 
 func process_a(areas, delta, behavior_idx):
 	match behavior_idx:
 		0: return process_a1(areas, delta)
+		1: return process_a2(areas, delta)
 
 
+# behavior 1
 func process_a1(areas, delta):
+	for area in areas:
+		# process rotation angle
+		area.rot_angle += delta * area.move_speed
+		area.rot_angle = fmod(area.rot_angle, 360)
+		
+	return areas
+
+
+# behavior 2
+func process_a2(areas, delta):
+	for area in areas:
+		# process rotation angle
+		area.rot_angle += delta * area.move_speed
+		area.rot_angle = fmod(area.rot_angle, 360)
+		
 	return areas
 
 
 func postprocess_a(areas, behavior_idx):
 	match behavior_idx:
 		0: return postprocess_a1(areas)
+		1: return postprocess_a2(areas)
 
 
+# behavior 1
 func postprocess_a1(areas):
 	return areas
+
+
+# behavior 2
+func postprocess_a2(areas):
+	return areas
+
 # ==================
 
 
 # ===== DEFEND =====
 func preprocess_d(areas, behavior_idx):
+	rng.randomize()
+	
 	match behavior_idx:
 		0: return preprocess_d1(areas)
 

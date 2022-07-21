@@ -7,7 +7,7 @@ export(float) var soul_lock_duration = 5
 enum Phases {
 	SOUL_LOCK
 	SOUL_STRIKE
-	ENEMY
+	DEFEND
 }
 
 onready var outer_line = $OuterLine
@@ -15,11 +15,13 @@ onready var inner_line = $InnerLine
 
 var rng = RandomNumberGenerator.new()
 
-var process
-var additional_info
+var process1
+var process2
 
 var object1 = [] # can be areas/arrows
 var object2 = [] # can be arrows during enemy's turn
+
+var additional_info
 
 var phase = null
 var running : bool = false
@@ -33,9 +35,9 @@ func _process(delta):
 	if running:
 		
 		match phase:
-			Phases.SOUL_LOCK:
+			Round.WheelPhase.SOUL_LOCK:
 				# Update data
-				object1 = process.call_func(
+				object1 = process1.call_func(
 					object1,
 					delta,
 					additional_info.ebi
@@ -45,8 +47,8 @@ func _process(delta):
 				for i in range(object1.size()):
 					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
 			
-			Phases.SOUL_STRIKE:
-				object1 = process.call_func(
+			Round.WheelPhase.SOUL_STRIKE:
+				object1 = process1.call_func(
 					object1,
 					delta,
 					additional_info.phase_number
@@ -55,32 +57,25 @@ func _process(delta):
 				for i in range(object1.size()):
 					$Arrows.get_child(i).rotation_degrees = object1[i].rot_angle
 		
-#		if phase == "lock":
-#			areas = area_behavior.call_func(delta, areas, enemy_behavior_idx)
-#
-#			# Update visuals
-#			for i in range(areas.size()):
-#				$Areas.get_child(i).rotation_degrees = areas[i].rot_angle
-#
-#		elif phase == "strike":
-#			arrows = arrow_behavior.call_func(delta, arrows, skill_data)
-#
-#			# Update visuals
-#			for i in range(arrows.size()):
-#				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
-#
-#		else:
-#			areas = area_behavior.call_func(delta, areas, enemy_behavior_idx)
-#			arrows = arrow_behavior.call_func(delta, arrows, skill_data)
-#
-#			# Update area visuals
-#			for i in range(areas.size()):
-#				$Areas.get_child(i).rotation_degrees = areas[i].rot_angle
-#
-#			# Update visuals
-#			for i in range(arrows.size()):
-#				$Arrows.get_child(i).rotation_degrees = arrows[i].rot_angle
-		
+			Round.WheelPhase.DEFEND:
+				object1 = process1.call_func(
+					object1,
+					delta,
+					additional_info.ebi
+				)
+				object2 = process2.call_func(
+					object2,
+					delta,
+					additional_info.phase_number
+				)
+				
+				# update visuals
+				for i in range(object1.size()):
+					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
+				
+				for i in range(object2.size()):
+					$Arrows.get_child(i).rotation_degrees = object2[i].rot_angle
+					
 		time_elapsed += delta
 		
 		if time_elapsed > soul_lock_duration or Input.is_action_pressed("ui_accept"):
@@ -122,37 +117,29 @@ func draw_arrows(_arrows):
 		$Arrows.add_child(arrow_display)
 
 
-func action(_process, _objects, _additional_info):
-	process = _process
+func action(_processes, _objects, _additional_info):
 	additional_info = _additional_info
 	
 	match phase:
-		Phases.SOUL_LOCK:
+		Round.WheelPhase.SOUL_LOCK:
+			process1 = _processes[0]
 			object1 = _objects[0]
-		Phases.SOUL_STRIKE:
+		Round.WheelPhase.SOUL_STRIKE:
+			process1 = _processes[0]
 			object1 = _objects[0]
-		Phases.ENEMY:
+		Round.WheelPhase.DEFEND:
+			process1 = _processes[0]
+			process2 = _processes[1]
 			object1 = _objects[0]
 			object2 = _objects[1]
-	
 	
 	emit_signal("start_running")
 	yield(self, "stop_running")
 	
 	match phase:
-		Phases.SOUL_LOCK: return object1
-		Phases.SOUL_STRIKE: return object1
-		Phases.ENEMY: return [object1, object2]
-	
-#
-#	if phase == "lock":
-#		return areas
-#
-#	elif phase == "strike":
-#		return [arrows, skill_data]
-#
-#	else:
-#		return [areas, arrows, skill_data]
+		Round.WheelPhase.SOUL_LOCK: return object1
+		Round.WheelPhase.SOUL_STRIKE: return object1
+		Round.WheelPhase.DEFEND: return [object1, object2]
 
 
 # Function for drawing the wheel's outline.
@@ -202,7 +189,7 @@ func _create_area(rot_angle):
 	area.rotation_degrees = rot_angle
 	
 	match phase:
-		Phases.ENEMY: area.default_color = Color(1, 0, 0, 1)
+		Round.WheelPhase.DEFEND: area.default_color = Color(1, 0, 0, 1)
 		_: area.default_color = Color(1, 1, 1, .5)
 	
 	return area

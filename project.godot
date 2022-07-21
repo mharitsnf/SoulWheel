@@ -70,7 +70,6 @@ config/icon="res://icon.png"
 
 Configurations="*res://Singletons/configurations.gd"
 Globals="*res://Singletons/globals.gd"
-EnemyProcessor="*res://Singletons/enemy_processor.gd"
 Round="*res://Singletons/round.gd"
 
 [display]

@@ -50,7 +50,7 @@ func play_turn():
 		if character is Enemy:
 			
 			# summon the wheel and draw the outlines
-			_summon_wheel(Wheel.Phases.SOUL_LOCK)
+			_summon_wheel(Round.WheelPhase.SOUL_LOCK)
 			
 			# draw locked areas
 			wheel_ins.draw_locked_areas(turn_manager.get_children())
@@ -59,7 +59,7 @@ func play_turn():
 			character.select_behavior(Character.Behavior.DEFEND)
 			
 			# set temporary variables
-			var soul_areas = character.data_model.soul_areas[character.behavior_idx]
+			var soul_areas = character.data_model.soul_areas[character.behavior_idx].duplicate(true)
 			var enemy_behavior_idx = character.behavior_idx
 			
 			# preprocess the areas
@@ -70,7 +70,7 @@ func play_turn():
 			
 			# process the areas
 			soul_areas = yield(wheel_ins.action(
-				character.data_model.behaviors.process,
+				[character.data_model.behaviors.process],
 				[soul_areas],
 				{ "ebi": enemy_behavior_idx }
 			), "completed")
@@ -92,19 +92,16 @@ func play_turn():
 	for phase_number in range(Round.chosen_skill.attack_arrows.size()):
 		
 		# summon the wheel and draw the outlines
-		_summon_wheel(Wheel.Phases.SOUL_STRIKE)
+		_summon_wheel(Round.WheelPhase.SOUL_STRIKE)
 		
 		# draw locked areas
 		wheel_ins.draw_locked_areas(turn_manager.get_children())
 		
-		# set the current player behavior for attack
-		select_behavior(Behavior.ATTACK)
-		
 		# set temporary variables
-		var arrows = Round.chosen_skill.attack_arrows[phase_number]
+		var arrows = Round.chosen_skill.attack_arrows[phase_number].duplicate(true)
 		
 		# preprocess the arrows for each round
-		arrows = Round.chosen_skill.behaviors.preprocess.call_func(
+		arrows = Round.chosen_skill.behaviors.preprocess_a.call_func(
 			arrows,
 			phase_number
 		)
@@ -114,16 +111,19 @@ func play_turn():
 		
 		# process the arrows
 		arrows = yield(wheel_ins.action(
-			Round.chosen_skill.behaviors.process,
+			[Round.chosen_skill.behaviors.process_a],
 			[arrows],
 			{ "phase_number": phase_number }
 		), "completed")
 		
 		# postprocess the arrows (if any)
-		arrows = Round.chosen_skill.behaviors.postprocess.call_func(
+		arrows = Round.chosen_skill.behaviors.postprocess_a.call_func(
 			arrows,
 			phase_number
 		)
+		
+		# set the updated arrows to the chosen skill attack arrows
+		Round.chosen_skill.attack_arrows[phase_number] = arrows
 		
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():
@@ -137,6 +137,7 @@ func play_turn():
 		# remove defeated enemies
 		yield(_remove_defeated_enemies(turn_manager.get_children()), "completed")
 		
+		# if all the enemies are defeated
 		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
 			yield(get_tree().create_timer(0.5), "timeout")
 			_destroy_wheel()
@@ -147,53 +148,8 @@ func play_turn():
 		yield(get_tree().create_timer(0.5), "timeout")
 		_destroy_wheel()
 	
-	# Soul strike phase
-#	var _i = 0
-#	for attack_phase in chosen_skill.attack_arrows:
-#		pass 
-		
-#		yield(_summon_wheel("strike"), "completed")
-#
-#		wheel_ins.draw_soul_areas(enemies_to_process)
-#
-#		wheel_ins.set_arrow_behavior(chosen_skill.behaviors_ins.attack_behavior)
-#		wheel_ins.set_skill_data(chosen_skill.skill_data)
-#
-#		wheel_ins.set_arrows(attack_phase, chosen_skill.behaviors_ins.randomize_attack)
-#		wheel_ins.draw_arrows()
-#
-#		var result = yield(wheel_ins.action(), "completed")
-#		var processed_arrows = result[0]
-#		skill_data = result[1]
-#
-#		for enemy in enemies_to_process:
-#			var areas_to_check = enemy.dm.soul_areas[enemy.dm.soul_behavior_idx]
-#			_check_result(enemy, areas_to_check, processed_arrows)
-#
-#		_deal_damage(processed_arrows)
-#
-#		if chosen_skill.conditions_ins.first_condition(processed_arrows, skill_data): add_hp(chosen_skill.hp_cost)
-#
-#		yield(_remove_defeated_enemies(), "completed")
-#
-#		if turn_manager.get_child_count() == 1 and turn_manager.get_child(0) == self:
-#			yield(get_tree().create_timer(0.5), "timeout")
-#			yield(_destroy_wheel(), "completed")
-#			_end_turn()
-#			return true
-#
-#		yield(get_tree().create_timer(0.5), "timeout")
-#		yield(_destroy_wheel(), "completed")
-#
-#		_i += 1
-	
 	_end_turn()
 	return false
-
-
-func select_behavior(behavior):
-	.select_behavior(behavior)
-	Round.chosen_skill.behaviors = Round.chosen_skill.behaviors.new(current_behavior)
 
 
 # Append enemies struck by an arrow into the arrow's list
