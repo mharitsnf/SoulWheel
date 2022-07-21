@@ -7,7 +7,26 @@
 [node name="CombatArena" type="Node"]
 script = ExtResource( 3 )
 
-[node name="TurnManager" type="Node2D" parent="."]
+[node name="Positions" type="Node2D" parent="."]
+
+[node name="Player" type="Position2D" parent="Positions"]
+position = Vector2( 64, 108 )
+
+[node name="Enemies" type="Node2D" parent="Positions"]
+
+[node name="Position2D" type="Position2D" parent="Positions/Enemies"]
+position = Vector2( 288, 90 )
+
+[node name="Position2D2" type="Position2D" parent="Positions/Enemies"]
+position = Vector2( 352, 126 )
+
+[node name="Position2D3" type="Position2D" parent="Positions/Enemies"]
+position = Vector2( 352, 54 )
+
+[node name="Position2D4" type="Position2D" parent="Positions/Enemies"]
+position = Vector2( 288, 162 )
+
+[node name="TurnManager" type="YSort" parent="."]
 script = ExtResource( 2 )
 
 [node name="HUD" parent="." instance=ExtResource( 1 )]

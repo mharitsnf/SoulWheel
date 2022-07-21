@@ -1,4 +1,4 @@
-extends Node2D
+extends YSort
 class_name TurnManager
 
 
@@ -13,10 +13,9 @@ func initialize():
 	
 	# Add enemies to the tree. Randomization
 	# happens here, depending on the level
-	var enemy1 = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres")
-	var enemy2 = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres")
-	add_child(enemy1)
-	add_child(enemy2)
+	for enemy_idx in range(4):
+		var enemy = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres", enemy_idx)
+		add_child(enemy)
 	
 	# Set the player as the first one to move
 	active_character = get_child(0)

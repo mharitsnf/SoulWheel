@@ -39,7 +39,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Resources/Player/player_data_model.gd"
 }, {
-"base": "Node2D",
+"base": "YSort",
 "class": "TurnManager",
 "language": "GDScript",
 "path": "res://Scenes/Components/Combat Arena/turn_manager.gd"

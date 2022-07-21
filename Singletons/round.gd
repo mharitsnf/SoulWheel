@@ -23,6 +23,7 @@ var chosen_skill = null
 # will stay there and will be saved if updated
 func create_player_node() -> Player:
 	var new_player : Player = player_node.instance()
+	new_player.position = Nodes.root.get_node("Positions/Player").position
 	return new_player
 
 
@@ -30,13 +31,14 @@ func create_player_node() -> Player:
 # Accepts path to data model as parameter.
 # Data model should be duplicated, as the original
 # should only act as the main template.
-func create_enemy_node(path_to_edm : String) -> Enemy:
+func create_enemy_node(path_to_edm : String, enemy_idx : int) -> Enemy:
 	var edm = load_enemy_data_model(path_to_edm)
 	
 	var enemy : Enemy = enemy_node.instance()
 	enemy.data_model_path = path_to_edm
 	enemy.data_model = edm
 	enemy.current_health = edm.max_health
+	enemy.position = Nodes.root.get_node("Positions/Enemies").get_child(enemy_idx).position
 	
 	return enemy
 
