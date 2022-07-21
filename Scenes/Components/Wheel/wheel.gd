@@ -55,9 +55,9 @@ func destroy():
 	queue_free()
 
 
-func draw_areas(_areas):
+func draw_areas(_areas, current_enemy):
 	for area in _areas:
-		var new_area = _create_area(area.rot_angle)
+		var new_area = _create_area(area.rot_angle, current_enemy.color)
 		$Areas.add_child(new_area)
 		_draw_area(new_area, 72, area.thickness)
 
@@ -102,7 +102,7 @@ func draw_locked_areas(characters):
 				var soul_areas = character.data_model.soul_areas[character.behavior_idx]
 				
 				for area in soul_areas:
-					var saved_area = _create_area(area.rot_angle)
+					var saved_area = _create_area(area.rot_angle, character.color, true)
 					area_container.add_child(saved_area)
 					_draw_area(saved_area, 72, area.thickness)
 				
@@ -182,14 +182,17 @@ func _calculate_point_on_circle(radian: float, radius: float) -> Vector2:
 	return point
 
 
-func _create_area(rot_angle):
+func _create_area(rot_angle, color, is_locked = false):
 	var area : Line2D = Line2D.new()
 	area.width = 8
 	area.rotation_degrees = rot_angle
 	
 	match phase:
 		Round.WheelPhase.DEFEND: area.default_color = Color(1, 0, 0, 1)
-		_: area.default_color = Color(1, 1, 1, .5)
+		_:
+			if is_locked: color.a = .25
+			else: color.a = .75
+			area.default_color = color
 	
 	return area
 

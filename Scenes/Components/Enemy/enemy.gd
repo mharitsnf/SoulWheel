@@ -4,6 +4,8 @@ class_name Enemy
 
 onready var current_health = data_model.max_health
 
+var color
+
 var data_model = null
 var data_model_path = null
 
@@ -47,7 +49,7 @@ func play_turn():
 		)
 		
 		# draw the areas and arrows
-		wheel_ins.draw_areas(damage_areas)
+		wheel_ins.draw_areas(damage_areas, self)
 		wheel_ins.draw_arrows(arrows)
 		
 		# process the areas and arrows

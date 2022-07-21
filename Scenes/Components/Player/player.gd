@@ -66,7 +66,7 @@ func play_turn():
 			soul_areas = character.data_model.behaviors.preprocess.call_func(soul_areas, enemy_behavior_idx)
 			
 			# draw the areas
-			wheel_ins.draw_areas(soul_areas)
+			wheel_ins.draw_areas(soul_areas, character)
 			
 			# process the areas
 			soul_areas = yield(wheel_ins.action(
