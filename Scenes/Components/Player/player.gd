@@ -25,6 +25,7 @@ func _ready():
 func take_damage(damage):
 	var new_health = data_model.current_health - damage
 	data_model.current_health = max(0, new_health)
+	$Shaker.start("position", position, 1)
 	
 	_update_hp_hud()
 	

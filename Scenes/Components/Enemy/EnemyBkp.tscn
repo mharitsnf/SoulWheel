@@ -2,17 +2,18 @@
 
 [ext_resource path="res://Scenes/Components/Enemy/enemy.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
-[ext_resource path="res://Scenes/Components/Character/Character.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/Components/Wheel/Wheel.tscn" type="PackedScene" id=3]
 
-[node name="Enemy" instance=ExtResource( 3 )]
+[node name="Enemy" type="Node2D"]
 script = ExtResource( 1 )
+wheel = ExtResource( 3 )
 
-[node name="Sprite" type="Sprite" parent="." index="1"]
+[node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -12 )
 scale = Vector2( 0.5, 0.5 )
 texture = ExtResource( 2 )
 
-[node name="ColorRect" type="ColorRect" parent="." index="2"]
+[node name="ColorRect" type="ColorRect" parent="."]
 margin_left = -16.0
 margin_top = 8.0
 margin_right = 16.0
