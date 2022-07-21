@@ -160,10 +160,10 @@ func play_turn():
 # Append enemies struck by an arrow into the arrow's list
 func _check_and_append_result(enemy, areas, arrows):
 	for area in areas:
-		var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 
 		for arrow in arrows:
-			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
 
 			if _is_hit(arrow_angle, area_angle):
 				arrow.enemies_struck.append(enemy)
@@ -190,6 +190,8 @@ func _defeat_enemy(enemy):
 
 
 func _start_turn():
+	._start_turn()
+	
 	Round.chosen_skill = null
 	data_model.skills = []
 	
@@ -208,21 +210,17 @@ func _end_turn():
 	._end_turn()
 
 
-func _put_card_on_deck(path):
-	Globals.skill_deck.append(Globals.attack_loader(path))
-
-
 func _summon_skill_hud():
 	skill_hud_ins = skill_hud.instance()
-	Globals.root.add_child(skill_hud_ins)
+	Nodes.root.add_child(skill_hud_ins)
 	skill_hud_ins.initialize(data_model.skills)
 	
-	Globals.hp_hud.move_up()
+#	Globals.hp_hud.move_up()
 	yield(skill_hud_ins.show(), "completed")
 
 
 func _destroy_skill_hud():
-	Globals.hp_hud.move_down()
+#	Globals.hp_hud.move_down()
 	yield(skill_hud_ins.hide_and_destroy(), "completed")
 	skill_hud_ins = null
 
@@ -238,7 +236,7 @@ func add_hp(amount):
 
 
 func _update_hp_hud():
-	Globals.hp_hud.update_health(data_model.current_health)
+	Nodes.hp_hud.update_health(data_model.current_health)
 
 
 func _on_skill_button_pressed(btn_idx):

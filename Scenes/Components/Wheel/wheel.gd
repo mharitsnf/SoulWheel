@@ -31,56 +31,7 @@ signal stop_running
 signal start_running
 
 
-func _process(delta):
-	if running:
-		
-		match phase:
-			Round.WheelPhase.SOUL_LOCK:
-				# Update data
-				object1 = process1.call_func(
-					object1,
-					delta,
-					additional_info.ebi
-				)
-				
-				# Update visuals
-				for i in range(object1.size()):
-					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
-			
-			Round.WheelPhase.SOUL_STRIKE:
-				object1 = process1.call_func(
-					object1,
-					delta,
-					additional_info.phase_number
-				)
-				
-				for i in range(object1.size()):
-					$Arrows.get_child(i).rotation_degrees = object1[i].rot_angle
-		
-			Round.WheelPhase.DEFEND:
-				object1 = process1.call_func(
-					object1,
-					delta,
-					additional_info.ebi
-				)
-				object2 = process2.call_func(
-					object2,
-					delta,
-					additional_info.phase_number
-				)
-				
-				# update visuals
-				for i in range(object1.size()):
-					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
-				
-				for i in range(object2.size()):
-					$Arrows.get_child(i).rotation_degrees = object2[i].rot_angle
-					
-		time_elapsed += delta
-		
-		if time_elapsed > soul_lock_duration or Input.is_action_pressed("ui_accept"):
-			emit_signal("stop_running")
-
+# ======= PUBLIC FUNCTIONS =======
 
 func initialize(_phase):
 	# Set the phase
@@ -90,7 +41,7 @@ func initialize(_phase):
 	rng.randomize()
 	
 	# Set position to center of the screen
-	position = Configurations.wheel_center
+	position = Configurations.wheel.position
 	
 	# Connect signals
 	var _e = connect("stop_running", self, "_on_stop_running")
@@ -142,23 +93,6 @@ func action(_processes, _objects, _additional_info):
 		Round.WheelPhase.DEFEND: return [object1, object2]
 
 
-# Function for drawing the wheel's outline.
-func _draw_outline():
-	for i in range(0, 361):
-		var radian = deg2rad(1.0 * i)
-		outer_line.add_point(_calculate_point_on_circle(radian, 80))
-	
-	for i in range(0, 361):
-		var radian = deg2rad(1.0 * i)
-		inner_line.add_point(_calculate_point_on_circle(radian, 64))
-
-
-func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
-	for i in range(-thickness, thickness + 1):
-		var radian = deg2rad(1.0 * i)
-		line_node.add_point(_calculate_point_on_circle(radian, radius))
-
-
 func draw_locked_areas(characters):
 	for character in characters:
 		if character is Enemy:
@@ -173,6 +107,71 @@ func draw_locked_areas(characters):
 					_draw_area(saved_area, 72, area.thickness)
 				
 				$SavedAreas.add_child(area_container)
+
+# ================================
+
+# ======= PRIVATE FUNCTIONS =======
+
+func _process(delta):
+	if running:
+		
+		match phase:
+			Round.WheelPhase.SOUL_LOCK:
+				# Update data
+				object1 = process1.call_func(
+					object1,
+					delta,
+					additional_info.ebi
+				)
+				
+				# Update visuals
+				for i in range(object1.size()):
+					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
+			
+			Round.WheelPhase.SOUL_STRIKE:
+				object1 = process1.call_func(
+					object1,
+					delta,
+					additional_info.phase_number
+				)
+				
+				for i in range(object1.size()):
+					$Arrows.get_child(i).rotation_degrees = object1[i].rot_angle
+		
+			Round.WheelPhase.DEFEND:
+				object1 = process1.call_func(
+					object1,
+					delta,
+					additional_info.ebi
+				)
+				object2 = process2.call_func(
+					object2,
+					delta,
+					additional_info.phase_number
+				)
+				
+				# update visuals
+				for i in range(object1.size()):
+					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
+				
+				for i in range(object2.size()):
+					$Arrows.get_child(i).rotation_degrees = object2[i].rot_angle
+					
+		time_elapsed += delta
+		
+		if time_elapsed > soul_lock_duration or Input.is_action_pressed("ui_accept"):
+			emit_signal("stop_running")
+
+
+# Function for drawing the wheel's outline.
+func _draw_outline():
+	for i in range(0, 361):
+		var radian = deg2rad(1.0 * i)
+		outer_line.add_point(_calculate_point_on_circle(radian, 80))
+	
+	for i in range(0, 361):
+		var radian = deg2rad(1.0 * i)
+		inner_line.add_point(_calculate_point_on_circle(radian, 64))
 
 
 func _calculate_point_on_circle(radian: float, radius: float) -> Vector2:
@@ -193,6 +192,12 @@ func _create_area(rot_angle):
 		_: area.default_color = Color(1, 1, 1, .5)
 	
 	return area
+
+
+func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
+	for i in range(-thickness, thickness + 1):
+		var radian = deg2rad(1.0 * i)
+		line_node.add_point(_calculate_point_on_circle(radian, radius))
 
 
 func _create_arrow(thickness: int, rot_angle : int):
@@ -216,3 +221,5 @@ func _on_start_running():
 func _on_stop_running():
 	running = false
 	time_elapsed = 0
+
+# ================================

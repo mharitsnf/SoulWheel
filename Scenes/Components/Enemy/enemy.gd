@@ -111,10 +111,10 @@ func select_behavior(behavior):
 
 func _check_and_append_result(areas, arrows):
 	for area in areas:
-		var area_angle : Vector2 = Globals.generate_angles(area.rot_angle, area.thickness)
+		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 		
 		for arrow in arrows:
-			var arrow_angle : Vector2 = Globals.generate_angles(arrow.rot_angle, arrow.thickness)
+			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
 			
 			if _is_hit(arrow_angle, area_angle):
 				arrow.struck_by.append(area)

@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "TurnManager",
 "language": "GDScript",
-"path": "res://Scenes/Main/turn_manager.gd"
+"path": "res://Scenes/Components/Combat Arena/turn_manager.gd"
 }, {
 "base": "Node2D",
 "class": "Wheel",
@@ -63,21 +63,21 @@ _global_script_class_icons={
 [application]
 
 config/name="Soul Wheel"
-run/main_scene="res://Scenes/Main/Root.tscn"
+run/main_scene="res://Scenes/Components/Combat Arena/CombatArena.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
 Configurations="*res://Singletons/configurations.gd"
-Globals="*res://Singletons/globals.gd"
+Nodes="*res://Singletons/nodes.gd"
 Round="*res://Singletons/round.gd"
 
 [display]
 
-window/size/width=180
-window/size/height=320
-window/size/test_width=360
-window/size/test_height=640
+window/size/width=400
+window/size/height=225
+window/size/test_width=400
+window/size/test_height=225
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
 
@@ -111,4 +111,5 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+environment/default_clear_color=Color( 0, 0, 0, 1 )
 environment/default_environment="res://default_env.tres"

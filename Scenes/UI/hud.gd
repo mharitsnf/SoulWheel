@@ -5,7 +5,7 @@ onready var hp_label = $MarginContainer/Label
 
 
 func _ready():
-	Globals.hp_hud = self
+	Nodes.hp_hud = self
 
 
 func update_health(new_health):
@@ -17,8 +17,8 @@ func move_down():
 		self,
 		"rect_position",
 		rect_position,
-		rect_position + Vector2(0, Globals.hud_move_amount),
-		Globals.hud_tween_speed, Tween.TRANS_CUBIC, Tween.EASE_OUT
+		rect_position + Vector2(0, Configurations.skill_hud.move_amount),
+		Configurations.skill_hud.tween_speed, Tween.TRANS_CUBIC, Tween.EASE_OUT
 	)
 	$Tween.start()
 	yield($Tween, "tween_all_completed")
@@ -29,8 +29,8 @@ func move_up():
 		self,
 		"rect_position",
 		rect_position,
-		rect_position + Vector2(0, -Globals.hud_move_amount),
-		Globals.hud_tween_speed, Tween.TRANS_CUBIC, Tween.EASE_OUT
+		rect_position + Vector2(0, -Configurations.skill_hud.move_amount),
+		Configurations.skill_hud.tween_speed, Tween.TRANS_CUBIC, Tween.EASE_OUT
 	)
 	$Tween.start()
 	yield($Tween, "tween_all_completed")
