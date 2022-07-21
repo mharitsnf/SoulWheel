@@ -22,7 +22,6 @@ func _ready():
 
 
 func play_turn():
-	yield(get_tree(), "idle_frame")
 	print("enemy playing")
 	
 	for phase_number in range(Round.chosen_skill.defend_arrows.size()):
@@ -80,6 +79,11 @@ func play_turn():
 			
 			_end_turn()
 			return true
+		
+		# assess second condition
+		var fc_res = Round.chosen_skill.conditions.second_condition.call_func(arrows, phase_number)
+		if fc_res:
+			Round.player.add_hp(Round.chosen_skill.hp_bonus)
 		
 		# reset the arrows struck by array
 		for arrow in arrows:

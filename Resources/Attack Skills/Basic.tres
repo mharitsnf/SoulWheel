@@ -146,12 +146,30 @@ func _init():
 	second_condition = funcref(self, \"sc\")
 
 
-func fc(arrows):
+# ===== FIRST CONDITION =====
+func fc(arrows, phase_number):
+	match phase_number:
+		0: return fc1(arrows)
+
+
+func fc1(arrows):
+	for arrow in arrows:
+		for enemy in arrow.enemies_struck:
+			if arrow.enemies_struck.count(enemy) > 1: return true
 	return false
+# ===========================
+
+# ===== SECOND CONDITION =====
+func sc(arrows, phase_number):
+	match phase_number:
+		0: return sc2(arrows)
 
 
-func sc(arrows):
+func sc2(arrows):
+	for arrow in arrows:
+		if !arrow.struck_by.empty(): return false
 	return true
+# ===========================
 "
 
 [resource]

@@ -134,6 +134,11 @@ func play_turn():
 		# deal damage to the enemies
 		_deal_damage(arrows)
 		
+		# assess first condition
+		var fc_res = Round.chosen_skill.conditions.first_condition.call_func(arrows, phase_number)
+		if fc_res:
+			add_hp(Round.chosen_skill.hp_cost)
+		
 		# remove defeated enemies
 		yield(_remove_defeated_enemies(turn_manager.get_children()), "completed")
 		
@@ -237,13 +242,11 @@ func _update_hp_hud():
 
 
 func _on_skill_button_pressed(btn_idx):
+	# choose the skill
 	Round.chosen_skill = data_model.skills[btn_idx]
 	
-#	chosen_skill = Globals.skill_deck[btn_idx]
-#	skill_data = chosen_skill.skill_data.duplicate(true)
-#
-#	_wager_hp(chosen_skill.hp_cost)
-#
-#	print("skill costs ", chosen_skill.hp_cost, " hp!")
-
+	# wager the HP
+	_wager_hp(Round.chosen_skill.hp_cost)
+	
+	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")
