@@ -5,6 +5,7 @@ class_name Enemy
 onready var current_health = data_model.max_health
 
 var color
+var radius
 
 var data_model = null
 var data_model_path = null

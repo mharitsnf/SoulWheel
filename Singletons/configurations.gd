@@ -14,8 +14,12 @@ var skill_hud = {
 }
 
 var enemy_colors = [
-	Color("f4f1de"),
-	Color("e07a5f"),
-	Color("81b29a"),
-	Color("f2cc8f")
+	Color(1, 1, 1),
+	Color(1, 1, 1),
+	Color(1, 1, 1),
+	Color(1, 1, 1),
+#	Color("f4f1de"),
+#	Color("e07a5f"),
+#	Color("81b29a"),
+#	Color("f2cc8f")
 ]

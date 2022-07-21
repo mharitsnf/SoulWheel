@@ -59,7 +59,7 @@ func draw_areas(_areas, current_enemy):
 	for area in _areas:
 		var new_area = _create_area(area.rot_angle, current_enemy.color)
 		$Areas.add_child(new_area)
-		_draw_area(new_area, 72, area.thickness)
+		_draw_area(new_area, current_enemy.radius, area.thickness)
 
 
 func draw_arrows(_arrows):
@@ -104,7 +104,7 @@ func draw_locked_areas(characters):
 				for area in soul_areas:
 					var saved_area = _create_area(area.rot_angle, character.color, true)
 					area_container.add_child(saved_area)
-					_draw_area(saved_area, 72, area.thickness)
+					_draw_area(saved_area, character.radius, area.thickness)
 				
 				$SavedAreas.add_child(area_container)
 
@@ -169,9 +169,9 @@ func _draw_outline():
 		var radian = deg2rad(1.0 * i)
 		outer_line.add_point(_calculate_point_on_circle(radian, 80))
 	
-	for i in range(0, 361):
-		var radian = deg2rad(1.0 * i)
-		inner_line.add_point(_calculate_point_on_circle(radian, 64))
+#	for i in range(0, 361):
+#		var radian = deg2rad(1.0 * i)
+#		inner_line.add_point(_calculate_point_on_circle(radian, 64))
 
 
 func _calculate_point_on_circle(radian: float, radius: float) -> Vector2:
@@ -184,14 +184,14 @@ func _calculate_point_on_circle(radian: float, radius: float) -> Vector2:
 
 func _create_area(rot_angle, color, is_locked = false):
 	var area : Line2D = Line2D.new()
-	area.width = 8
+	area.width = 6
 	area.rotation_degrees = rot_angle
 	
 	match phase:
-		Round.WheelPhase.DEFEND: area.default_color = Color(1, 0, 0, 1)
+		Round.WheelPhase.DEFEND: area.default_color = Color(1, 1, 1, 1)
 		_:
-			if is_locked: color.a = .25
-			else: color.a = .75
+			if is_locked: color.a = .5
+			else: color.a = .5
 			area.default_color = color
 	
 	return area
@@ -205,7 +205,7 @@ func _draw_area(line_node: Line2D, radius: float, thickness : int) -> void:
 
 func _create_arrow(thickness: int, rot_angle : int):
 	var new_polygon = Polygon2D.new()
-	new_polygon.color = Color(0, 1, 1, 1)
+	new_polygon.color = Color(1, 1, 1, 1)
 	new_polygon.rotation_degrees = rot_angle
 	var points = [Vector2.ZERO]
 	

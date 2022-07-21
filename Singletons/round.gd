@@ -40,6 +40,8 @@ func create_enemy_node(path_to_edm : String, enemy_idx : int) -> Enemy:
 	enemy.current_health = edm.max_health
 	enemy.position = Nodes.root.get_node("Positions/Enemies").get_child(enemy_idx).position
 	enemy.color = Configurations.enemy_colors[enemy_idx]
+	enemy.radius = 72 - ((enemy_idx * 8))
+	
 	enemy.get_node("ColorRect").color = enemy.color
 	
 	return enemy
