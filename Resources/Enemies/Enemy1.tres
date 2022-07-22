@@ -9,8 +9,10 @@ script/source = "extends Node
 var preprocess
 var process
 var postprocess
+
+var time_elapsed = 0
+
 var rng = RandomNumberGenerator.new()
-var tween = Tween.new()
 
 # Attack:
 # Enemy1 has one attack pattern.
@@ -36,7 +38,7 @@ func _init(current_behavior):
 			postprocess = funcref(self, \"postprocess_d\")
 
 
-# ===== ATTACK =====
+# ===== ATTACK / ENEMY'S TURN =====
 func preprocess_a(attack_pattern, behavior_idx):
 	rng.randomize()
 	
@@ -80,32 +82,47 @@ func preprocess_a2(attack_pattern):
 
 
 func process_a(attack_pattern, delta, behavior_idx):
+	var result
+	
 	match behavior_idx:
-		0: return process_a1(attack_pattern, delta)
-		1: return process_a2(attack_pattern, delta)
+		0: result = process_a1(attack_pattern, delta)
+		1: result = process_a2(attack_pattern, delta)
+	
+	time_elapsed += delta
+	return result
 
 
 # behavior 1
 func process_a1(attack_pattern, delta):
+	var is_finished = false
+	
 	for area in attack_pattern.areas:
 		# process rotation angle
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
-		
-	return attack_pattern
+	
+	is_finished = time_elapsed > attack_pattern.process_time
+	
+	return [attack_pattern, is_finished]
 
 
 # behavior 2
 func process_a2(attack_pattern, delta):
+	var is_finished = false
+	
 	for area in attack_pattern.areas:
 		# process rotation angle
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
 		
-	return attack_pattern
+	is_finished = time_elapsed > attack_pattern.process_time
+	
+	return [attack_pattern, is_finished]
 
 
 func postprocess_a(attack_pattern, behavior_idx):
+	time_elapsed = 0
+	
 	match behavior_idx:
 		0: return postprocess_a1(attack_pattern)
 		1: return postprocess_a2(attack_pattern)
@@ -123,7 +140,7 @@ func postprocess_a2(attack_pattern):
 # ==================
 
 
-# ===== DEFEND =====
+# ===== DEFEND / SOUL LOCK =====
 func preprocess_d(defend_pattern, behavior_idx):
 	rng.randomize()
 	
@@ -146,19 +163,30 @@ func preprocess_d1(defend_pattern):
 
 
 func process_d(defend_pattern, delta, behavior_idx):
+	var result
+	
 	match behavior_idx:
-		0: return process_d1(defend_pattern, delta)
+		0: result = process_d1(defend_pattern, delta)
+	
+	time_elapsed += delta
+	return result
 
 
 func process_d1(defend_pattern, delta):
+	var is_finished = false
+	
 	for area in defend_pattern.areas:
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
 	
-	return defend_pattern
+	is_finished = time_elapsed > defend_pattern.process_time
+	
+	return [defend_pattern, is_finished]
 
 
 func postprocess_d(defend_pattern, behavior_idx):
+	time_elapsed = 0
+	
 	match behavior_idx:
 		0: return postprocess_d1(defend_pattern)
 

@@ -14,6 +14,8 @@ var preprocess_d
 var process_d
 var postprocess_d
 
+var time_elapsed = 0
+
 var rng = RandomNumberGenerator.new()
 
 # Attack:
@@ -61,20 +63,31 @@ func preprocess_a1(pattern):
 
 
 func _process_a(pattern, delta, phase_number):
+	var result
+	
 	match phase_number:
-		0: return process_a1(pattern, delta)
+		0: result = process_a1(pattern, delta)
+	
+	time_elapsed += delta
+	return result
 
 
 # phase 1
 func process_a1(pattern, delta):
+	var is_finished = false
+	
 	for arrow in pattern.arrows:
 		arrow.rot_angle += delta * arrow.move_speed
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 	
-	return pattern
+	is_finished = time_elapsed > pattern.process_time
+	
+	return [pattern, is_finished]
 
 
 func _postprocess_a(pattern, phase_number):
+	time_elapsed = 0
+	
 	match phase_number:
 		0: return postprocess_a1(pattern)
 
@@ -109,20 +122,31 @@ func preprocess_d1(pattern):
 
 
 func _process_d(pattern, delta, phase_number):
+	var result
+	
 	match phase_number:
-		0: return process_d1(pattern, delta)
+		0: result = process_d1(pattern, delta)
+	
+	time_elapsed += delta
+	return result
 
 
 func process_d1(pattern, delta):
+	var is_finished = false
+	
 	for arrow in pattern.arrows:
 		arrow.rot_angle += delta * arrow.move_speed * -1
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 	
-	return pattern
+	is_finished = time_elapsed > pattern.process_time
+	
+	return [pattern, is_finished]
 
 
 func _postprocess_d(pattern, phase_number):
+	time_elapsed = 0
+	
 	match phase_number:
 		0: return postprocess_d1(pattern)
 

@@ -59,8 +59,8 @@ func play_turn():
 			[attack_pattern, defend_pattern],
 			{ "ebi": behavior_idx, "phase_number": phase_number }
 		), "completed")
-		attack_pattern = result[0]
-		defend_pattern = result[1]
+		attack_pattern = result.data[0]
+		defend_pattern = result.data[1]
 		
 		# postprocess the areas and arrows
 		attack_pattern = data_model.behaviors.postprocess.call_func(

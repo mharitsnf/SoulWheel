@@ -70,11 +70,12 @@ func play_turn():
 			wheel_ins.draw_areas(defend_pattern, character)
 			
 			# process the areas
-			defend_pattern = yield(wheel_ins.action(
+			var result = yield(wheel_ins.action(
 				[character.data_model.behaviors.process],
 				[defend_pattern],
 				{ "ebi": enemy_behavior_idx }
 			), "completed")
+			defend_pattern = result.data[0]
 			
 			# postprocess the areas (if any)
 			defend_pattern = character.data_model.behaviors.postprocess.call_func(
@@ -114,11 +115,12 @@ func play_turn():
 		wheel_ins.draw_arrows(pattern)
 		
 		# process the arrows
-		pattern = yield(wheel_ins.action(
+		var result = yield(wheel_ins.action(
 			[Round.chosen_skill.behaviors.process_a],
 			[pattern],
 			{ "phase_number": phase_number }
 		), "completed")
+		pattern = result.data[0]
 		
 		# postprocess the arrows (if any)
 		pattern = Round.chosen_skill.behaviors.postprocess_a.call_func(

@@ -25,7 +25,8 @@ var additional_info
 
 var phase = null
 var running : bool = false
-var time_elapsed : float = 0
+#var time_elapsed : float = 0
+var did_player_act = true
 
 signal stop_running
 signal start_running
@@ -88,9 +89,21 @@ func action(_processes, _objects, _additional_info):
 	yield(self, "stop_running")
 	
 	match phase:
-		Round.WheelPhase.SOUL_LOCK: return object1
-		Round.WheelPhase.SOUL_STRIKE: return object1
-		Round.WheelPhase.DEFEND: return [object1, object2]
+		Round.WheelPhase.SOUL_LOCK:
+			return {
+				"data": [object1],
+				"did_player_act": did_player_act
+			}
+		Round.WheelPhase.SOUL_STRIKE:
+			return {
+				"data": [object1],
+				"did_player_act": did_player_act
+			}
+		Round.WheelPhase.DEFEND:
+			return {
+				"data": [object1, object2],
+				"did_player_act": did_player_act
+			}
 
 
 func draw_locked_areas(characters):
@@ -114,41 +127,54 @@ func draw_locked_areas(characters):
 
 func _process(delta):
 	if running:
+		var is_finished = false
 		
 		match phase:
 			Round.WheelPhase.SOUL_LOCK:
 				# Update data
-				object1 = process1.call_func(
+				var result = process1.call_func(
 					object1,
 					delta,
 					additional_info.ebi
 				)
+				object1 = result[0]
+				is_finished = result[1]
 				
 				# Update visuals
 				for i in range(object1.areas.size()):
 					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
 			
 			Round.WheelPhase.SOUL_STRIKE:
-				object1 = process1.call_func(
+				var result = process1.call_func(
 					object1,
 					delta,
 					additional_info.phase_number
 				)
+				object1 = result[0]
+				is_finished = result[1]
 				
 				for i in range(object1.arrows.size()):
 					$Arrows.get_child(i).rotation_degrees = object1.arrows[i].rot_angle
 		
 			Round.WheelPhase.DEFEND:
-				object1 = process1.call_func(
+				# enemy's attack pattern (areas)
+				var result1 = process1.call_func(
 					object1,
 					delta,
 					additional_info.ebi
 				)
-				object2 = process2.call_func(
+				object1 = result1[0]
+				
+				# player's defend pattern (arrows)
+				var result2 = process2.call_func(
 					object2,
 					delta,
 					additional_info.phase_number
 				)
+				object2 = result2[0]
+				
+				# finish based on the player's pattern
+				is_finished = result2[1]
 				
 				# update visuals
 				for i in range(object1.areas.size()):
@@ -157,9 +183,14 @@ func _process(delta):
 				for i in range(object2.arrows.size()):
 					$Arrows.get_child(i).rotation_degrees = object2.arrows[i].rot_angle
 					
-		time_elapsed += delta
+#		time_elapsed += delta
+
+		if Input.is_action_pressed("ui_accept"):
+			did_player_act = true
+			emit_signal("stop_running")
 		
-		if time_elapsed > soul_lock_duration or Input.is_action_pressed("ui_accept"):
+		if is_finished:
+			did_player_act = false
 			emit_signal("stop_running")
 
 
@@ -223,6 +254,6 @@ func _on_start_running():
 
 func _on_stop_running():
 	running = false
-	time_elapsed = 0
+#	time_elapsed = 0
 
 # ================================
