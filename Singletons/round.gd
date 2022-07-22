@@ -54,9 +54,9 @@ func load_enemy_data_model(path_to_edm : String):
 	var edm = load(path_to_edm).duplicate()
 	
 	# duplicate soul areas
-	var soul_areas = []
+	var defend_patterns = []
 	
-	for phase in edm.soul_areas:
+	for phase in edm.defend_patterns:
 		var new_phase = phase.duplicate()
 		var new_areas = []
 		
@@ -68,14 +68,14 @@ func load_enemy_data_model(path_to_edm : String):
 			))
 		
 		new_phase.areas = new_areas
-		soul_areas.append(new_phase)
+		defend_patterns.append(new_phase)
 	
-	edm.soul_areas = soul_areas
+	edm.defend_patterns = defend_patterns
 	
 	# duplicate damage areas
-	var damage_areas = []
+	var attack_patterns = []
 	
-	for phase in edm.damage_areas:
+	for phase in edm.attack_patterns:
 		var new_phase = phase.duplicate()
 		var new_areas = []
 		
@@ -89,9 +89,9 @@ func load_enemy_data_model(path_to_edm : String):
 			))
 		
 		new_phase.areas = new_areas
-		damage_areas.append(new_phase)
+		attack_patterns.append(new_phase)
 	
-	edm.damage_areas = damage_areas
+	edm.attack_patterns = attack_patterns
 	
 	# return
 	return edm

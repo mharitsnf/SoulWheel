@@ -171,7 +171,7 @@ func postprocess_d1(defend_pattern):
 [resource]
 script = ExtResource( 1 )
 max_health = 30
-soul_areas = [ {
+defend_patterns = [ {
 "areas": [ {
 "move_speed": 50.0,
 "rot_angle": 0.0,
@@ -183,21 +183,21 @@ soul_areas = [ {
 } ],
 "process_time": 5.0
 } ]
-damage_areas = [ {
+attack_patterns = [ {
 "areas": [ {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
 "move_speed": 50.0,
 "rot_angle": 0.0,
 "thickness": 30.0
 }, {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
 "move_speed": 50.0,
 "rot_angle": 120.0,
 "thickness": 30.0
 }, {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
 "move_speed": 50.0,
 "rot_angle": 240.0,
@@ -206,7 +206,7 @@ damage_areas = [ {
 "process_time": 5.0
 }, {
 "areas": [ {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
 "move_speed": 50.0,
 "rot_angle": 0.0,

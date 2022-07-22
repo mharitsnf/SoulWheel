@@ -60,7 +60,7 @@ func play_turn():
 			character.select_behavior(Character.Behavior.DEFEND)
 			
 			# set temporary variables
-			var defend_pattern = character.data_model.soul_areas[character.behavior_idx].duplicate(true)
+			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
 			var enemy_behavior_idx = character.behavior_idx
 			
 			# preprocess the areas
@@ -83,7 +83,7 @@ func play_turn():
 			)
 			
 			# set the updated soul areas to the enemy data model
-			character.data_model.soul_areas[character.behavior_idx] = defend_pattern
+			character.data_model.defend_patterns[character.behavior_idx] = defend_pattern
 			character.is_locked = true
 			
 			# Destroy
@@ -132,7 +132,7 @@ func play_turn():
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():
 			if character is Enemy:
-				var defend_pattern = character.data_model.soul_areas[character.behavior_idx]
+				var defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
 				_check_and_append_result(character, defend_pattern, arrows)
 		
 		# deal damage to the enemies

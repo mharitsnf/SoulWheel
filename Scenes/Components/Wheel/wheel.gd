@@ -99,7 +99,7 @@ func draw_locked_areas(characters):
 			if character.is_locked:
 				
 				var area_container = Node2D.new()
-				var defend_pattern = character.data_model.soul_areas[character.behavior_idx]
+				var defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
 				
 				for area in defend_pattern.areas:
 					var saved_area = _create_area(area.rot_angle, character.color, true)

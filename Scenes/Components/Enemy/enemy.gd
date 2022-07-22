@@ -36,7 +36,7 @@ func play_turn():
 		select_behavior(Behavior.ATTACK)
 		
 		# set temporary variables
-		var attack_pattern = data_model.damage_areas[behavior_idx].duplicate(true)
+		var attack_pattern = data_model.attack_patterns[behavior_idx].duplicate(true)
 		var arrows = Round.chosen_skill.defend_arrows[phase_number].duplicate(true)
 		
 		# preprocess the areas and arrows
@@ -106,8 +106,8 @@ func select_behavior(behavior):
 	.select_behavior(behavior)
 	
 	match current_behavior:
-		Behavior.ATTACK: behavior_idx = rng.randi_range(0, data_model.damage_areas.size() - 1)
-		Behavior.DEFEND: behavior_idx = rng.randi_range(0, data_model.soul_areas.size() - 1)
+		Behavior.ATTACK: behavior_idx = rng.randi_range(0, data_model.attack_patterns.size() - 1)
+		Behavior.DEFEND: behavior_idx = rng.randi_range(0, data_model.defend_patterns.size() - 1)
 	
 	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
