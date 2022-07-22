@@ -60,27 +60,30 @@ func play_turn():
 			character.select_behavior(Character.Behavior.DEFEND)
 			
 			# set temporary variables
-			var soul_areas = character.data_model.soul_areas[character.behavior_idx].duplicate(true)
+			var defend_pattern = character.data_model.soul_areas[character.behavior_idx].duplicate(true)
 			var enemy_behavior_idx = character.behavior_idx
 			
 			# preprocess the areas
-			soul_areas = character.data_model.behaviors.preprocess.call_func(soul_areas, enemy_behavior_idx)
+			defend_pattern = character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
 			
 			# draw the areas
-			wheel_ins.draw_areas(soul_areas, character)
+			wheel_ins.draw_areas(defend_pattern, character)
 			
 			# process the areas
-			soul_areas = yield(wheel_ins.action(
+			defend_pattern = yield(wheel_ins.action(
 				[character.data_model.behaviors.process],
-				[soul_areas],
+				[defend_pattern],
 				{ "ebi": enemy_behavior_idx }
 			), "completed")
 			
 			# postprocess the areas (if any)
-			soul_areas = character.data_model.behaviors.postprocess.call_func(soul_areas, enemy_behavior_idx)
+			defend_pattern = character.data_model.behaviors.postprocess.call_func(
+				defend_pattern,
+				enemy_behavior_idx
+			)
 			
 			# set the updated soul areas to the enemy data model
-			character.data_model.soul_areas[character.behavior_idx] = soul_areas
+			character.data_model.soul_areas[character.behavior_idx] = defend_pattern
 			character.is_locked = true
 			
 			# Destroy
@@ -129,8 +132,8 @@ func play_turn():
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():
 			if character is Enemy:
-				var areas = character.data_model.soul_areas[character.behavior_idx]
-				_check_and_append_result(character, areas, arrows)
+				var defend_pattern = character.data_model.soul_areas[character.behavior_idx]
+				_check_and_append_result(character, defend_pattern, arrows)
 		
 		# deal damage to the enemies
 		_deal_damage(arrows)
@@ -159,8 +162,8 @@ func play_turn():
 
 
 # Append enemies struck by an arrow into the arrow's list
-func _check_and_append_result(enemy, areas, arrows):
-	for area in areas:
+func _check_and_append_result(enemy, pattern, arrows):
+	for area in pattern.areas:
 		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 
 		for arrow in arrows:

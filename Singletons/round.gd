@@ -50,19 +50,24 @@ func create_enemy_node(path_to_edm : String, enemy_idx : int) -> Enemy:
 # Function for loading and duplicating the
 # enemy data model.
 func load_enemy_data_model(path_to_edm : String):
+	# duplicate the data model
 	var edm = load(path_to_edm).duplicate()
 	
 	# duplicate soul areas
 	var soul_areas = []
 	
-	for phases in edm.soul_areas:
-		var new_phase = []
-		for area in phases:
-			new_phase.append(area_template.new(
+	for phase in edm.soul_areas:
+		var new_phase = phase.duplicate()
+		var new_areas = []
+		
+		for area in phase.areas:
+			new_areas.append(area_template.new(
 				area.move_speed,
 				area.rot_angle,
 				area.thickness
 			))
+		
+		new_phase.areas = new_areas
 		soul_areas.append(new_phase)
 	
 	edm.soul_areas = soul_areas
@@ -70,20 +75,25 @@ func load_enemy_data_model(path_to_edm : String):
 	# duplicate damage areas
 	var damage_areas = []
 	
-	for phases in edm.damage_areas:
-		var new_phase = []
-		for area in phases:
-			new_phase.append(area_template.new(
+	for phase in edm.damage_areas:
+		var new_phase = phase.duplicate()
+		var new_areas = []
+		
+		for area in phase.areas:
+			new_areas.append(area_template.new(
 				area.move_speed,
 				area.rot_angle,
 				area.thickness,
 				area.damage,
 				area.is_damage_percentage
 			))
+		
+		new_phase.areas = new_areas
 		damage_areas.append(new_phase)
 	
 	edm.damage_areas = damage_areas
 	
+	# return
 	return edm
 
 

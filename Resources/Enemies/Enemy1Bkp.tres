@@ -9,6 +9,9 @@ script/source = "extends Node
 var preprocess
 var process
 var postprocess
+
+var process_time = 0
+
 var rng = RandomNumberGenerator.new()
 var tween = Tween.new()
 
@@ -37,19 +40,19 @@ func _init(current_behavior):
 
 
 # ===== ATTACK =====
-func preprocess_a(attack_pattern, behavior_idx):
+func preprocess_a(areas, behavior_idx):
 	rng.randomize()
 	
 	match behavior_idx:
-		0: return preprocess_a1(attack_pattern)
-		1: return preprocess_a2(attack_pattern)
+		0: return preprocess_a1(areas)
+		1: return preprocess_a2(areas)
 
 
 # behavior 1
-func preprocess_a1(attack_pattern):
+func preprocess_a1(areas):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	
-	for area in attack_pattern.areas:
+	for area in areas:
 		# process rotation angle
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -59,14 +62,14 @@ func preprocess_a1(attack_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return attack_pattern
+	return areas
 
 
 # behavior 2
-func preprocess_a2(attack_pattern):
+func preprocess_a2(areas):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	
-	for area in attack_pattern.areas:
+	for area in areas:
 		# process rotation angle
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -76,63 +79,67 @@ func preprocess_a2(attack_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return attack_pattern
+	return areas
 
 
-func process_a(attack_pattern, delta, behavior_idx):
+func process_a(areas, delta, behavior_idx):
 	match behavior_idx:
-		0: return process_a1(attack_pattern, delta)
-		1: return process_a2(attack_pattern, delta)
+		0: return process_a1(areas, delta)
+		1: return process_a2(areas, delta)
 
 
 # behavior 1
-func process_a1(attack_pattern, delta):
-	for area in attack_pattern.areas:
+func process_a1(areas, delta):
+	for area in areas:
 		# process rotation angle
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
-		
-	return attack_pattern
+	
+	process_time += delta
+	return areas
 
 
 # behavior 2
-func process_a2(attack_pattern, delta):
-	for area in attack_pattern.areas:
+func process_a2(areas, delta):
+	for area in areas:
 		# process rotation angle
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
-		
-	return attack_pattern
+	
+	process_time += delta
+	return areas
 
 
-func postprocess_a(attack_pattern, behavior_idx):
+func postprocess_a(areas, behavior_idx):
+	process_time = 0
+	
 	match behavior_idx:
-		0: return postprocess_a1(attack_pattern)
-		1: return postprocess_a2(attack_pattern)
+		0: return postprocess_a1(areas)
+		1: return postprocess_a2(areas)
 
 
 # behavior 1
-func postprocess_a1(attack_pattern):
-	return attack_pattern
+func postprocess_a1(areas):
+	return areas
 
 
 # behavior 2
-func postprocess_a2(attack_pattern):
-	return attack_pattern
+func postprocess_a2(areas):
+	return areas
 
 # ==================
 
 
 # ===== DEFEND =====
-func preprocess_d(defend_pattern, behavior_idx):
+func preprocess_d(areas, behavior_idx):
 	rng.randomize()
 	
 	match behavior_idx:
-		0: return preprocess_d1(defend_pattern)
+		0: return preprocess_d1(areas)
 
 
-func preprocess_d1(defend_pattern):
-	for area in defend_pattern.areas:
+func preprocess_d1(areas):
+	for area in areas:
 		# process rotation angle
 		area.rot_angle += rng.randi_range(0, 360)
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -142,76 +149,67 @@ func preprocess_d1(defend_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return defend_pattern
+	return areas
 
 
-func process_d(defend_pattern, delta, behavior_idx):
+func process_d(areas, delta, behavior_idx):
 	match behavior_idx:
-		0: return process_d1(defend_pattern, delta)
+		0: return process_d1(areas, delta)
 
 
-func process_d1(defend_pattern, delta):
-	for area in defend_pattern.areas:
+func process_d1(areas, delta):
+	for area in areas:
 		area.rot_angle += delta * area.move_speed
 		area.rot_angle = fmod(area.rot_angle, 360)
 	
-	return defend_pattern
+	return areas
 
 
-func postprocess_d(defend_pattern, behavior_idx):
+func postprocess_d(areas, behavior_idx):
 	match behavior_idx:
-		0: return postprocess_d1(defend_pattern)
+		0: return postprocess_d1(areas)
 
 
-func postprocess_d1(defend_pattern):
-	return defend_pattern
+func postprocess_d1(areas):
+	return areas
 # ==================
 "
 
 [resource]
 script = ExtResource( 1 )
 max_health = 30
-soul_areas = [ {
-"areas": [ {
-"move_speed": 50.0,
-"rot_angle": 0.0,
-"thickness": 60.0
+soul_areas = [ [ {
+"move_speed": 60,
+"rot_angle": 0,
+"thickness": 60
 }, {
-"move_speed": 150.0,
-"rot_angle": 0.0,
-"thickness": 15.0
-} ],
-"process_time": 5.0
-} ]
-damage_areas = [ {
-"areas": [ {
-"damage": 5.0,
+"move_speed": 120,
+"rot_angle": 0,
+"thickness": 15
+} ] ]
+damage_areas = [ [ {
+"damage": 5,
 "is_damage_percentage": false,
-"move_speed": 50.0,
-"rot_angle": 0.0,
-"thickness": 30.0
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 30
 }, {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
-"move_speed": 50.0,
-"rot_angle": 120.0,
-"thickness": 30.0
+"move_speed": 50,
+"rot_angle": 120,
+"thickness": 30
 }, {
-"damage": 5.0,
+"damage": 5,
 "is_damage_percentage": false,
-"move_speed": 50.0,
-"rot_angle": 240.0,
-"thickness": 30.0
-} ],
-"process_time": 5.0
-}, {
-"areas": [ {
-"damage": 5.0,
+"move_speed": 50,
+"rot_angle": 240,
+"thickness": 30
+} ], [ {
+"damage": 5,
 "is_damage_percentage": false,
-"move_speed": 50.0,
-"rot_angle": 0.0,
-"thickness": 180.0
-} ],
-"process_time": 5.0
-} ]
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 180
+} ] ]
 behaviors = SubResource( 1 )

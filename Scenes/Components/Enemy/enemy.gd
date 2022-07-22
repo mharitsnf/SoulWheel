@@ -36,12 +36,12 @@ func play_turn():
 		select_behavior(Behavior.ATTACK)
 		
 		# set temporary variables
-		var damage_areas = data_model.damage_areas[behavior_idx].duplicate(true)
+		var attack_pattern = data_model.damage_areas[behavior_idx].duplicate(true)
 		var arrows = Round.chosen_skill.defend_arrows[phase_number].duplicate(true)
 		
 		# preprocess the areas and arrows
-		damage_areas = data_model.behaviors.preprocess.call_func(
-			damage_areas,
+		attack_pattern = data_model.behaviors.preprocess.call_func(
+			attack_pattern,
 			behavior_idx
 		)
 		arrows = Round.chosen_skill.behaviors.preprocess_d.call_func(
@@ -50,21 +50,21 @@ func play_turn():
 		)
 		
 		# draw the areas and arrows
-		wheel_ins.draw_areas(damage_areas, self)
+		wheel_ins.draw_areas(attack_pattern, self)
 		wheel_ins.draw_arrows(arrows)
 		
 		# process the areas and arrows
 		var result = yield(wheel_ins.action(
 			[data_model.behaviors.process, Round.chosen_skill.behaviors.process_d],
-			[damage_areas, arrows],
+			[attack_pattern, arrows],
 			{ "ebi": behavior_idx, "phase_number": phase_number }
 		), "completed")
-		damage_areas = result[0]
+		attack_pattern = result[0]
 		arrows = result[1]
 		
 		# postprocess the areas and arrows
-		damage_areas = data_model.behaviors.postprocess.call_func(
-			damage_areas,
+		attack_pattern = data_model.behaviors.postprocess.call_func(
+			attack_pattern,
 			behavior_idx
 		)
 		arrows = Round.chosen_skill.behaviors.postprocess_d.call_func(
@@ -73,7 +73,7 @@ func play_turn():
 		)
 		
 		# check result
-		_check_and_append_result(damage_areas, arrows)
+		_check_and_append_result(attack_pattern, arrows)
 		
 		# deal damage to the player and return if the player is defeated
 		if _deal_damage(arrows):
@@ -112,8 +112,8 @@ func select_behavior(behavior):
 	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
 
-func _check_and_append_result(areas, arrows):
-	for area in areas:
+func _check_and_append_result(pattern, arrows):
+	for area in pattern.areas:
 		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 		
 		for arrow in arrows:

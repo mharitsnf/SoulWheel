@@ -55,8 +55,8 @@ func destroy():
 	queue_free()
 
 
-func draw_areas(_areas, current_enemy):
-	for area in _areas:
+func draw_areas(pattern, current_enemy):
+	for area in pattern.areas:
 		var new_area = _create_area(area.rot_angle, current_enemy.color)
 		$Areas.add_child(new_area)
 		_draw_area(new_area, current_enemy.radius, area.thickness)
@@ -99,9 +99,9 @@ func draw_locked_areas(characters):
 			if character.is_locked:
 				
 				var area_container = Node2D.new()
-				var soul_areas = character.data_model.soul_areas[character.behavior_idx]
+				var defend_pattern = character.data_model.soul_areas[character.behavior_idx]
 				
-				for area in soul_areas:
+				for area in defend_pattern.areas:
 					var saved_area = _create_area(area.rot_angle, character.color, true)
 					area_container.add_child(saved_area)
 					_draw_area(saved_area, character.radius, area.thickness)
@@ -125,8 +125,8 @@ func _process(delta):
 				)
 				
 				# Update visuals
-				for i in range(object1.size()):
-					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
+				for i in range(object1.areas.size()):
+					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
 			
 			Round.WheelPhase.SOUL_STRIKE:
 				object1 = process1.call_func(
@@ -151,8 +151,8 @@ func _process(delta):
 				)
 				
 				# update visuals
-				for i in range(object1.size()):
-					$Areas.get_child(i).rotation_degrees = object1[i].rot_angle
+				for i in range(object1.areas.size()):
+					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
 				
 				for i in range(object2.size()):
 					$Arrows.get_child(i).rotation_degrees = object2[i].rot_angle
