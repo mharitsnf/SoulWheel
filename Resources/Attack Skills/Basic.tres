@@ -38,16 +38,16 @@ func _init():
 
 
 # ===== ATTACK =====
-func _preprocess_a(arrows, phase_number):
+func _preprocess_a(pattern, phase_number):
 	rng.randomize()
 	
 	match phase_number:
-		0: return preprocess_a1(arrows)
+		0: return preprocess_a1(pattern)
 
 
 # phase 1
-func preprocess_a1(arrows):
-	for arrow in arrows:
+func preprocess_a1(pattern):
+	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
@@ -57,45 +57,45 @@ func preprocess_a1(arrows):
 		arrow.thickness = clamp(arrow.thickness, 2, 360)
 		arrow.thickness = floor(arrow.thickness / 2)
 	
-	return arrows
+	return pattern
 
 
-func _process_a(arrows, delta, phase_number):
+func _process_a(pattern, delta, phase_number):
 	match phase_number:
-		0: return process_a1(arrows, delta)
+		0: return process_a1(pattern, delta)
 
 
 # phase 1
-func process_a1(arrows, delta):
-	for arrow in arrows:
+func process_a1(pattern, delta):
+	for arrow in pattern.arrows:
 		arrow.rot_angle += delta * arrow.move_speed
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 	
-	return arrows
+	return pattern
 
 
-func _postprocess_a(arrows, phase_number):
+func _postprocess_a(pattern, phase_number):
 	match phase_number:
-		0: return postprocess_a1(arrows)
+		0: return postprocess_a1(pattern)
 
 
 # phase 1
-func postprocess_a1(arrows):
-	return arrows
+func postprocess_a1(pattern):
+	return pattern
 
 # ==================
 
 
 # ===== DEFEND =====
-func _preprocess_d(arrows, phase_number):
+func _preprocess_d(pattern, phase_number):
 	rng.randomize()
 	
 	match phase_number:
-		0: return preprocess_d1(arrows)
+		0: return preprocess_d1(pattern)
 
 
-func preprocess_d1(arrows):
-	for arrow in arrows:
+func preprocess_d1(pattern):
+	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
@@ -105,30 +105,30 @@ func preprocess_d1(arrows):
 		arrow.thickness = clamp(arrow.thickness, 2, 360)
 		arrow.thickness = floor(arrow.thickness / 2)
 	
-	return arrows
+	return pattern
 
 
-func _process_d(arrows, delta, phase_number):
+func _process_d(pattern, delta, phase_number):
 	match phase_number:
-		0: return process_d1(arrows, delta)
+		0: return process_d1(pattern, delta)
 
 
-func process_d1(arrows, delta):
-	for arrow in arrows:
+func process_d1(pattern, delta):
+	for arrow in pattern.arrows:
 		arrow.rot_angle += delta * arrow.move_speed * -1
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 	
-	return arrows
+	return pattern
 
 
-func _postprocess_d(arrows, phase_number):
+func _postprocess_d(pattern, phase_number):
 	match phase_number:
-		0: return postprocess_d1(arrows)
+		0: return postprocess_d1(pattern)
 
 
-func postprocess_d1(arrows):
-	return arrows
+func postprocess_d1(pattern):
+	return pattern
 
 # ==================
 "
@@ -147,26 +147,26 @@ func _init():
 
 
 # ===== FIRST CONDITION =====
-func fc(arrows, phase_number):
+func fc(pattern, phase_number):
 	match phase_number:
-		0: return fc1(arrows)
+		0: return fc1(pattern)
 
 
-func fc1(arrows):
-	for arrow in arrows:
+func fc1(pattern):
+	for arrow in pattern.arrows:
 		for enemy in arrow.enemies_struck:
 			if arrow.enemies_struck.count(enemy) > 1: return true
 	return false
 # ===========================
 
 # ===== SECOND CONDITION =====
-func sc(arrows, phase_number):
+func sc(pattern, phase_number):
 	match phase_number:
-		0: return sc2(arrows)
+		0: return sc2(pattern)
 
 
-func sc2(arrows):
-	for arrow in arrows:
+func sc2(pattern):
+	for arrow in pattern.arrows:
 		if !arrow.struck_by.empty(): return false
 	return true
 # ===========================
@@ -175,17 +175,23 @@ func sc2(arrows):
 [resource]
 script = ExtResource( 1 )
 name = "Basic"
-attack_arrows = [ [ {
+attack_patterns = [ {
+"arrows": [ {
 "damage": 5,
-"move_speed": 150,
-"rot_angle": 0,
+"move_speed": 125.0,
+"rot_angle": 0.0,
 "thickness": 2
-} ] ]
-defend_arrows = [ [ {
-"move_speed": 150,
-"rot_angle": 0,
+} ],
+"process_time": 5.0
+} ]
+defend_patterns = [ {
+"arrows": [ {
+"move_speed": 125.0,
+"rot_angle": 0.0,
 "thickness": 2
-} ] ]
+} ],
+"process_time": 5.0
+} ]
 hp_cost = 5
 is_cost_percentage = false
 hp_bonus = 1

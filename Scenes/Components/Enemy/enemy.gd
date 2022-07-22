@@ -27,7 +27,7 @@ func _ready():
 func play_turn():
 	print("enemy playing")
 	
-	for phase_number in range(Round.chosen_skill.defend_arrows.size()):
+	for phase_number in range(Round.chosen_skill.defend_patterns.size()):
 		
 		# summon wheel with defend phase for the player
 		_summon_wheel(Round.WheelPhase.DEFEND)
@@ -37,59 +37,59 @@ func play_turn():
 		
 		# set temporary variables
 		var attack_pattern = data_model.attack_patterns[behavior_idx].duplicate(true)
-		var arrows = Round.chosen_skill.defend_arrows[phase_number].duplicate(true)
+		var defend_pattern = Round.chosen_skill.defend_patterns[phase_number].duplicate(true)
 		
 		# preprocess the areas and arrows
 		attack_pattern = data_model.behaviors.preprocess.call_func(
 			attack_pattern,
 			behavior_idx
 		)
-		arrows = Round.chosen_skill.behaviors.preprocess_d.call_func(
-			arrows,
+		defend_pattern = Round.chosen_skill.behaviors.preprocess_d.call_func(
+			defend_pattern,
 			phase_number
 		)
 		
 		# draw the areas and arrows
 		wheel_ins.draw_areas(attack_pattern, self)
-		wheel_ins.draw_arrows(arrows)
+		wheel_ins.draw_arrows(defend_pattern)
 		
 		# process the areas and arrows
 		var result = yield(wheel_ins.action(
 			[data_model.behaviors.process, Round.chosen_skill.behaviors.process_d],
-			[attack_pattern, arrows],
+			[attack_pattern, defend_pattern],
 			{ "ebi": behavior_idx, "phase_number": phase_number }
 		), "completed")
 		attack_pattern = result[0]
-		arrows = result[1]
+		defend_pattern = result[1]
 		
 		# postprocess the areas and arrows
 		attack_pattern = data_model.behaviors.postprocess.call_func(
 			attack_pattern,
 			behavior_idx
 		)
-		arrows = Round.chosen_skill.behaviors.postprocess_d.call_func(
-			arrows,
+		defend_pattern = Round.chosen_skill.behaviors.postprocess_d.call_func(
+			defend_pattern,
 			phase_number
 		)
 		
 		# check result
-		_check_and_append_result(attack_pattern, arrows)
+		_check_and_append_result(attack_pattern, defend_pattern)
 		
 		# deal damage to the player and return if the player is defeated
-		if _deal_damage(arrows):
-			yield(get_tree().create_timer(.5), "timeout")
+		if _deal_damage(defend_pattern):
+			yield (get_tree().create_timer(.5), "timeout")
 			_destroy_wheel()
 			
 			_end_turn()
 			return true
 		
 		# assess second condition
-		var fc_res = Round.chosen_skill.conditions.second_condition.call_func(arrows, phase_number)
-		if fc_res:
+		var sc_res = Round.chosen_skill.conditions.second_condition.call_func(defend_pattern, phase_number)
+		if sc_res:
 			Round.player.add_hp(Round.chosen_skill.hp_bonus)
 		
 		# reset the arrows struck by array
-		for arrow in arrows:
+		for arrow in defend_pattern.arrows:
 			arrow.struck_by = []
 		
 		# destroy wheel
@@ -112,19 +112,19 @@ func select_behavior(behavior):
 	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
 
-func _check_and_append_result(pattern, arrows):
-	for area in pattern.areas:
+func _check_and_append_result(enemy_pattern, player_pattern):
+	for area in enemy_pattern.areas:
 		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 		
-		for arrow in arrows:
+		for arrow in player_pattern.arrows:
 			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
 			
 			if _is_hit(arrow_angle, area_angle):
 				arrow.struck_by.append(area)
 
 
-func _deal_damage(arrows):
-	for arrow in arrows:
+func _deal_damage(pattern):
+	for arrow in pattern.arrows:
 		for area in arrow.struck_by:
 			if Round.player.take_damage(area.damage): return true
 	

@@ -104,26 +104,34 @@ func load_skill(path_to_skill : String):
 	var skill = load(path_to_skill).duplicate()
 	
 	# create attack arrows
-	var attack_arrows = []
+	var attack_patterns = []
+	
+	for phase in skill.attack_patterns:
+		var new_phase = phase.duplicate()
+		var new_arrows = []
+		
+		for arrow in phase.arrows:
+			new_arrows.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness, arrow.damage))
+		
+		new_phase.arrows = new_arrows
+		attack_patterns.append(new_phase)
 
-	for phases in skill.attack_arrows:
-		var new_phase = []
-		for arrow in phases:
-			new_phase.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness, arrow.damage))
-		attack_arrows.append(new_phase)
-
-	skill.attack_arrows = attack_arrows
+	skill.attack_patterns = attack_patterns
 	
 	# create defend arrows
-	var defend_arrows = []
+	var defend_patterns = []
+	
+	for phase in skill.defend_patterns:
+		var new_phase = phase.duplicate()
+		var new_arrows = []
+		
+		for arrow in phase.arrows:
+			new_arrows.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness))
+		
+		new_phase.arrows = new_arrows
+		defend_patterns.append(new_phase)
 
-	for phases in skill.defend_arrows:
-		var new_phase = []
-		for arrow in phases:
-			new_phase.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness))
-		defend_arrows.append(new_phase)
-
-	skill.defend_arrows = defend_arrows
+	skill.defend_patterns = defend_patterns
 	
 	# instantiate conditions
 	skill.conditions = skill.conditions.new()

@@ -8,10 +8,10 @@ export(String) var name
 
 # Array of array of dictionaries. The array's length represents the number of phases, and
 # each element represents the number of arrows in the respective phase
-export(Array) var attack_arrows
+export(Array) var attack_patterns
 
 # Only contains one phase, so Array of arrows.
-export(Array) var defend_arrows
+export(Array) var defend_patterns
 
 # How much HP will be wagered and is it a percentage based on the player's current
 # health?

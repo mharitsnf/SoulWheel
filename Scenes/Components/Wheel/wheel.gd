@@ -62,8 +62,8 @@ func draw_areas(pattern, current_enemy):
 		_draw_area(new_area, current_enemy.radius, area.thickness)
 
 
-func draw_arrows(_arrows):
-	for arrow in _arrows:
+func draw_arrows(pattern):
+	for arrow in pattern.arrows:
 		var arrow_display = _create_arrow(arrow.thickness, arrow.rot_angle)
 		$Arrows.add_child(arrow_display)
 
@@ -135,8 +135,8 @@ func _process(delta):
 					additional_info.phase_number
 				)
 				
-				for i in range(object1.size()):
-					$Arrows.get_child(i).rotation_degrees = object1[i].rot_angle
+				for i in range(object1.arrows.size()):
+					$Arrows.get_child(i).rotation_degrees = object1.arrows[i].rot_angle
 		
 			Round.WheelPhase.DEFEND:
 				object1 = process1.call_func(
@@ -154,8 +154,8 @@ func _process(delta):
 				for i in range(object1.areas.size()):
 					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
 				
-				for i in range(object2.size()):
-					$Arrows.get_child(i).rotation_degrees = object2[i].rot_angle
+				for i in range(object2.arrows.size()):
+					$Arrows.get_child(i).rotation_degrees = object2.arrows[i].rot_angle
 					
 		time_elapsed += delta
 		

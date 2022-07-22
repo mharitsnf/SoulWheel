@@ -93,7 +93,7 @@ func play_turn():
 	
 	# PHASE 3: Soul Strike phase
 	# Loop for each attacking phases
-	for phase_number in range(Round.chosen_skill.attack_arrows.size()):
+	for phase_number in range(Round.chosen_skill.attack_patterns.size()):
 		
 		# summon the wheel and draw the outlines
 		_summon_wheel(Round.WheelPhase.SOUL_STRIKE)
@@ -102,44 +102,44 @@ func play_turn():
 		wheel_ins.draw_locked_areas(turn_manager.get_children())
 		
 		# set temporary variables
-		var arrows = Round.chosen_skill.attack_arrows[phase_number].duplicate(true)
+		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
 		
 		# preprocess the arrows for each round
-		arrows = Round.chosen_skill.behaviors.preprocess_a.call_func(
-			arrows,
+		pattern = Round.chosen_skill.behaviors.preprocess_a.call_func(
+			pattern,
 			phase_number
 		)
 		
 		# draw the arrows
-		wheel_ins.draw_arrows(arrows)
+		wheel_ins.draw_arrows(pattern)
 		
 		# process the arrows
-		arrows = yield(wheel_ins.action(
+		pattern = yield(wheel_ins.action(
 			[Round.chosen_skill.behaviors.process_a],
-			[arrows],
+			[pattern],
 			{ "phase_number": phase_number }
 		), "completed")
 		
 		# postprocess the arrows (if any)
-		arrows = Round.chosen_skill.behaviors.postprocess_a.call_func(
-			arrows,
+		pattern = Round.chosen_skill.behaviors.postprocess_a.call_func(
+			pattern,
 			phase_number
 		)
 		
 		# set the updated arrows to the chosen skill attack arrows
-		Round.chosen_skill.attack_arrows[phase_number] = arrows
+		Round.chosen_skill.attack_patterns[phase_number] = pattern
 		
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():
 			if character is Enemy:
-				var defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
-				_check_and_append_result(character, defend_pattern, arrows)
+				var enemy_defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
+				_check_and_append_result(character, enemy_defend_pattern, pattern)
 		
 		# deal damage to the enemies
-		_deal_damage(arrows)
+		_deal_damage(pattern)
 		
 		# assess first condition
-		var fc_res = Round.chosen_skill.conditions.first_condition.call_func(arrows, phase_number)
+		var fc_res = Round.chosen_skill.conditions.first_condition.call_func(pattern, phase_number)
 		if fc_res:
 			add_hp(Round.chosen_skill.hp_cost)
 		
@@ -162,11 +162,11 @@ func play_turn():
 
 
 # Append enemies struck by an arrow into the arrow's list
-func _check_and_append_result(enemy, pattern, arrows):
-	for area in pattern.areas:
+func _check_and_append_result(enemy, enemy_pattern, player_pattern):
+	for area in enemy_pattern.areas:
 		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
 
-		for arrow in arrows:
+		for arrow in player_pattern.arrows:
 			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
 
 			if _is_hit(arrow_angle, area_angle):
@@ -174,8 +174,8 @@ func _check_and_append_result(enemy, pattern, arrows):
 
 
 # Deal damage based on the updated arrow's list
-func _deal_damage(arrows):
-	for arrow in arrows:
+func _deal_damage(pattern):
+	for arrow in pattern.arrows:
 		for enemy in arrow.enemies_struck:
 			enemy.is_defeated = enemy.take_damage(arrow.damage)
 			print(arrow, " struck ", enemy.name, "! enemy health: ", enemy.current_health)
