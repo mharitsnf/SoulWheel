@@ -100,20 +100,21 @@ func action(behaviors, patterns, additional_info):
 			result.did_player_acted.append(result0[1])
 		
 		Round.WheelPhase.DEFEND:
-			var result0 = behaviors[0].process.call_func(
+			var player_thread = Thread.new()
+			var player_data = {
+				"behavior": behaviors[1],
+				"params": [patterns[1], $Arrows.get_children(), additional_info.phase_number]
+			}
+			
+			player_thread.start(self, "_player_process_d", player_data, 0)
+			
+			var result0 = yield(behaviors[0].process.call_func(
 				patterns[0],
 				$Areas.get_children(),
 				additional_info.ebi
-			)
-			
-			var result1 = yield(behaviors[1].process_d.call_func(
-				patterns[1],
-				$Arrows.get_children(),
-				additional_info.phase_number
 			), "completed")
 			
-			if result0 is GDScriptFunctionState:
-				result0 = yield(result0, "completed")
+			var result1 = yield(player_thread.wait_to_finish(), "completed")
 			
 			result.patterns.append(result0[0])
 			result.patterns.append(result1[0])
@@ -145,6 +146,14 @@ func draw_locked_areas(characters):
 # ================================
 
 # ======= PRIVATE FUNCTIONS =======
+
+func _player_process_d(player_data):
+	return yield(player_data.behavior.process_d.call_func(
+		player_data.params[0],
+		player_data.params[1],
+		player_data.params[2]
+	), "completed")
+
 
 func _process(delta):
 	pass
