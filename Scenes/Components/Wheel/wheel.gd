@@ -21,8 +21,6 @@ var process2
 var object1 = [] # can be areas/arrows
 var object2 = [] # can be arrows during enemy's turn
 
-var additional_info
-
 var phase = null
 var running : bool = false
 #var time_elapsed : float = 0
@@ -69,41 +67,64 @@ func draw_arrows(pattern):
 		$Arrows.add_child(arrow_display)
 
 
-func action(_processes, _objects, _additional_info):
-	additional_info = _additional_info
+# _processes: array of process functions
+# _objects: array of behaviors
+func action(behaviors, patterns, additional_info):
+	var result = {
+		"patterns": [],
+		"did_player_acted": []
+	}
+	
+	for behavior in behaviors:
+		Nodes.root.add_child(behavior)
 	
 	match phase:
 		Round.WheelPhase.SOUL_LOCK:
-			process1 = _processes[0]
-			object1 = _objects[0]
+			var result0 = yield(behaviors[0].process.call_func(
+				patterns[0],
+				$Areas.get_children(),
+				additional_info.ebi
+			), "completed")
+			
+			result.patterns.append(result0[0])
+			result.did_player_acted.append(result0[1])
+		
 		Round.WheelPhase.SOUL_STRIKE:
-			process1 = _processes[0]
-			object1 = _objects[0]
+			var result0 = yield(behaviors[0].process_a.call_func(
+				patterns[0],
+				$Arrows.get_children(),
+				additional_info.phase_number
+			), "completed")
+			
+			result.patterns.append(result0[0])
+			result.did_player_acted.append(result0[1])
+		
 		Round.WheelPhase.DEFEND:
-			process1 = _processes[0]
-			process2 = _processes[1]
-			object1 = _objects[0]
-			object2 = _objects[1]
+			var result0 = behaviors[0].process.call_func(
+				patterns[0],
+				$Areas.get_children(),
+				additional_info.ebi
+			)
+			
+			var result1 = yield(behaviors[1].process_d.call_func(
+				patterns[1],
+				$Arrows.get_children(),
+				additional_info.phase_number
+			), "completed")
+			
+			if result0 is GDScriptFunctionState:
+				result0 = yield(result0, "completed")
+			
+			result.patterns.append(result0[0])
+			result.patterns.append(result1[0])
+			
+			result.did_player_acted.append(result0[1])
+			result.did_player_acted.append(result1[1])
 	
-	emit_signal("start_running")
-	yield(self, "stop_running")
+	for behavior in behaviors:
+		Nodes.root.remove_child(behavior)
 	
-	match phase:
-		Round.WheelPhase.SOUL_LOCK:
-			return {
-				"data": [object1],
-				"did_player_act": did_player_act
-			}
-		Round.WheelPhase.SOUL_STRIKE:
-			return {
-				"data": [object1],
-				"did_player_act": did_player_act
-			}
-		Round.WheelPhase.DEFEND:
-			return {
-				"data": [object1, object2],
-				"did_player_act": did_player_act
-			}
+	return result
 
 
 func draw_locked_areas(characters):
@@ -126,72 +147,73 @@ func draw_locked_areas(characters):
 # ======= PRIVATE FUNCTIONS =======
 
 func _process(delta):
-	if running:
-		var is_finished = false
-		
-		match phase:
-			Round.WheelPhase.SOUL_LOCK:
-				# Update data
-				var result = process1.call_func(
-					object1,
-					delta,
-					additional_info.ebi
-				)
-				object1 = result[0]
-				is_finished = result[1]
-				
-				# Update visuals
-				for i in range(object1.areas.size()):
-					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
-			
-			Round.WheelPhase.SOUL_STRIKE:
-				var result = process1.call_func(
-					object1,
-					delta,
-					additional_info.phase_number
-				)
-				object1 = result[0]
-				is_finished = result[1]
-				
-				for i in range(object1.arrows.size()):
-					$Arrows.get_child(i).rotation_degrees = object1.arrows[i].rot_angle
-		
-			Round.WheelPhase.DEFEND:
-				# enemy's attack pattern (areas)
-				var result1 = process1.call_func(
-					object1,
-					delta,
-					additional_info.ebi
-				)
-				object1 = result1[0]
-				
-				# player's defend pattern (arrows)
-				var result2 = process2.call_func(
-					object2,
-					delta,
-					additional_info.phase_number
-				)
-				object2 = result2[0]
-				
-				# finish based on the player's pattern
-				is_finished = result2[1]
-				
-				# update visuals
-				for i in range(object1.areas.size()):
-					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
-				
-				for i in range(object2.arrows.size()):
-					$Arrows.get_child(i).rotation_degrees = object2.arrows[i].rot_angle
-					
-#		time_elapsed += delta
-
-		if Input.is_action_pressed("ui_accept"):
-			did_player_act = true
-			emit_signal("stop_running")
-		
-		if is_finished:
-			did_player_act = false
-			emit_signal("stop_running")
+	pass
+#	if running:
+#		var is_finished = false
+#
+#		match phase:
+#			Round.WheelPhase.SOUL_LOCK:
+#				# Update data
+#				var result = process1.call_func(
+#					object1,
+#					delta,
+#					additional_info.ebi
+#				)
+#				object1 = result[0]
+#				is_finished = result[1]
+#
+#				# Update visuals
+#				for i in range(object1.areas.size()):
+#					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
+#
+#			Round.WheelPhase.SOUL_STRIKE:
+#				var result = process1.call_func(
+#					object1,
+#					delta,
+#					additional_info.phase_number
+#				)
+#				object1 = result[0]
+#				is_finished = result[1]
+#
+#				for i in range(object1.arrows.size()):
+#					$Arrows.get_child(i).rotation_degrees = object1.arrows[i].rot_angle
+#
+#			Round.WheelPhase.DEFEND:
+#				# enemy's attack pattern (areas)
+#				var result1 = process1.call_func(
+#					object1,
+#					delta,
+#					additional_info.ebi
+#				)
+#				object1 = result1[0]
+#
+#				# player's defend pattern (arrows)
+#				var result2 = process2.call_func(
+#					object2,
+#					delta,
+#					additional_info.phase_number
+#				)
+#				object2 = result2[0]
+#
+#				# finish based on the player's pattern
+#				is_finished = result2[1]
+#
+#				# update visuals
+#				for i in range(object1.areas.size()):
+#					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
+#
+#				for i in range(object2.arrows.size()):
+#					$Arrows.get_child(i).rotation_degrees = object2.arrows[i].rot_angle
+#
+##		time_elapsed += delta
+#
+#		if Input.is_action_pressed("ui_accept"):
+#			did_player_act = true
+#			emit_signal("stop_running")
+#
+#		if is_finished:
+#			did_player_act = false
+#			emit_signal("stop_running")
 
 
 # Function for drawing the wheel's outline.

@@ -13,6 +13,11 @@ var postprocess
 var time_elapsed = 0
 
 var rng = RandomNumberGenerator.new()
+var tween : Tween = Tween.new()
+
+var did_player_acted = false
+
+signal stop_running
 
 # Attack:
 # Enemy1 has one attack pattern.
@@ -24,6 +29,11 @@ var rng = RandomNumberGenerator.new()
 
 
 func _init(current_behavior):
+	add_child(tween)
+	
+	var _e = connect(\"stop_running\", self, \"_on_stop_running\")
+	_e = tween.connect(\"tween_all_completed\", self, \"_on_tween_all_completed\")
+	
 	rng.randomize()
 	
 	match current_behavior:
@@ -39,19 +49,19 @@ func _init(current_behavior):
 
 
 # ===== ATTACK / ENEMY'S TURN =====
-func preprocess_a(attack_pattern, behavior_idx):
+func preprocess_a(pattern, behavior_idx):
 	rng.randomize()
 	
 	match behavior_idx:
-		0: return preprocess_a1(attack_pattern)
-		1: return preprocess_a2(attack_pattern)
+		0: return preprocess_a1(pattern)
+		1: return preprocess_a2(pattern)
 
 
 # behavior 1
-func preprocess_a1(attack_pattern):
+func preprocess_a1(pattern):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	
-	for area in attack_pattern.areas:
+	for area in pattern.areas:
 		# process rotation angle
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -61,14 +71,14 @@ func preprocess_a1(attack_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return attack_pattern
+	return pattern
 
 
 # behavior 2
-func preprocess_a2(attack_pattern):
+func preprocess_a2(pattern):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	
-	for area in attack_pattern.areas:
+	for area in pattern.areas:
 		# process rotation angle
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -78,78 +88,125 @@ func preprocess_a2(attack_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return attack_pattern
+	return pattern
 
 
-func process_a(attack_pattern, delta, behavior_idx):
+func process_a(pattern, visuals, behavior_idx):
 	var result
 	
 	match behavior_idx:
-		0: result = process_a1(attack_pattern, delta)
-		1: result = process_a2(attack_pattern, delta)
+		0: result = process_a1(pattern, visuals)
+		1: result = process_a2(pattern, visuals)
 	
-	time_elapsed += delta
 	return result
 
 
 # behavior 1
-func process_a1(attack_pattern, delta):
-	var is_finished = false
+func process_a1(pattern, visuals):
+	var _e
+	# setup the tween
+	for i in range(pattern.areas.size()):
+		var area = pattern.areas[i]
+		var visual = visuals[i]
+		var offset = pattern.offset[i]
+		
+		_e = tween.interpolate_property(
+			area, \"rot_angle\", 
+			area.rot_angle, area.rot_angle + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
+		
+		_e = tween.interpolate_property(
+			visual, \"rotation_degrees\",
+			visual.rotation_degrees, visual.rotation_degrees + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
 	
-	for area in attack_pattern.areas:
-		# process rotation angle
-		area.rot_angle += delta * area.move_speed
-		area.rot_angle = fmod(area.rot_angle, 360)
+	# start the tween
+	_e = tween.start()
 	
-	is_finished = time_elapsed > attack_pattern.process_time
+	# wait until the tween is stopped regardless how it stopped;
+	# by player input or time out?
+	yield(self, \"stop_running\")
 	
-	return [attack_pattern, is_finished]
+	# return
+	return [pattern, did_player_acted]
 
 
 # behavior 2
-func process_a2(attack_pattern, delta):
-	var is_finished = false
-	
-	for area in attack_pattern.areas:
-		# process rotation angle
-		area.rot_angle += delta * area.move_speed
-		area.rot_angle = fmod(area.rot_angle, 360)
+func process_a2(pattern, visuals):
+	var _e
+	# setup the tween
+	for i in range(pattern.areas.size()):
+		var area = pattern.areas[i]
+		var visual = visuals[i]
+		var offset = pattern.offset[i]
 		
-	is_finished = time_elapsed > attack_pattern.process_time
+		_e = tween.interpolate_property(
+			area, \"rot_angle\", 
+			area.rot_angle, area.rot_angle + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
+		
+		_e = tween.interpolate_property(
+			visual, \"rotation_degrees\",
+			visual.rotation_degrees, visual.rotation_degrees + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
 	
-	return [attack_pattern, is_finished]
+	# start the tween
+	_e = tween.start()
+	
+	# wait until the tween is stopped regardless how it stopped;
+	# by player input or time out?
+	yield(self, \"stop_running\")
+	
+	# return
+	return [pattern, did_player_acted]
 
 
-func postprocess_a(attack_pattern, behavior_idx):
+func postprocess_a(pattern, behavior_idx):
 	time_elapsed = 0
 	
 	match behavior_idx:
-		0: return postprocess_a1(attack_pattern)
-		1: return postprocess_a2(attack_pattern)
+		0: return postprocess_a1(pattern)
+		1: return postprocess_a2(pattern)
 
 
 # behavior 1
-func postprocess_a1(attack_pattern):
-	return attack_pattern
+func postprocess_a1(pattern):
+	for area in pattern.areas:
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
+	
+	return pattern
 
 
 # behavior 2
-func postprocess_a2(attack_pattern):
-	return attack_pattern
+func postprocess_a2(pattern):
+	for area in pattern.areas:
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
+		
+	return pattern
 
 # ==================
 
 
 # ===== DEFEND / SOUL LOCK =====
-func preprocess_d(defend_pattern, behavior_idx):
+func preprocess_d(pattern, behavior_idx):
 	rng.randomize()
 	
 	match behavior_idx:
-		0: return preprocess_d1(defend_pattern)
+		0: return preprocess_d1(pattern)
 
 
-func preprocess_d1(defend_pattern):
-	for area in defend_pattern.areas:
+func preprocess_d1(pattern):
+	for area in pattern.areas:
 		# process rotation angle
 		area.rot_angle += rng.randi_range(0, 360)
 		area.rot_angle = fmod(area.rot_angle, 360)
@@ -159,41 +216,81 @@ func preprocess_d1(defend_pattern):
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
 	
-	return defend_pattern
+	return pattern
 
 
-func process_d(defend_pattern, delta, behavior_idx):
+func process_d(pattern, visuals, behavior_idx):
 	var result
 	
 	match behavior_idx:
-		0: result = process_d1(defend_pattern, delta)
+		0: result = process_d1(pattern, visuals)
 	
-	time_elapsed += delta
 	return result
 
 
-func process_d1(defend_pattern, delta):
-	var is_finished = false
+func process_d1(pattern, visuals):
+	var _e
 	
-	for area in defend_pattern.areas:
-		area.rot_angle += delta * area.move_speed
-		area.rot_angle = fmod(area.rot_angle, 360)
+	# setup the tween
+	for i in range(pattern.areas.size()):
+		var area = pattern.areas[i]
+		var visual = visuals[i]
+		var offset = pattern.offset[i]
+		
+		_e = tween.interpolate_property(
+			area, \"rot_angle\", 
+			area.rot_angle, area.rot_angle + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
+		
+		_e = tween.interpolate_property(
+			visual, \"rotation_degrees\",
+			visual.rotation_degrees, visual.rotation_degrees + offset,
+			pattern.process_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
 	
-	is_finished = time_elapsed > defend_pattern.process_time
+	# start the tween
+	_e = tween.start()
 	
-	return [defend_pattern, is_finished]
+	# wait until the tween is stopped regardless how it stopped;
+	# by player input or time out?
+	yield(self, \"stop_running\")
+	
+	# return
+	return [pattern, did_player_acted]
 
 
-func postprocess_d(defend_pattern, behavior_idx):
+func postprocess_d(pattern, behavior_idx):
 	time_elapsed = 0
 	
 	match behavior_idx:
-		0: return postprocess_d1(defend_pattern)
+		0: return postprocess_d1(pattern)
 
 
-func postprocess_d1(defend_pattern):
-	return defend_pattern
+func postprocess_d1(pattern):
+	for area in pattern.areas:
+		area.rot_angle = fmod(area.rot_angle, 360)
+		if area.rot_angle < 0: area.rot_angle += 360
+	
+	return pattern
 # ==================
+
+
+func _input(event):
+	if event.is_action_pressed(\"ui_accept\") and tween.is_active():
+		did_player_acted = true
+		emit_signal(\"stop_running\")
+
+
+func _on_tween_all_completed():
+	emit_signal(\"stop_running\")
+
+
+func _on_stop_running():
+	if tween.is_active():
+		var _e = tween.stop_all()
 "
 
 [resource]
@@ -209,6 +306,7 @@ defend_patterns = [ {
 "rot_angle": 0.0,
 "thickness": 15.0
 } ],
+"offset": [ 270.0, 720.0 ],
 "process_time": 5.0
 } ]
 attack_patterns = [ {
@@ -231,6 +329,7 @@ attack_patterns = [ {
 "rot_angle": 240.0,
 "thickness": 30.0
 } ],
+"offset": [ 720.0, 720.0, 720.0 ],
 "process_time": 5.0
 }, {
 "areas": [ {
@@ -240,6 +339,7 @@ attack_patterns = [ {
 "rot_angle": 0.0,
 "thickness": 180.0
 } ],
+"offset": [ 720.0 ],
 "process_time": 5.0
 } ]
 behaviors = SubResource( 1 )

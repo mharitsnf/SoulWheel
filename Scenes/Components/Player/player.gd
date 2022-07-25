@@ -71,11 +71,11 @@ func play_turn():
 			
 			# process the areas
 			var result = yield(wheel_ins.action(
-				[character.data_model.behaviors.process],
+				[character.data_model.behaviors],
 				[defend_pattern],
 				{ "ebi": enemy_behavior_idx }
 			), "completed")
-			defend_pattern = result.data[0]
+			defend_pattern = result.patterns[0]
 			
 			# postprocess the areas (if any)
 			defend_pattern = character.data_model.behaviors.postprocess.call_func(
@@ -116,11 +116,11 @@ func play_turn():
 		
 		# process the arrows
 		var result = yield(wheel_ins.action(
-			[Round.chosen_skill.behaviors.process_a],
+			[Round.chosen_skill.behaviors],
 			[pattern],
-			{ "phase_number": phase_number }
+			{ "phase_number" : phase_number }
 		), "completed")
-		pattern = result.data[0]
+		pattern = result.patterns[0]
 		
 		# postprocess the arrows (if any)
 		pattern = Round.chosen_skill.behaviors.postprocess_a.call_func(

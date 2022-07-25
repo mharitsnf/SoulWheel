@@ -18,3 +18,5 @@ default_color = Color( 1, 1, 1, 1 )
 [node name="InnerLine" type="Line2D" parent="."]
 width = 3.0
 default_color = Color( 1, 1, 1, 1 )
+
+[node name="Tween" type="Tween" parent="."]
