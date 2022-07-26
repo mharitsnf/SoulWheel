@@ -20,6 +20,8 @@ signal action_ended
 # ======= PUBLIC FUNCTIONS =======
 
 func initialize(_phase):
+	var _e = connect("action_ended", self, "_on_action_ended")
+	
 	# Set the phase
 	phase = _phase
 	
@@ -69,7 +71,7 @@ func action(behaviors, patterns, additional_info):
 			
 			yield(self, "action_ended")
 			
-			behaviors[0].stop_tween()
+			behaviors[0].stop_process()
 			_synchronize(AREAS, patterns[0], $Areas.get_children())
 			
 		Round.WheelPhase.SOUL_STRIKE:
@@ -81,7 +83,7 @@ func action(behaviors, patterns, additional_info):
 			
 			yield(self, "action_ended")
 			
-			behaviors[0].stop_tween()
+			behaviors[0].stop_process()
 			_synchronize(ARROWS, patterns[0], $Arrows.get_children())
 			
 		Round.WheelPhase.DEFEND:
@@ -99,10 +101,10 @@ func action(behaviors, patterns, additional_info):
 			
 			yield(self, "action_ended")
 			
-			behaviors[0].stop_tween()
+			behaviors[0].stop_process()
 			_synchronize(AREAS, patterns[0], $Areas.get_children())
 			
-			behaviors[1].stop_tween()
+			behaviors[1].stop_process()
 			_synchronize(ARROWS, patterns[1], $Arrows.get_children())
 	
 	is_running = false
@@ -200,6 +202,9 @@ func _create_arrow(thickness: int, rot_angle : int):
 	return new_polygon
 
 # ================================
+
+func _on_action_ended():
+	pass
 
 func _input(event):
 	if event.is_action_pressed("ui_accept") and is_running:

@@ -171,7 +171,7 @@ func postprocess_d1(pattern):
 
 # ==================
 
-func stop_tween():
+func stop_process():
 	if tween.is_active():
 		tween.stop_all()
 "
