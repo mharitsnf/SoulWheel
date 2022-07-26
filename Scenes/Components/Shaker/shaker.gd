@@ -14,17 +14,17 @@ var shake_count = 0
 onready var parent = get_parent()
 
 
-func start(property, initial_value, priority = 0, shake_data = {}):
+func start(_property, _initial_value, _priority = 0, _shake_data = {}):
 	if priority >= self.priority:
-		self.property = property
-		self.initial_value = initial_value
-		self.priority = priority
+		property = _property
+		initial_value = _initial_value
+		priority = _priority
 		
-		if shake_data:
-			self.shake_data = shake_data
+		if _shake_data:
+			shake_data = _shake_data
 		
-		$Duration.wait_time = self.shake_data.duration
-		$Frequency.wait_time = 1 / float(self.shake_data.frequency)
+		$Duration.wait_time = shake_data.duration
+		$Frequency.wait_time = 1 / float(shake_data.frequency)
 		$Duration.start()
 		$Frequency.start()
 		

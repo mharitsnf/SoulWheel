@@ -64,27 +64,25 @@ func play_turn():
 			var enemy_behavior_idx = character.behavior_idx
 			
 			# preprocess the areas
-			defend_pattern = character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
+			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
 			
 			# draw the areas
 			Nodes.wheel.draw_areas(defend_pattern, character)
 			
 			# process the areas
-			var result = yield(Nodes.wheel.action(
+			var _did_player_acted = yield(Nodes.wheel.action(
 				[character.data_model.behaviors],
 				[defend_pattern],
 				{ "ebi": enemy_behavior_idx }
 			), "completed")
-			defend_pattern = result.patterns[0]
 			
 			# postprocess the areas (if any)
-			defend_pattern = character.data_model.behaviors.postprocess.call_func(
+			character.data_model.behaviors.postprocess.call_func(
 				defend_pattern,
 				enemy_behavior_idx
 			)
 			
 			# set the updated soul areas to the enemy data model
-			character.data_model.defend_patterns[character.behavior_idx] = defend_pattern
 			character.is_locked = true
 			
 			# Destroy
@@ -106,7 +104,7 @@ func play_turn():
 		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
 		
 		# preprocess the arrows for each round
-		pattern = Round.chosen_skill.behaviors.preprocess_a.call_func(
+		Round.chosen_skill.behaviors.preprocess_a.call_func(
 			pattern,
 			phase_number
 		)
@@ -115,21 +113,17 @@ func play_turn():
 		Nodes.wheel.draw_arrows(pattern)
 		
 		# process the arrows
-		var result = yield(Nodes.wheel.action(
+		var _did_player_acted = yield(Nodes.wheel.action(
 			[Round.chosen_skill.behaviors],
 			[pattern],
 			{ "phase_number" : phase_number }
 		), "completed")
-		pattern = result.patterns[0]
 		
 		# postprocess the arrows (if any)
-		pattern = Round.chosen_skill.behaviors.postprocess_a.call_func(
+		Round.chosen_skill.behaviors.postprocess_a.call_func(
 			pattern,
 			phase_number
 		)
-		
-		# set the updated arrows to the chosen skill attack arrows
-		Round.chosen_skill.attack_patterns[phase_number] = pattern
 		
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():

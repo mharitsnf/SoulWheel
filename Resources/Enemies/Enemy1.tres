@@ -15,8 +15,6 @@ var time_elapsed = 0
 var rng = RandomNumberGenerator.new()
 var tween = Tween.new()
 
-signal stop_running
-
 # Attack:
 # Enemy1 has one attack pattern.
 # 1. One area with constant speed.
@@ -45,10 +43,8 @@ func _init(current_behavior):
 
 # ===== ATTACK / ENEMY'S TURN =====
 func preprocess_a(pattern, behavior_idx):
-	rng.randomize()
-	
 	match behavior_idx:
-		0: return preprocess_a1(pattern)
+		0: preprocess_a1(pattern)
 
 
 # behavior 1
@@ -64,8 +60,6 @@ func preprocess_a1(pattern):
 		# process thickness
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
-	
-	return pattern
 
 
 func process_a(pattern, visuals, behavior_idx):
@@ -79,17 +73,9 @@ func process_a1(pattern, visuals):
 	
 	# --- TWEEN SETUP ---
 	for i in range(pattern.areas.size()):
-		var area = pattern.areas[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-
-		_e = tween.interpolate_property(
-			area, \"rot_angle\", 
-			area.rot_angle, area.rot_angle + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-
+		
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
@@ -110,7 +96,7 @@ func postprocess_a(pattern, behavior_idx):
 	time_elapsed = 0
 	
 	match behavior_idx:
-		0: return postprocess_a1(pattern)
+		0: postprocess_a1(pattern)
 
 
 # behavior 1
@@ -118,8 +104,6 @@ func postprocess_a1(pattern):
 	for area in pattern.areas:
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
-	
-	return pattern
 
 # ==================
 
@@ -129,7 +113,7 @@ func preprocess_d(pattern, behavior_idx):
 	rng.randomize()
 	
 	match behavior_idx:
-		0: return preprocess_d1(pattern)
+		0: preprocess_d1(pattern)
 
 
 func preprocess_d1(pattern):
@@ -142,8 +126,6 @@ func preprocess_d1(pattern):
 		# process thickness
 		area.thickness = clamp(area.thickness, 2, 360)
 		area.thickness = floor(area.thickness / 2)
-	
-	return pattern
 
 
 func process_d(pattern, visuals, behavior_idx):
@@ -156,17 +138,9 @@ func process_d1(pattern, visuals):
 
 	# --- TWEEN SETUP ---
 	for i in range(pattern.areas.size()):
-		var area = pattern.areas[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-
-		_e = tween.interpolate_property(
-			area, \"rot_angle\", 
-			area.rot_angle, area.rot_angle + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-
+		
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
@@ -187,15 +161,13 @@ func postprocess_d(pattern, behavior_idx):
 	time_elapsed = 0
 	
 	match behavior_idx:
-		0: return postprocess_d1(pattern)
+		0: postprocess_d1(pattern)
 
 
 func postprocess_d1(pattern):
 	for area in pattern.areas:
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
-	
-	return pattern
 
 # ==================
 

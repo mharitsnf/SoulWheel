@@ -19,8 +19,6 @@ var time_elapsed = 0
 var rng = RandomNumberGenerator.new()
 var tween = Tween.new()
 
-signal stop_running
-
 # Attack:
 # Enemy1 has one attack pattern.
 # 1. One area with constant speed.
@@ -49,7 +47,7 @@ func _preprocess_a(pattern, phase_number):
 	rng.randomize()
 	
 	match phase_number:
-		0: return preprocess_a1(pattern)
+		0: preprocess_a1(pattern)
 
 
 # phase 1
@@ -63,8 +61,6 @@ func preprocess_a1(pattern):
 		# process thickness
 		arrow.thickness = clamp(arrow.thickness, 2, 360)
 		arrow.thickness = floor(arrow.thickness / 2)
-	
-	return pattern
 
 
 func _process_a(pattern, visuals, phase_number):
@@ -78,16 +74,8 @@ func process_a1(pattern, visuals):
 
 	# --- TWEEN SETUP ---
 	for i in range(pattern.arrows.size()):
-		var arrow = pattern.arrows[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-
-		_e = tween.interpolate_property(
-			arrow, \"rot_angle\", 
-			arrow.rot_angle, arrow.rot_angle + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
 
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
@@ -109,7 +97,7 @@ func _postprocess_a(pattern, phase_number):
 	time_elapsed = 0
 	
 	match phase_number:
-		0: return postprocess_a1(pattern)
+		0: postprocess_a1(pattern)
 
 
 # phase 1
@@ -117,8 +105,6 @@ func postprocess_a1(pattern):
 	for arrow in pattern.arrows:
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
-		
-	return pattern
 
 # ==================
 
@@ -128,7 +114,7 @@ func _preprocess_d(pattern, phase_number):
 	rng.randomize()
 	
 	match phase_number:
-		0: return preprocess_d1(pattern)
+		0: preprocess_d1(pattern)
 
 
 func preprocess_d1(pattern):
@@ -141,8 +127,6 @@ func preprocess_d1(pattern):
 		# process thickness
 		arrow.thickness = clamp(arrow.thickness, 2, 360)
 		arrow.thickness = floor(arrow.thickness / 2)
-	
-	return pattern
 
 
 func _process_d(pattern, visuals, phase_number):
@@ -155,17 +139,9 @@ func process_d1(pattern, visuals):
 
 	# --- TWEEN SETUP ---
 	for i in range(pattern.arrows.size()):
-		var arrow = pattern.arrows[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-
-		_e = tween.interpolate_property(
-			arrow, \"rot_angle\", 
-			arrow.rot_angle, arrow.rot_angle + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-
+		
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
@@ -186,15 +162,13 @@ func _postprocess_d(pattern, phase_number):
 	time_elapsed = 0
 	
 	match phase_number:
-		0: return postprocess_d1(pattern)
+		0: postprocess_d1(pattern)
 
 
 func postprocess_d1(pattern):
 	for arrow in pattern.arrows:
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
-		
-	return pattern
 
 # ==================
 

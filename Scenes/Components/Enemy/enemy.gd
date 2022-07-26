@@ -40,11 +40,11 @@ func play_turn():
 		var defend_pattern = Round.chosen_skill.defend_patterns[phase_number].duplicate(true)
 		
 		# preprocess the areas and arrows
-		attack_pattern = data_model.behaviors.preprocess.call_func(
+		data_model.behaviors.preprocess.call_func(
 			attack_pattern,
 			behavior_idx
 		)
-		defend_pattern = Round.chosen_skill.behaviors.preprocess_d.call_func(
+		Round.chosen_skill.behaviors.preprocess_d.call_func(
 			defend_pattern,
 			phase_number
 		)
@@ -54,20 +54,18 @@ func play_turn():
 		Nodes.wheel.draw_arrows(defend_pattern)
 		
 		# process the areas and arrows
-		var result = yield(Nodes.wheel.action(
+		var _did_player_acted = yield(Nodes.wheel.action(
 			[data_model.behaviors, Round.chosen_skill.behaviors],
 			[attack_pattern, defend_pattern],
 			{ "ebi": behavior_idx, "phase_number": phase_number }
 		), "completed")
-		attack_pattern = result.patterns[0]
-		defend_pattern = result.patterns[1]
 		
 		# postprocess the areas and arrows
-		attack_pattern = data_model.behaviors.postprocess.call_func(
+		data_model.behaviors.postprocess.call_func(
 			attack_pattern,
 			behavior_idx
 		)
-		defend_pattern = Round.chosen_skill.behaviors.postprocess_d.call_func(
+		Round.chosen_skill.behaviors.postprocess_d.call_func(
 			defend_pattern,
 			phase_number
 		)

@@ -4,11 +4,7 @@ class_name Wheel
 
 export(float) var soul_lock_duration = 5
 
-enum Phases {
-	SOUL_LOCK
-	SOUL_STRIKE
-	DEFEND
-}
+enum { AREAS, ARROWS }
 
 onready var outer_line = $OuterLine
 onready var inner_line = $InnerLine
@@ -57,9 +53,6 @@ func draw_arrows(pattern):
 # _processes: array of process functions
 # _objects: array of behaviors
 func action(behaviors, patterns, additional_info):
-	var result = {
-		"patterns": []
-	}
 	
 	for behavior in behaviors:
 		Nodes.root.add_child(behavior)
@@ -75,10 +68,10 @@ func action(behaviors, patterns, additional_info):
 			)
 			
 			yield(self, "action_ended")
-			behaviors[0].stop_tween()
 			
-			result.patterns.append(patterns[0])
-		
+			behaviors[0].stop_tween()
+			_synchronize(AREAS, patterns[0], $Areas.get_children())
+			
 		Round.WheelPhase.SOUL_STRIKE:
 			behaviors[0].process_a.call_func(
 				patterns[0],
@@ -87,10 +80,10 @@ func action(behaviors, patterns, additional_info):
 			)
 			
 			yield(self, "action_ended")
-			behaviors[0].stop_tween()
 			
-			result.patterns.append(patterns[0])
-		
+			behaviors[0].stop_tween()
+			_synchronize(ARROWS, patterns[0], $Arrows.get_children())
+			
 		Round.WheelPhase.DEFEND:
 			behaviors[0].process.call_func(
 				patterns[0],
@@ -105,20 +98,19 @@ func action(behaviors, patterns, additional_info):
 			)
 			
 			yield(self, "action_ended")
-			behaviors[0].stop_tween()
-			behaviors[1].stop_tween()
 			
-			result.patterns.append(patterns[0])
-			result.patterns.append(patterns[1])
+			behaviors[0].stop_tween()
+			_synchronize(AREAS, patterns[0], $Areas.get_children())
+			
+			behaviors[1].stop_tween()
+			_synchronize(ARROWS, patterns[1], $Arrows.get_children())
 	
 	is_running = false
-	
-	result.did_player_acted = did_player_acted
 	
 	for behavior in behaviors:
 		Nodes.root.remove_child(behavior)
 	
-	return result
+	return did_player_acted
 
 
 func draw_locked_areas(characters):
@@ -139,6 +131,16 @@ func draw_locked_areas(characters):
 # ================================
 
 # ======= PRIVATE FUNCTIONS =======
+
+func _synchronize(flag, pattern, visuals):
+	match flag:
+		AREAS:
+			for i in range(visuals.size()):
+				pattern.areas[i].rot_angle = visuals[i].rotation_degrees
+		
+		ARROWS:
+			for i in range(visuals.size()):
+				pattern.arrows[i].rot_angle = visuals[i].rotation_degrees
 
 func _player_process_d(player_data):
 	return yield(player_data.behavior.process_d.call_funcv(player_data.params), "completed")
