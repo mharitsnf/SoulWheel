@@ -54,7 +54,7 @@ func play_turn():
 			_summon_wheel(Round.WheelPhase.SOUL_LOCK)
 			
 			# draw locked areas
-			wheel_ins.draw_locked_areas(turn_manager.get_children())
+			Nodes.wheel.draw_locked_areas(turn_manager.get_children())
 			
 			# set the enemy current behavior for defend (soul areas)
 			character.select_behavior(Character.Behavior.DEFEND)
@@ -67,10 +67,10 @@ func play_turn():
 			defend_pattern = character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
 			
 			# draw the areas
-			wheel_ins.draw_areas(defend_pattern, character)
+			Nodes.wheel.draw_areas(defend_pattern, character)
 			
 			# process the areas
-			var result = yield(wheel_ins.action(
+			var result = yield(Nodes.wheel.action(
 				[character.data_model.behaviors],
 				[defend_pattern],
 				{ "ebi": enemy_behavior_idx }
@@ -100,7 +100,7 @@ func play_turn():
 		_summon_wheel(Round.WheelPhase.SOUL_STRIKE)
 		
 		# draw locked areas
-		wheel_ins.draw_locked_areas(turn_manager.get_children())
+		Nodes.wheel.draw_locked_areas(turn_manager.get_children())
 		
 		# set temporary variables
 		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
@@ -112,10 +112,10 @@ func play_turn():
 		)
 		
 		# draw the arrows
-		wheel_ins.draw_arrows(pattern)
+		Nodes.wheel.draw_arrows(pattern)
 		
 		# process the arrows
-		var result = yield(wheel_ins.action(
+		var result = yield(Nodes.wheel.action(
 			[Round.chosen_skill.behaviors],
 			[pattern],
 			{ "phase_number" : phase_number }

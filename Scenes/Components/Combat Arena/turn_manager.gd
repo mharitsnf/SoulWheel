@@ -13,7 +13,7 @@ func initialize():
 	
 	# Add enemies to the tree. Randomization
 	# happens here, depending on the level
-	for enemy_idx in range(4):
+	for enemy_idx in range(1):
 		var enemy = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres", enemy_idx)
 		add_child(enemy)
 	

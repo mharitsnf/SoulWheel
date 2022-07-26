@@ -13,9 +13,7 @@ var postprocess
 var time_elapsed = 0
 
 var rng = RandomNumberGenerator.new()
-var tween : Tween = Tween.new()
-
-var did_player_acted = false
+var tween = Tween.new()
 
 signal stop_running
 
@@ -30,9 +28,6 @@ signal stop_running
 
 func _init(current_behavior):
 	add_child(tween)
-	
-	var _e = connect(\"stop_running\", self, \"_on_stop_running\")
-	_e = tween.connect(\"tween_all_completed\", self, \"_on_tween_all_completed\")
 	
 	rng.randomize()
 	
@@ -54,7 +49,6 @@ func preprocess_a(pattern, behavior_idx):
 	
 	match behavior_idx:
 		0: return preprocess_a1(pattern)
-		1: return preprocess_a2(pattern)
 
 
 # behavior 1
@@ -74,107 +68,49 @@ func preprocess_a1(pattern):
 	return pattern
 
 
-# behavior 2
-func preprocess_a2(pattern):
-	var rot_angle_variation = rng.randi_range(0, 360)
-	
-	for area in pattern.areas:
-		# process rotation angle
-		area.rot_angle += rot_angle_variation
-		area.rot_angle = fmod(area.rot_angle, 360)
-		if area.rot_angle < 0: area.rot_angle += 360
-		
-		# process thickness
-		area.thickness = clamp(area.thickness, 2, 360)
-		area.thickness = floor(area.thickness / 2)
-	
-	return pattern
-
-
 func process_a(pattern, visuals, behavior_idx):
-	var result
-	
 	match behavior_idx:
-		0: result = process_a1(pattern, visuals)
-		1: result = process_a2(pattern, visuals)
-	
-	return result
+		0: process_a1(pattern, visuals)
 
 
 # behavior 1
 func process_a1(pattern, visuals):
 	var _e
-	# setup the tween
+	
+	# --- TWEEN SETUP ---
 	for i in range(pattern.areas.size()):
 		var area = pattern.areas[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-		
+
 		_e = tween.interpolate_property(
 			area, \"rot_angle\", 
 			area.rot_angle, area.rot_angle + offset,
 			pattern.process_time,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
-		
+
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
 			pattern.process_time,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
-	
-	# start the tween
+
+	# --- TWEEN START ---
 	_e = tween.start()
 	
-	# wait until the tween is stopped regardless how it stopped;
-	# by player input or time out?
-	yield(self, \"stop_running\")
+	yield(tween, \"tween_all_completed\")
 	
-	# return
-	return [pattern, did_player_acted]
-
-
-# behavior 2
-func process_a2(pattern, visuals):
-	var _e
-	# setup the tween
-	for i in range(pattern.areas.size()):
-		var area = pattern.areas[i]
-		var visual = visuals[i]
-		var offset = pattern.offset[i]
-		
-		_e = tween.interpolate_property(
-			area, \"rot_angle\", 
-			area.rot_angle, area.rot_angle + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-		
-		_e = tween.interpolate_property(
-			visual, \"rotation_degrees\",
-			visual.rotation_degrees, visual.rotation_degrees + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-	
-	# start the tween
-	_e = tween.start()
-	
-	# wait until the tween is stopped regardless how it stopped;
-	# by player input or time out?
-	yield(self, \"stop_running\")
-	
-	# return
-	return [pattern, did_player_acted]
+	Nodes.wheel.emit_signal(\"action_ended\")
 
 
 func postprocess_a(pattern, behavior_idx):
+	tween.remove_all()
 	time_elapsed = 0
 	
 	match behavior_idx:
 		0: return postprocess_a1(pattern)
-		1: return postprocess_a2(pattern)
 
 
 # behavior 1
@@ -183,15 +119,6 @@ func postprocess_a1(pattern):
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
 	
-	return pattern
-
-
-# behavior 2
-func postprocess_a2(pattern):
-	for area in pattern.areas:
-		area.rot_angle = fmod(area.rot_angle, 360)
-		if area.rot_angle < 0: area.rot_angle += 360
-		
 	return pattern
 
 # ==================
@@ -220,49 +147,43 @@ func preprocess_d1(pattern):
 
 
 func process_d(pattern, visuals, behavior_idx):
-	var result
-	
 	match behavior_idx:
-		0: result = process_d1(pattern, visuals)
-	
-	return result
+		0: process_d1(pattern, visuals)
 
 
 func process_d1(pattern, visuals):
 	var _e
-	
-	# setup the tween
+
+	# --- TWEEN SETUP ---
 	for i in range(pattern.areas.size()):
 		var area = pattern.areas[i]
 		var visual = visuals[i]
 		var offset = pattern.offset[i]
-		
+
 		_e = tween.interpolate_property(
 			area, \"rot_angle\", 
 			area.rot_angle, area.rot_angle + offset,
 			pattern.process_time,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
-		
+
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
 			pattern.process_time,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
-	
-	# start the tween
+
+	# --- TWEEN START ---
 	_e = tween.start()
 	
-	# wait until the tween is stopped regardless how it stopped;
-	# by player input or time out?
-	yield(self, \"stop_running\")
+	yield(tween, \"tween_all_completed\")
 	
-	# return
-	return [pattern, did_player_acted]
+	Nodes.wheel.emit_signal(\"action_ended\")
 
 
 func postprocess_d(pattern, behavior_idx):
+	tween.remove_all()
 	time_elapsed = 0
 	
 	match behavior_idx:
@@ -275,22 +196,12 @@ func postprocess_d1(pattern):
 		if area.rot_angle < 0: area.rot_angle += 360
 	
 	return pattern
+
 # ==================
 
-
-func _input(event):
-	if event.is_action_pressed(\"ui_accept\") and tween.is_active():
-		did_player_acted = true
-		emit_signal(\"stop_running\")
-
-
-func _on_tween_all_completed():
-	emit_signal(\"stop_running\")
-
-
-func _on_stop_running():
+func stop_tween():
 	if tween.is_active():
-		var _e = tween.remove_all()
+		tween.stop_all()
 "
 
 [resource]
@@ -329,17 +240,7 @@ attack_patterns = [ {
 "rot_angle": 240.0,
 "thickness": 30.0
 } ],
-"offset": [ 720.0, 720.0, 720.0 ],
-"process_time": 5.0
-}, {
-"areas": [ {
-"damage": 5,
-"is_damage_percentage": false,
-"move_speed": 50.0,
-"rot_angle": 0.0,
-"thickness": 180.0
-} ],
-"offset": [ 720.0 ],
+"offset": [ 360.0, 360.0, 360.0 ],
 "process_time": 5.0
 } ]
 behaviors = SubResource( 1 )

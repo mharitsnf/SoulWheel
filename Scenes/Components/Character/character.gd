@@ -4,7 +4,6 @@ class_name Character
 
 export(PackedScene) var wheel : PackedScene
 
-var wheel_ins : Node2D = null
 var turn_count : int = 0
 var is_hit = null
 var rng : RandomNumberGenerator = RandomNumberGenerator.new()
@@ -25,14 +24,14 @@ func _ready():
 
 
 func _summon_wheel(phase):
-	wheel_ins = wheel.instance()
-	Nodes.root.add_child(wheel_ins)
-	wheel_ins.initialize(phase)
+	Nodes.wheel = wheel.instance()
+	Nodes.root.add_child(Nodes.wheel)
+	Nodes.wheel.initialize(phase)
 
 
 func _destroy_wheel():
-	wheel_ins.destroy()
-	wheel_ins = null
+	Nodes.wheel.destroy()
+	Nodes.wheel = null
 
 
 func _is_hit(arrow : Vector2, area : Vector2):

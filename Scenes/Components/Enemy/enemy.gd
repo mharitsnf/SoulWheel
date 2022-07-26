@@ -50,11 +50,11 @@ func play_turn():
 		)
 		
 		# draw the areas and arrows
-		wheel_ins.draw_areas(attack_pattern, self)
-		wheel_ins.draw_arrows(defend_pattern)
+		Nodes.wheel.draw_areas(attack_pattern, self)
+		Nodes.wheel.draw_arrows(defend_pattern)
 		
 		# process the areas and arrows
-		var result = yield(wheel_ins.action(
+		var result = yield(Nodes.wheel.action(
 			[data_model.behaviors, Round.chosen_skill.behaviors],
 			[attack_pattern, defend_pattern],
 			{ "ebi": behavior_idx, "phase_number": phase_number }

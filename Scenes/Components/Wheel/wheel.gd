@@ -15,20 +15,11 @@ onready var inner_line = $InnerLine
 
 var rng = RandomNumberGenerator.new()
 
-var process1
-var process2
-
-var object1 = [] # can be areas/arrows
-var object2 = [] # can be arrows during enemy's turn
-
 var phase = null
-var running : bool = false
-#var time_elapsed : float = 0
-var did_player_act = true
+var is_running : bool = false
+var did_player_acted = false
 
-signal stop_running
-signal start_running
-
+signal action_ended
 
 # ======= PUBLIC FUNCTIONS =======
 
@@ -41,10 +32,6 @@ func initialize(_phase):
 	
 	# Set position to center of the screen
 	position = Configurations.wheel.position
-	
-	# Connect signals
-	var _e = connect("stop_running", self, "_on_stop_running")
-	_e = connect("start_running", self, "_on_start_running")
 	
 	# Draw the wheel outline
 	_draw_outline()
@@ -71,56 +58,62 @@ func draw_arrows(pattern):
 # _objects: array of behaviors
 func action(behaviors, patterns, additional_info):
 	var result = {
-		"patterns": [],
-		"did_player_acted": []
+		"patterns": []
 	}
 	
 	for behavior in behaviors:
 		Nodes.root.add_child(behavior)
 	
+	is_running = true
+	
 	match phase:
 		Round.WheelPhase.SOUL_LOCK:
-			var result0 = yield(behaviors[0].process.call_func(
+			behaviors[0].process.call_func(
 				patterns[0],
 				$Areas.get_children(),
 				additional_info.ebi
-			), "completed")
+			)
 			
-			result.patterns.append(result0[0])
-			result.did_player_acted.append(result0[1])
+			yield(self, "action_ended")
+			behaviors[0].stop_tween()
+			
+			result.patterns.append(patterns[0])
 		
 		Round.WheelPhase.SOUL_STRIKE:
-			var result0 = yield(behaviors[0].process_a.call_func(
+			behaviors[0].process_a.call_func(
 				patterns[0],
 				$Arrows.get_children(),
 				additional_info.phase_number
-			), "completed")
+			)
 			
-			result.patterns.append(result0[0])
-			result.did_player_acted.append(result0[1])
+			yield(self, "action_ended")
+			behaviors[0].stop_tween()
+			
+			result.patterns.append(patterns[0])
 		
 		Round.WheelPhase.DEFEND:
-			var player_thread = Thread.new()
-			var player_data = {
-				"behavior": behaviors[1],
-				"params": [patterns[1], $Arrows.get_children(), additional_info.phase_number]
-			}
-			
-			player_thread.start(self, "_player_process_d", player_data, 0)
-			
-			var result0 = yield(behaviors[0].process.call_func(
+			behaviors[0].process.call_func(
 				patterns[0],
 				$Areas.get_children(),
 				additional_info.ebi
-			), "completed")
+			)
 			
-			var result1 = yield(player_thread.wait_to_finish(), "completed")
+			behaviors[1].process_d.call_func(
+				patterns[1],
+				$Arrows.get_children(),
+				additional_info.phase_number
+			)
 			
-			result.patterns.append(result0[0])
-			result.patterns.append(result1[0])
+			yield(self, "action_ended")
+			behaviors[0].stop_tween()
+			behaviors[1].stop_tween()
 			
-			result.did_player_acted.append(result0[1])
-			result.did_player_acted.append(result1[1])
+			result.patterns.append(patterns[0])
+			result.patterns.append(patterns[1])
+	
+	is_running = false
+	
+	result.did_player_acted = did_player_acted
 	
 	for behavior in behaviors:
 		Nodes.root.remove_child(behavior)
@@ -148,81 +141,7 @@ func draw_locked_areas(characters):
 # ======= PRIVATE FUNCTIONS =======
 
 func _player_process_d(player_data):
-	return yield(player_data.behavior.process_d.call_func(
-		player_data.params[0],
-		player_data.params[1],
-		player_data.params[2]
-	), "completed")
-
-
-func _process(delta):
-	pass
-#	if running:
-#		var is_finished = false
-#
-#		match phase:
-#			Round.WheelPhase.SOUL_LOCK:
-#				# Update data
-#				var result = process1.call_func(
-#					object1,
-#					delta,
-#					additional_info.ebi
-#				)
-#				object1 = result[0]
-#				is_finished = result[1]
-#
-#				# Update visuals
-#				for i in range(object1.areas.size()):
-#					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
-#
-#			Round.WheelPhase.SOUL_STRIKE:
-#				var result = process1.call_func(
-#					object1,
-#					delta,
-#					additional_info.phase_number
-#				)
-#				object1 = result[0]
-#				is_finished = result[1]
-#
-#				for i in range(object1.arrows.size()):
-#					$Arrows.get_child(i).rotation_degrees = object1.arrows[i].rot_angle
-#
-#			Round.WheelPhase.DEFEND:
-#				# enemy's attack pattern (areas)
-#				var result1 = process1.call_func(
-#					object1,
-#					delta,
-#					additional_info.ebi
-#				)
-#				object1 = result1[0]
-#
-#				# player's defend pattern (arrows)
-#				var result2 = process2.call_func(
-#					object2,
-#					delta,
-#					additional_info.phase_number
-#				)
-#				object2 = result2[0]
-#
-#				# finish based on the player's pattern
-#				is_finished = result2[1]
-#
-#				# update visuals
-#				for i in range(object1.areas.size()):
-#					$Areas.get_child(i).rotation_degrees = object1.areas[i].rot_angle
-#
-#				for i in range(object2.arrows.size()):
-#					$Arrows.get_child(i).rotation_degrees = object2.arrows[i].rot_angle
-#
-##		time_elapsed += delta
-#
-#		if Input.is_action_pressed("ui_accept"):
-#			did_player_act = true
-#			emit_signal("stop_running")
-#
-#		if is_finished:
-#			did_player_act = false
-#			emit_signal("stop_running")
+	return yield(player_data.behavior.process_d.call_funcv(player_data.params), "completed")
 
 
 # Function for drawing the wheel's outline.
@@ -278,13 +197,9 @@ func _create_arrow(thickness: int, rot_angle : int):
 	new_polygon.polygon = points
 	return new_polygon
 
-
-func _on_start_running():
-	running = true
-
-
-func _on_stop_running():
-	running = false
-#	time_elapsed = 0
-
 # ================================
+
+func _input(event):
+	if event.is_action_pressed("ui_accept") and is_running:
+		did_player_acted = true
+		emit_signal("action_ended")
