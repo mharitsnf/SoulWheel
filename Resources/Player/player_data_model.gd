@@ -7,6 +7,7 @@ export var initial_health : int
 var current_health = 30
 
 var skill_paths = [
-	"res://Resources/Attack Skills/Basic.tres"
+	"res://Resources/Attack Skills/Basic.tres",
+	"res://Resources/Attack Skills/Accelerate.tres"
 ]
 var skills = []

@@ -88,7 +88,7 @@ func process_a1(pattern, visuals):
 	
 	yield(tween, \"tween_all_completed\")
 	
-	Nodes.wheel.emit_signal(\"action_ended\")
+	Nodes.wheel.emit_signal(\"action_ended\", \"enemy\")
 
 
 func postprocess_a(pattern, behavior_idx):
@@ -153,7 +153,7 @@ func process_d1(pattern, visuals):
 	
 	yield(tween, \"tween_all_completed\")
 	
-	Nodes.wheel.emit_signal(\"action_ended\")
+	Nodes.wheel.emit_signal(\"action_ended\", \"enemy\")
 
 
 func postprocess_d(pattern, behavior_idx):
@@ -190,7 +190,7 @@ defend_patterns = [ {
 "thickness": 15.0
 } ],
 "offset": [ 270.0, 720.0 ],
-"process_time": 5.0
+"process_time": 4.0
 } ]
 attack_patterns = [ {
 "areas": [ {
@@ -212,7 +212,7 @@ attack_patterns = [ {
 "rot_angle": 240.0,
 "thickness": 30.0
 } ],
-"offset": [ 360.0, 360.0, 360.0 ],
-"process_time": 5.0
+"offset": [ 180.0, 180.0, 180.0 ],
+"process_time": 4.0
 } ]
 behaviors = SubResource( 1 )

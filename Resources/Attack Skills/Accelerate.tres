@@ -19,6 +19,11 @@ var time_elapsed = 0
 var rng = RandomNumberGenerator.new()
 var tween = Tween.new()
 
+var is_process_running = false
+var process_data = {}
+
+signal stop_internal_process
+
 # Attack:
 # Enemy1 has one attack pattern.
 # 1. One area with constant speed.
@@ -29,6 +34,8 @@ var tween = Tween.new()
 
 
 func _init():
+	var _e = connect(\"stop_internal_process\", self, \"_on_stop_internal_process\")
+	
 	add_child(tween)
 	
 	rng.randomize()
@@ -64,30 +71,23 @@ func preprocess_a1(pattern):
 
 
 func _process_a(pattern, visuals, phase_number):
+	var _e = Nodes.wheel.connect(\"action_ended\", self, \"_on_stop_internal_process\")
+	
 	match phase_number:
-		0: process_a1(pattern, visuals)
+		0: process_a1(pattern, visuals, phase_number)
 
 
 # phase 1
-func process_a1(pattern, visuals):
-	var _e 
-
-	# --- TWEEN SETUP ---
-	for i in range(pattern.arrows.size()):
-		var visual = visuals[i]
-		var offset = pattern.offset[i]
-
-		_e = tween.interpolate_property(
-			visual, \"rotation_degrees\",
-			visual.rotation_degrees, visual.rotation_degrees + offset,
-			pattern.process_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-
-	# --- TWEEN START ---
-	_e = tween.start()
+func process_a1(pattern, visuals, phase_number):
+	process_data = {
+		\"pattern\": pattern,
+		\"visuals\": visuals,
+		\"phase_code\": \"a\" + str(phase_number)
+	}
 	
-	yield(tween, \"tween_all_completed\")
+	is_process_running = true
+	
+	yield(self, \"stop_internal_process\")
 	
 	Nodes.wheel.emit_signal(\"action_ended\", \"player\")
 
@@ -131,28 +131,19 @@ func preprocess_d1(pattern):
 
 func _process_d(pattern, visuals, phase_number):
 	match phase_number:
-		0: process_d1(pattern, visuals)
+		0: process_d1(pattern, visuals, phase_number)
 
 
-func process_d1(pattern, visuals):
-	var _e 
-
-	# --- FIRST TWEEN ---
-	for i in range(pattern.arrows.size()):
-		var visual = visuals[i]
-		var offset = pattern.offset[i]
-		
-		_e = tween.interpolate_property(
-			visual, \"rotation_degrees\",
-			visual.rotation_degrees, visual.rotation_degrees + offset,
-			float(pattern.process_time / 2),
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
+func process_d1(pattern, visuals, phase_number):
+	process_data = {
+		\"pattern\": pattern,
+		\"visuals\": visuals,
+		\"phase_code\": \"d\" + str(phase_number)
+	}
 	
-	_e = tween.start()
+	is_process_running = true
 	
-	yield(tween, \"tween_completed\")
-	# --- FIRST TWEEN ---
+	yield(self, \"stop_internal_process\")
 	
 	Nodes.wheel.emit_signal(\"action_ended\", \"player\")
 
@@ -171,6 +162,31 @@ func postprocess_d1(pattern):
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 
 # ==================
+
+func _process(delta):
+	if is_process_running and process_data:
+		
+		match process_data.phase_code:
+			\"a0\", \"d0\":
+				for i in range(process_data.pattern.arrows.size()):
+					var pattern = process_data.pattern
+					var visual = process_data.visuals[i]
+					var arrow = process_data.pattern.arrows[i]
+					var direction = int(process_data.phase_code == \"a0\") * 2 - 1
+					
+					visual.rotation_degrees += delta * arrow.move_speed * direction
+					arrow.move_speed += pattern.acceleration
+		
+		time_elapsed += delta
+		
+		if time_elapsed > process_data.pattern.process_time:
+			emit_signal(\"stop_internal_process\")
+
+
+func _on_stop_internal_process(_who = null):
+	process_data = {}
+	is_process_running = false
+
 
 func stop_process():
 	if tween.is_active():
@@ -218,11 +234,12 @@ func sc2(pattern):
 
 [resource]
 script = ExtResource( 1 )
-name = "Basic"
+name = "Accelerate"
 attack_patterns = [ {
+"acceleration": 6.0,
 "arrows": [ {
 "damage": 5,
-"move_speed": 125.0,
+"move_speed": 10.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
@@ -230,6 +247,7 @@ attack_patterns = [ {
 "process_time": 4.0
 } ]
 defend_patterns = [ {
+"acceleration": 6.0,
 "arrows": [ {
 "move_speed": 125.0,
 "rot_angle": 0.0,

@@ -87,6 +87,10 @@ func action(behaviors, patterns, additional_info):
 			_synchronize(ARROWS, patterns[0], $Arrows.get_children())
 			
 		Round.WheelPhase.DEFEND:
+			# Like the other two phases, the process function stops on
+			# two conditions: player action or time out. The process stops
+			# whenever the fastest process ends.
+			
 			behaviors[0].process.call_func(
 				patterns[0],
 				$Areas.get_children(),
@@ -203,10 +207,10 @@ func _create_arrow(thickness: int, rot_angle : int):
 
 # ================================
 
-func _on_action_ended():
-	pass
+func _on_action_ended(who):
+	print("Who fired? ", who)
 
 func _input(event):
 	if event.is_action_pressed("ui_accept") and is_running:
 		did_player_acted = true
-		emit_signal("action_ended")
+		emit_signal("action_ended", self)

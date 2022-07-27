@@ -195,8 +195,8 @@ func _start_turn():
 	Round.chosen_skill = null
 	data_model.skills = []
 	
-	for skill_path in data_model.skill_paths:
-		data_model.skills.append(Round.load_skill(skill_path))
+	for skill in data_model.skill_paths:
+		data_model.skills.append(Round.load_skill(skill))
 
 
 func _end_turn():
