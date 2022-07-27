@@ -160,12 +160,12 @@ func play_turn():
 # Append enemies struck by an arrow into the arrow's list
 func _check_and_append_result(enemy, enemy_pattern, player_pattern):
 	for area in enemy_pattern.areas:
-		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
+		var area_angle : Vector2 = Round.generate_angles(area.rot_angle, area.thickness)
 
 		for arrow in player_pattern.arrows:
-			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
+			var arrow_angle : Vector2 = Round.generate_angles(arrow.rot_angle, arrow.thickness)
 
-			if _is_hit(arrow_angle, area_angle):
+			if Round.is_hit(arrow_angle, area_angle):
 				arrow.enemies_struck.append(enemy)
 
 

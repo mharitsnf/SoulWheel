@@ -50,19 +50,19 @@ func _is_hit(arrow : Vector2, area : Vector2):
 	
 	return false
 
-func _generate_angles(rot_angle, thickness):
-	# Limit to -359 to 359
-	var start_angle = fmod(-thickness + rot_angle, 360)
-	var end_angle = fmod(thickness + 1 + rot_angle, 360)
-	
-	# Limit to 0 to 359
-	if start_angle < 0: start_angle += 360
-	if end_angle < 0: end_angle += 360
-	
-	# Handles when start angle > end angle
-	if start_angle > end_angle: end_angle += 360
-	
-	return Vector2(start_angle, end_angle)
+#func _generate_angles(rot_angle, thickness):
+#	# Limit to -359 to 359
+#	var start_angle = fmod(-thickness + rot_angle, 360)
+#	var end_angle = fmod(thickness + 1 + rot_angle, 360)
+#
+#	# Limit to 0 to 359
+#	if start_angle < 0: start_angle += 360
+#	if end_angle < 0: end_angle += 360
+#
+#	# Handles when start angle > end angle
+#	if start_angle > end_angle: end_angle += 360
+#
+#	return Vector2(start_angle, end_angle)
 
 
 func select_behavior(behavior):

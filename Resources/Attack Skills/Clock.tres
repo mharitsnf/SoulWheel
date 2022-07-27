@@ -52,9 +52,10 @@ func _preprocess_a(pattern, phase_number):
 
 # phase 1
 func preprocess_a1(pattern):
+	var rot_angle_variation = rng.randi_range(0, 360)
 	for arrow in pattern.arrows:
 		# process rotation angle
-		arrow.rot_angle += rng.randi_range(0, 360)
+		arrow.rot_angle += rot_angle_variation
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 
@@ -114,9 +115,10 @@ func _preprocess_d(pattern, phase_number):
 
 
 func preprocess_d1(pattern):
+	var rot_angle_variation = rng.randi_range(0, 360)
 	for arrow in pattern.arrows:
 		# process rotation angle
-		arrow.rot_angle += rng.randi_range(0, 360)
+		arrow.rot_angle += rot_angle_variation
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 
@@ -137,7 +139,7 @@ func process_d1(pattern, visuals):
 		_e = tween.interpolate_property(
 			visual, \"rotation_degrees\",
 			visual.rotation_degrees, visual.rotation_degrees + offset,
-			float(pattern.process_time / 2),
+			float(pattern.process_time),
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
 	
@@ -189,9 +191,14 @@ func fc(pattern, phase_number):
 
 
 func fc1(pattern):
+	var angle_small = Round.generate_angles(pattern.arrows[0].rot_angle, pattern.arrows[0].thickness)
+	var angle_large = Round.generate_angles(pattern.arrows[1].rot_angle, pattern.arrows[1].thickness)
+	
+	var is_arrow_overlapping = Round.is_hit(angle_small, angle_large)
+	
 	for arrow in pattern.arrows:
-		for enemy in arrow.enemies_struck:
-			if arrow.enemies_struck.count(enemy) > 1: return true
+		if !arrow.enemies_struck.empty() and is_arrow_overlapping: return true
+			
 	return false
 # ===========================
 
@@ -202,23 +209,34 @@ func sc(pattern, phase_number):
 
 
 func sc2(pattern):
+	var angle_small = Round.generate_angles(pattern.arrows[0].rot_angle, pattern.arrows[0].thickness)
+	var angle_large = Round.generate_angles(pattern.arrows[1].rot_angle, pattern.arrows[1].thickness)
+	
+	var is_arrow_overlapping = Round.is_hit(angle_small, angle_large)
+	
 	for arrow in pattern.arrows:
 		if !arrow.struck_by.empty(): return false
-	return true
+	
+	return is_arrow_overlapping
 # ===========================
 "
 
 [resource]
 script = ExtResource( 1 )
-name = "Basic"
+name = "Clock"
 attack_patterns = [ {
 "arrows": [ {
 "damage": 5,
 "move_speed": 125.0,
 "rot_angle": 0.0,
 "thickness": 2
+}, {
+"damage": 5,
+"move_speed": 0,
+"rot_angle": 0,
+"thickness": 10
 } ],
-"offset": [ 1080.0 ],
+"offset": [ 1440.0, 360 ],
 "process_time": 4.0
 } ]
 defend_patterns = [ {
@@ -226,8 +244,12 @@ defend_patterns = [ {
 "move_speed": 125.0,
 "rot_angle": 0.0,
 "thickness": 2
+}, {
+"move_speed": 0,
+"rot_angle": 0,
+"thickness": 10
 } ],
-"offset": [ 360.0 ],
+"offset": [ 1440.0, 360 ],
 "process_time": 4.0
 } ]
 hp_cost = 5

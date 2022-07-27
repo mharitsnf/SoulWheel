@@ -112,12 +112,12 @@ func select_behavior(behavior):
 
 func _check_and_append_result(enemy_pattern, player_pattern):
 	for area in enemy_pattern.areas:
-		var area_angle : Vector2 = _generate_angles(area.rot_angle, area.thickness)
+		var area_angle : Vector2 = Round.generate_angles(area.rot_angle, area.thickness)
 		
 		for arrow in player_pattern.arrows:
-			var arrow_angle : Vector2 = _generate_angles(arrow.rot_angle, arrow.thickness)
+			var arrow_angle : Vector2 = Round.generate_angles(arrow.rot_angle, arrow.thickness)
 			
-			if _is_hit(arrow_angle, area_angle):
+			if Round.is_hit(arrow_angle, area_angle):
 				arrow.struck_by.append(area)
 
 

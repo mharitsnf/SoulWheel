@@ -138,3 +138,35 @@ func load_skill(path_to_skill : String):
 	skill.behaviors = skill.behaviors.new()
 	
 	return skill
+
+
+func is_hit(object1 : Vector2, object2 : Vector2):
+	# when arrow is behind
+	if object1.y - object2.x > 360:
+		object2.x += 360
+		object2.y += 360
+	
+	# when arrow is in front
+	if object2.y - object1.x > 360:
+		object1.x += 360
+		object1.y += 360
+	
+	if object1.y >= object2.x and object1.x <= object2.y:
+		return true
+	
+	return false
+
+
+func generate_angles(rot_angle, thickness):
+	# Limit to -359 to 359
+	var start_angle = fmod(-thickness + rot_angle, 360)
+	var end_angle = fmod(thickness + 1 + rot_angle, 360)
+	
+	# Limit to 0 to 359
+	if start_angle < 0: start_angle += 360
+	if end_angle < 0: end_angle += 360
+	
+	# Handles when start angle > end angle
+	if start_angle > end_angle: end_angle += 360
+	
+	return Vector2(start_angle, end_angle)

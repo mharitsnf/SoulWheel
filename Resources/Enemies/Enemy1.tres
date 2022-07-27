@@ -56,10 +56,6 @@ func preprocess_a1(pattern):
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
-		
-		# process thickness
-		area.thickness = clamp(area.thickness, 2, 360)
-		area.thickness = floor(area.thickness / 2)
 
 
 func process_a(pattern, visuals, behavior_idx):
@@ -122,10 +118,6 @@ func preprocess_d1(pattern):
 		area.rot_angle += rng.randi_range(0, 360)
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
-		
-		# process thickness
-		area.thickness = clamp(area.thickness, 2, 360)
-		area.thickness = floor(area.thickness / 2)
 
 
 func process_d(pattern, visuals, behavior_idx):

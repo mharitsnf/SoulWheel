@@ -64,10 +64,6 @@ func preprocess_a1(pattern):
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
-		
-		# process thickness
-		arrow.thickness = clamp(arrow.thickness, 2, 360)
-		arrow.thickness = floor(arrow.thickness / 2)
 
 
 func _process_a(pattern, visuals, phase_number):
@@ -103,8 +99,12 @@ func _postprocess_a(pattern, phase_number):
 # phase 1
 func postprocess_a1(pattern):
 	for arrow in pattern.arrows:
+		# adjust rot angle
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		
+		# reset move speed
+		arrow.move_speed = arrow.initial_move_speed
 
 # ==================
 
@@ -123,10 +123,6 @@ func preprocess_d1(pattern):
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
-		
-		# process thickness
-		arrow.thickness = clamp(arrow.thickness, 2, 360)
-		arrow.thickness = floor(arrow.thickness / 2)
 
 
 func _process_d(pattern, visuals, phase_number):
@@ -158,8 +154,12 @@ func _postprocess_d(pattern, phase_number):
 
 func postprocess_d1(pattern):
 	for arrow in pattern.arrows:
+		# adjust rot angle
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		
+		# reset move speed
+		arrow.move_speed = arrow.initial_move_speed
 
 # ==================
 
@@ -236,7 +236,7 @@ func sc2(pattern):
 script = ExtResource( 1 )
 name = "Accelerate"
 attack_patterns = [ {
-"acceleration": 6.0,
+"acceleration": 2.0,
 "arrows": [ {
 "damage": 5,
 "move_speed": 10.0,
@@ -244,17 +244,17 @@ attack_patterns = [ {
 "thickness": 2
 } ],
 "offset": [ 1080.0 ],
-"process_time": 4.0
+"process_time": 5.0
 } ]
 defend_patterns = [ {
-"acceleration": 6.0,
+"acceleration": 2.0,
 "arrows": [ {
 "move_speed": 125.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
 "offset": [ 360.0 ],
-"process_time": 4.0
+"process_time": 5.0
 } ]
 hp_cost = 5
 is_cost_percentage = false
