@@ -28,3 +28,5 @@ export(GDScript) var conditions
 
 # Script that handles the behavior of the attack and defend arrows.
 export(GDScript) var behaviors
+
+export(String, MULTILINE) var description

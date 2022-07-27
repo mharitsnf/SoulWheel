@@ -262,3 +262,4 @@ hp_bonus = 1
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
+description = "An arrow that accelerates overtime."

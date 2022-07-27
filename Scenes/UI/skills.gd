@@ -11,6 +11,8 @@ func initialize(_skills):
 		btn.size_flags_horizontal = Control.SIZE_FILL
 		btn_container.add_child(btn)
 		btn.connect("pressed", Round.player, "_on_skill_button_pressed", [btn.get_index()])
+		btn.connect("mouse_entered", Round.player, "_on_skill_button_mouse_entered", [skill])
+		btn.connect("mouse_exited", Round.player, "_on_skill_button_mouse_exited", [skill])
 
 
 func show():

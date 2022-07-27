@@ -1,0 +1,197 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Resources/Fonts/HeaderFont.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Resources/Fonts/NormalFont.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Scenes/UI/skill_card.gd" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="Animation" id=2]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "hide"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "show"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
+
+[node name="SkillCard" type="Panel"]
+anchor_right = 0.32
+anchor_bottom = 0.68
+margin_right = -1.52588e-05
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 3 )
+
+[node name="HeaderContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = 8.0
+margin_right = -5.99998
+margin_bottom = -126.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
+margin_right = 116.0
+margin_bottom = 19.0
+
+[node name="Control" type="Control" parent="HeaderContainer/HBoxContainer"]
+margin_right = 12.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="HeaderContainer/HBoxContainer"]
+margin_left = 16.0
+margin_top = 6.0
+margin_right = 99.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 1 )
+text = "Placeholder"
+
+[node name="Control2" type="Control" parent="HeaderContainer/HBoxContainer"]
+margin_left = 103.0
+margin_right = 116.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+
+[node name="DescriptionContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = 30.0
+margin_right = -5.99998
+margin_bottom = -81.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="DescriptionContainer"]
+margin_right = 116.0
+margin_bottom = 42.0
+custom_fonts/normal_font = ExtResource( 2 )
+text = "Lorem ipsum dolor sit amet"
+
+[node name="FCContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = 76.0
+margin_right = -70.0
+margin_bottom = -32.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="FCContainer"]
+margin_right = 51.0
+margin_bottom = 45.0
+custom_fonts/normal_font = ExtResource( 2 )
+text = "Lorem ipsum dolor sit amet"
+
+[node name="SCContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 64.0
+margin_top = 76.0
+margin_right = -5.99998
+margin_bottom = -32.0
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="RichTextLabel" type="RichTextLabel" parent="SCContainer"]
+margin_right = 58.0
+margin_bottom = 45.0
+custom_fonts/normal_font = ExtResource( 2 )
+text = "Lorem ipsum dolor sit amet"
+
+[node name="FooterContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.0
+margin_top = 126.0
+margin_right = -5.99998
+margin_bottom = -8.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="FooterContainer"]
+margin_right = 116.0
+margin_bottom = 19.0
+
+[node name="HPCost" type="Label" parent="FooterContainer/HBoxContainer"]
+margin_top = 6.0
+margin_right = 13.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "+5"
+
+[node name="Control" type="Control" parent="FooterContainer/HBoxContainer"]
+margin_left = 17.0
+margin_right = 100.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+
+[node name="HPBonus" type="Label" parent="FooterContainer/HBoxContainer"]
+margin_left = 104.0
+margin_top = 6.0
+margin_right = 116.0
+margin_bottom = 12.0
+custom_fonts/font = ExtResource( 2 )
+text = "-5"
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 2 )
+anims/hide = SubResource( 3 )
+anims/show = SubResource( 4 )
