@@ -207,8 +207,9 @@ func _create_arrow(thickness: int, rot_angle : int):
 
 # ================================
 
-func _on_action_ended(who):
-	print("Who fired? ", who)
+func _on_action_ended(_who):
+	pass
+
 
 func _input(event):
 	if event.is_action_pressed("ui_accept") and is_running:

@@ -64,6 +64,9 @@ func preprocess_a1(pattern):
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		
+		# reset variables
+		arrow.rot_angle_displacement = 0
 
 
 func _process_a(pattern, visuals, phase_number):
@@ -103,7 +106,7 @@ func postprocess_a1(pattern):
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 		
-		# reset move speed
+		# reset variables
 		arrow.move_speed = arrow.initial_move_speed
 
 # ==================
@@ -123,6 +126,9 @@ func preprocess_d1(pattern):
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		
+		# reset variables
+		arrow.rot_angle_displacement = 0
 
 
 func _process_d(pattern, visuals, phase_number):
@@ -158,7 +164,7 @@ func postprocess_d1(pattern):
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 		
-		# reset move speed
+		# reset variables
 		arrow.move_speed = arrow.initial_move_speed
 
 # ==================
@@ -168,14 +174,16 @@ func _process(delta):
 		
 		match process_data.phase_code:
 			\"a0\", \"d0\":
-				for i in range(process_data.pattern.arrows.size()):
-					var pattern = process_data.pattern
-					var visual = process_data.visuals[i]
-					var arrow = process_data.pattern.arrows[i]
-					var direction = int(process_data.phase_code == \"a0\") * 2 - 1
-					
-					visual.rotation_degrees += delta * arrow.move_speed * direction
-					arrow.move_speed += pattern.acceleration
+				var pattern = process_data.pattern
+				var visual = process_data.visuals[0]
+				var arrow = process_data.pattern.arrows[0]
+				var direction = int(process_data.phase_code == \"a0\") * 2 - 1
+				var displacement = delta * arrow.move_speed * direction
+				
+				visual.rotation_degrees += displacement
+				
+				arrow.rot_angle_displacement += displacement
+				arrow.move_speed += pattern.acceleration
 		
 		time_elapsed += delta
 		
@@ -213,22 +221,25 @@ func fc(pattern, phase_number):
 
 
 func fc1(pattern):
-	for arrow in pattern.arrows:
-		for enemy in arrow.enemies_struck:
-			if arrow.enemies_struck.count(enemy) > 1: return true
+	var arrow = pattern.arrows[0]
+	if !arrow.enemies_struck.empty() and abs(arrow.rot_angle_displacement) > 360: return true
+	
 	return false
+
 # ===========================
 
 # ===== SECOND CONDITION =====
 func sc(pattern, phase_number):
 	match phase_number:
-		0: return sc2(pattern)
+		0: return sc1(pattern)
 
 
-func sc2(pattern):
-	for arrow in pattern.arrows:
-		if !arrow.struck_by.empty(): return false
-	return true
+func sc1(pattern):
+	var arrow = pattern.arrows[0]
+	if arrow.struck_by.empty() and abs(arrow.rot_angle_displacement) > 360: return true
+	
+	return false
+
 # ===========================
 "
 
@@ -236,7 +247,7 @@ func sc2(pattern):
 script = ExtResource( 1 )
 name = "Accelerate"
 attack_patterns = [ {
-"acceleration": 2.0,
+"acceleration": 1.5,
 "arrows": [ {
 "damage": 5,
 "move_speed": 10.0,
@@ -247,9 +258,9 @@ attack_patterns = [ {
 "process_time": 5.0
 } ]
 defend_patterns = [ {
-"acceleration": 2.0,
+"acceleration": 1.5,
 "arrows": [ {
-"move_speed": 125.0,
+"move_speed": 10.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],

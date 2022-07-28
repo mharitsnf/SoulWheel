@@ -15,6 +15,13 @@ func initialize(_skills):
 		btn.connect("mouse_exited", Round.player, "_on_skill_button_mouse_exited", [skill])
 
 
+func disconnect_signals():
+	for btn in btn_container.get_children():
+		if btn is Button:
+			btn.disconnect("mouse_entered", Round.player, "_on_skill_button_mouse_entered")
+			btn.disconnect("mouse_exited", Round.player, "_on_skill_button_mouse_exited")
+
+
 func show():
 	$Tween.interpolate_property(
 		self,

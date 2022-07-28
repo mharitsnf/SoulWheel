@@ -8,6 +8,7 @@ onready var fc_node = $FCContainer/RichTextLabel
 onready var sc_node = $SCContainer/RichTextLabel
 onready var hp_cost_node = $FooterContainer/HBoxContainer/HPCost
 onready var hp_bonus_node = $FooterContainer/HBoxContainer/HPBonus
+onready var animation_player = $AnimationPlayer
 
 var title = "" setget _set_title
 var description = "" setget _set_description
@@ -18,12 +19,13 @@ var hp_bonus = 0 setget _set_hp_bonus
 
 
 func show():
-	$AnimationPlayer.play("show")
+	animation_player.play("show")
+	yield(animation_player, "animation_finished")
 
 
 func hide():
-	$AnimationPlayer.play("hide")
-	yield($AnimationPlayer, "animation_finished")
+	animation_player.play("hide")
+	yield(animation_player, "animation_finished")
 
 
 func _set_title(value):

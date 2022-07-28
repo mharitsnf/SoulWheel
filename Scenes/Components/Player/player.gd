@@ -23,9 +23,10 @@ func _ready():
 
 
 func take_damage(damage):
+	.take_damage(damage)
+	
 	var new_health = data_model.current_health - damage
 	data_model.current_health = max(0, new_health)
-	$Shaker.start("position", position, 1)
 	
 	_update_hp_hud()
 	
@@ -215,12 +216,12 @@ func _summon_skill_hud():
 	Nodes.root.add_child(skill_hud_ins)
 	skill_hud_ins.initialize(data_model.skills)
 	
-#	Globals.hp_hud.move_up()
 	yield(skill_hud_ins.show(), "completed")
 
 
 func _destroy_skill_hud():
-#	Globals.hp_hud.move_down()
+	skill_hud_ins.disconnect_signals()
+	yield(Nodes.skill_card.hide(), "completed")
 	yield(skill_hud_ins.hide_and_destroy(), "completed")
 	skill_hud_ins = null
 

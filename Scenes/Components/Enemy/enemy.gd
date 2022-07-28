@@ -140,9 +140,10 @@ func _end_turn():
 
 
 func take_damage(damage):
+	.take_damage(damage)
+	
 	var new_health = current_health - damage
 	current_health = max(0, new_health)
-	$Shaker.start("position", position, 1)
 	
 	if new_health <= 0:
 		return true
