@@ -174,8 +174,11 @@ func _check_and_append_result(enemy, enemy_pattern, player_pattern):
 func _deal_damage(pattern):
 	for arrow in pattern.arrows:
 		for enemy in arrow.enemies_struck:
-			enemy.is_defeated = enemy.take_damage(arrow.damage)
-			print(arrow, " struck ", enemy.name, "! enemy health: ", enemy.current_health)
+			if !enemy.is_damage_dealt:
+				var damage = arrow.damage * arrow.enemies_struck.count(enemy)
+				enemy.is_defeated = enemy.take_damage(damage)
+				enemy.is_damage_dealt = true
+				print(arrow, " struck ", enemy.name, " for ", damage, " damage! enemy health: ", enemy.current_health)
 
 
 func _remove_defeated_enemies(characters):
@@ -206,6 +209,7 @@ func _end_turn():
 	for character in turn_manager.get_children():
 		if character is Enemy:
 			character.is_locked = false
+			character.is_damage_dealt = false
 			character.reset_data_model()
 	
 	._end_turn()
@@ -221,17 +225,19 @@ func _summon_skill_hud():
 
 func _destroy_skill_hud():
 	skill_hud_ins.disconnect_signals()
-	yield(Nodes.skill_card.hide(), "completed")
+	Nodes.skill_card.hide()
 	yield(skill_hud_ins.hide_and_destroy(), "completed")
 	skill_hud_ins = null
 
 
 func _wager_hp(amount):
+	hp_notification(-amount)
 	data_model.current_health = max(1, data_model.current_health - amount)
 	_update_hp_hud()
 
 
 func add_hp(amount):
+	hp_notification(amount)
 	data_model.current_health += amount
 	_update_hp_hud()
 
@@ -256,6 +262,8 @@ func _on_skill_button_mouse_entered(skill):
 	Nodes.skill_card.description = skill.description
 	Nodes.skill_card.hp_cost = skill.hp_cost
 	Nodes.skill_card.hp_bonus = skill.hp_bonus
+	Nodes.skill_card.fc = skill.first_condition
+	Nodes.skill_card.sc = skill.second_condition
 	
 	Nodes.skill_card.show()
 

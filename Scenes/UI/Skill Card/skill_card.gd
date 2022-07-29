@@ -19,13 +19,11 @@ var hp_bonus = 0 setget _set_hp_bonus
 
 
 func show():
-	animation_player.play("show")
-	yield(animation_player, "animation_finished")
+	modulate.a = 1
 
 
 func hide():
-	animation_player.play("hide")
-	yield(animation_player, "animation_finished")
+	modulate.a = 0
 
 
 func _set_title(value):
@@ -40,22 +38,22 @@ func _set_description(value):
 
 func _set_fc(value):
 	fc = value
-	fc_node.text = value
+	fc_node.text = "Reclaim HP: " + value
 
 
 func _set_sc(value):
 	sc = value
-	sc_node = value
+	sc_node.text = "Bonus HP: " + value
 
 
 func _set_hp_cost(value):
 	hp_cost = value
-	hp_cost_node.text = "-" + str(value)
+	hp_cost_node.text = "Wager " + str(value) + "HP"
 
 
 func _set_hp_bonus(value):
 	hp_bonus = value
-	hp_bonus_node.text = "+" + str(value)
+	hp_bonus_node.text = "Bonus " + str(value) + "HP"
 
 
 func _ready():

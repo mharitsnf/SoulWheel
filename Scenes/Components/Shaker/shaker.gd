@@ -20,8 +20,14 @@ func start(_property, _initial_value, _priority = 0, _shake_data = {}):
 		initial_value = _initial_value
 		priority = _priority
 		
-		if _shake_data:
-			shake_data = _shake_data
+		if _shake_data.has("duration"):
+			shake_data.duration = _shake_data.duration
+		
+		if _shake_data.has("frequency"):
+			shake_data.frequency = _shake_data.frequency
+		
+		if _shake_data.has("amplitude"):
+			shake_data.amplitude = _shake_data.amplitude
 		
 		$Duration.wait_time = shake_data.duration
 		$Frequency.wait_time = 1 / float(shake_data.frequency)

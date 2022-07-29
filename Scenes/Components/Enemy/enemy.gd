@@ -12,6 +12,7 @@ var data_model_path = null
 
 var is_defeated = false
 var is_locked = false
+var is_damage_dealt = false
 
 var behavior_idx = 0
 
@@ -122,9 +123,13 @@ func _check_and_append_result(enemy_pattern, player_pattern):
 
 
 func _deal_damage(pattern):
+	var total_damage = 0
+	
 	for arrow in pattern.arrows:
 		for area in arrow.struck_by:
-			if Round.player.take_damage(area.damage): return true
+			total_damage += area.damage
+			
+	if total_damage > 0 and Round.player.take_damage(total_damage): return true
 	
 	return false
 

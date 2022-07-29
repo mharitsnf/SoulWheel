@@ -56,8 +56,18 @@ func select_behavior(behavior):
 
 
 func take_damage(_damage):
+	# pop up notification
+	hp_notification(-_damage)
+	
 	# Shake animation
 	$Shaker.start("position", position, 1)
+
+
+func hp_notification(amount):
+	var notification_ins = load("res://Scenes/UI/Notification/Notification.tscn").instance()
+	notification_ins.initialize(amount)
+	notification_ins.rect_position = position + Vector2(-15, -30)
+	Nodes.notification_container.add_child(notification_ins)
 
 
 func _start_turn():

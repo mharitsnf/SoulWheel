@@ -226,7 +226,7 @@ script = ExtResource( 1 )
 name = "Clock"
 attack_patterns = [ {
 "arrows": [ {
-"damage": 5,
+"damage": 10,
 "move_speed": 125.0,
 "rot_angle": 0.0,
 "thickness": 2
@@ -254,8 +254,10 @@ defend_patterns = [ {
 } ]
 hp_cost = 5
 is_cost_percentage = false
-hp_bonus = 1
+hp_bonus = 3
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "One slow large arrow and one fast small arrow."
+description = "One slow large arrow (5DMG) and one fast small arrow (10DMG) that rotates on constant speed."
+first_condition = "Both arrows hit an area and the small arrow is within the large arrow."
+second_condition = "Both arrows avoid damaging areas and the small arrow is within the large arrow."

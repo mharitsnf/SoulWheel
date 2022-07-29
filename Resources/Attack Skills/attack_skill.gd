@@ -30,3 +30,5 @@ export(GDScript) var conditions
 export(GDScript) var behaviors
 
 export(String, MULTILINE) var description
+export(String, MULTILINE) var first_condition
+export(String, MULTILINE) var second_condition

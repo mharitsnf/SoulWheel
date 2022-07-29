@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Scenes/UI/hud.gd" type="Script" id=1]
+[ext_resource path="res://Scenes/UI/HUD/hud.gd" type="Script" id=1]
+[ext_resource path="res://Resources/Fonts/NormalFont.tres" type="DynamicFont" id=2]
 
 [node name="HUD" type="Control"]
 anchor_right = 1.0
@@ -20,9 +21,10 @@ margin_bottom = -8.0
 
 [node name="Label" type="Label" parent="MarginContainer"]
 margin_right = 384.0
-margin_bottom = 14.0
+margin_bottom = 10.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_fonts/font = ExtResource( 2 )
 valign = 1
 
 [node name="Tween" type="Tween" parent="."]

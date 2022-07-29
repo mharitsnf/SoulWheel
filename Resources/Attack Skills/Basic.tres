@@ -213,13 +213,13 @@ script = ExtResource( 1 )
 name = "Basic"
 attack_patterns = [ {
 "arrows": [ {
-"damage": 5,
+"damage": 2,
 "move_speed": 125.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
 "offset": [ 1080.0 ],
-"process_time": 4.0
+"process_time": 6.0
 } ]
 defend_patterns = [ {
 "arrows": [ {
@@ -228,12 +228,14 @@ defend_patterns = [ {
 "thickness": 2
 } ],
 "offset": [ 360.0 ],
-"process_time": 4.0
+"process_time": 6.0
 } ]
-hp_cost = 5
+hp_cost = 3
 is_cost_percentage = false
-hp_bonus = 1
+hp_bonus = 0
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "An arrow that rotates constantly."
+description = "An arrow that rotates on constant speed (2DMG)."
+first_condition = "The arrow hits an overlapping area."
+second_condition = "The arrow avoids any damaging areas."

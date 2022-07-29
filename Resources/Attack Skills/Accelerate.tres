@@ -106,6 +106,8 @@ func postprocess_a1(pattern):
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 		
+		arrow.damage += floor(arrow.rot_angle_displacement / 180) * pattern.damage_bonus
+		
 		# reset variables
 		arrow.move_speed = arrow.initial_move_speed
 
@@ -236,7 +238,7 @@ func sc(pattern, phase_number):
 
 func sc1(pattern):
 	var arrow = pattern.arrows[0]
-	if arrow.struck_by.empty() and abs(arrow.rot_angle_displacement) > 360: return true
+	if arrow.struck_by.empty() and abs(arrow.rot_angle_displacement) > (360*2): return true
 	
 	return false
 
@@ -247,30 +249,33 @@ func sc1(pattern):
 script = ExtResource( 1 )
 name = "Accelerate"
 attack_patterns = [ {
-"acceleration": 1.5,
+"acceleration": 2.0,
 "arrows": [ {
-"damage": 5,
+"damage": 2,
 "move_speed": 10.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
+"damage_bonus": 2.0,
 "offset": [ 1080.0 ],
-"process_time": 5.0
+"process_time": 6.0
 } ]
 defend_patterns = [ {
-"acceleration": 1.5,
+"acceleration": 2.0,
 "arrows": [ {
 "move_speed": 10.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
 "offset": [ 360.0 ],
-"process_time": 5.0
+"process_time": 6.0
 } ]
 hp_cost = 5
 is_cost_percentage = false
-hp_bonus = 1
+hp_bonus = 2
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "An arrow that accelerates overtime."
+description = "An arrow that accelerates overtime (2DMG). Adds 1DMG every half circle rotated."
+first_condition = "The arrow hits an overlapping area after revoluting the circle once."
+second_condition = "The arrow avoids any areas after revoluting the circle twice."
