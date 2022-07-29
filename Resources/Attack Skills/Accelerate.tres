@@ -106,7 +106,7 @@ func postprocess_a1(pattern):
 		arrow.rot_angle = fmod(arrow.rot_angle, 360)
 		if arrow.rot_angle < 0: arrow.rot_angle += 360
 		
-		arrow.damage += floor(arrow.rot_angle_displacement / 180) * pattern.damage_bonus
+		arrow.damage += floor(arrow.rot_angle_displacement / 360) * pattern.damage_bonus
 		
 		# reset variables
 		arrow.move_speed = arrow.initial_move_speed
@@ -249,7 +249,7 @@ func sc1(pattern):
 script = ExtResource( 1 )
 name = "Accelerate"
 attack_patterns = [ {
-"acceleration": 2.0,
+"acceleration": 5.0,
 "arrows": [ {
 "damage": 2,
 "move_speed": 10.0,
@@ -261,7 +261,7 @@ attack_patterns = [ {
 "process_time": 6.0
 } ]
 defend_patterns = [ {
-"acceleration": 2.0,
+"acceleration": 5.0,
 "arrows": [ {
 "move_speed": 10.0,
 "rot_angle": 0.0,

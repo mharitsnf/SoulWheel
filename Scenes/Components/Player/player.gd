@@ -47,6 +47,8 @@ func play_turn():
 	yield(self, "skill_button_pressed") # Wait for player to select a skill
 	yield(_destroy_skill_hud(), "completed")
 	
+	yield(_wager_hp(Round.chosen_skill.hp_cost), "completed")
+	
 	# PHASE 2: Soul lock phase
 	for character in turn_manager.get_children():
 		if character is Enemy:
@@ -231,7 +233,7 @@ func _destroy_skill_hud():
 
 
 func _wager_hp(amount):
-	hp_notification(-amount)
+	yield(hp_notification(-amount), "completed")
 	data_model.current_health = max(1, data_model.current_health - amount)
 	_update_hp_hud()
 
@@ -249,9 +251,6 @@ func _update_hp_hud():
 func _on_skill_button_pressed(btn_idx):
 	# choose the skill
 	Round.chosen_skill = data_model.skills[btn_idx]
-	
-	# wager the HP
-	_wager_hp(Round.chosen_skill.hp_cost)
 	
 	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")

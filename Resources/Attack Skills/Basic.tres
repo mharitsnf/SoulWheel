@@ -238,4 +238,4 @@ conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
 description = "An arrow that rotates on constant speed (2DMG)."
 first_condition = "The arrow hits an overlapping area."
-second_condition = "The arrow avoids any damaging areas."
+second_condition = "-"

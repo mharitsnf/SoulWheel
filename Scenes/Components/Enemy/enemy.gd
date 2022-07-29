@@ -2,7 +2,9 @@ extends Character
 class_name Enemy
 
 
-onready var current_health = data_model.max_health
+onready var health_bar = $HealthBar
+
+var current_health
 
 var color
 var radius
@@ -23,6 +25,10 @@ func _ready():
 	._ready()
 	
 	assert(data_model != null)
+	
+	current_health = data_model.max_health
+	health_bar.max_value = current_health
+	health_bar.value = current_health
 
 
 func play_turn():
@@ -150,10 +156,16 @@ func take_damage(damage):
 	var new_health = current_health - damage
 	current_health = max(0, new_health)
 	
+	_update_health_bar()
+	
 	if new_health <= 0:
 		return true
 	
 	return false
+
+
+func _update_health_bar():
+	health_bar.value = current_health
 
 
 func _input(event):

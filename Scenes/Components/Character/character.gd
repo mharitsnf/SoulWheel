@@ -68,6 +68,7 @@ func hp_notification(amount):
 	notification_ins.initialize(amount)
 	notification_ins.rect_position = position + Vector2(-15, -30)
 	Nodes.notification_container.add_child(notification_ins)
+	yield(notification_ins, "tree_exited")
 
 
 func _start_turn():
