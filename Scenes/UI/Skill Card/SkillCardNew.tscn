@@ -45,7 +45,7 @@ anchor_bottom = 1.0
 margin_left = 64.0
 margin_top = 32.0
 margin_right = -80.0
-margin_bottom = -65.0
+margin_bottom = -33.0
 custom_styles/panel = SubResource( 1 )
 
 [node name="TabContainer" type="TabContainer" parent="."]
@@ -68,33 +68,39 @@ margin_top = 24.0
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Description"]
 anchor_left = 0.016
-anchor_top = 0.042
+anchor_top = 0.094
 anchor_right = 0.516
-anchor_bottom = 0.958
+anchor_bottom = 0.960688
 margin_left = 0.0319998
 margin_top = -0.0320005
 margin_right = 0.0319901
 margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="Description" type="RichTextLabel" parent="TabContainer/Description/MarginContainer"]
 margin_right = 124.0
-margin_bottom = 88.0
+margin_bottom = 111.0
 custom_fonts/normal_font = ExtResource( 1 )
 text = "One fast small arrow (1) and one slow large arrow (2) that revolves on constant speed."
 
 [node name="MarginContainer2" type="MarginContainer" parent="TabContainer/Description"]
-anchor_left = 0.758
-anchor_top = 0.042
-anchor_right = 0.984
-anchor_bottom = 0.958
-margin_left = -55.984
+anchor_left = 0.532
+anchor_top = 0.094
+anchor_right = 0.996
+anchor_bottom = 0.960688
+margin_left = 0.0639954
 margin_top = -0.0320005
-margin_right = 2.96799
+margin_right = -0.00801086
 margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Description/MarginContainer2"]
 margin_right = 115.0
-margin_bottom = 88.0
+margin_bottom = 111.0
 
 [node name="HPCost" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
 margin_right = 115.0
@@ -125,39 +131,43 @@ margin_top = 24.0
 
 [node name="FCContainer" type="MarginContainer" parent="TabContainer/Conditions"]
 anchor_left = 0.016
-anchor_top = 0.083
+anchor_top = 0.0935
 anchor_right = 0.484
-anchor_bottom = 0.958
+anchor_bottom = 0.960688
 margin_left = 0.0319998
 margin_top = 0.0319996
 margin_right = -0.0320053
 margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/FCContainer"]
 margin_right = 116.0
-margin_bottom = 84.0
+margin_bottom = 111.0
 custom_constants/separation = 8
 
 [node name="Title" type="Label" parent="TabContainer/Conditions/FCContainer/VBoxContainer"]
 margin_right = 116.0
 margin_bottom = 6.0
 custom_fonts/font = ExtResource( 3 )
-text = "First Condition"
+text = "Reclaim HP"
 align = 1
+valign = 1
 
 [node name="Description" type="RichTextLabel" parent="TabContainer/Conditions/FCContainer/VBoxContainer"]
 margin_top = 14.0
 margin_right = 116.0
-margin_bottom = 84.0
+margin_bottom = 111.0
 size_flags_vertical = 3
 custom_fonts/normal_font = ExtResource( 1 )
 text = "Both arrows hit an enemy area while the small arow is within the large arrow."
 
 [node name="SCContainer" type="MarginContainer" parent="TabContainer/Conditions"]
 anchor_left = 0.516
-anchor_top = 0.0836667
+anchor_top = 0.094
 anchor_right = 0.996097
-anchor_bottom = 0.958
+anchor_bottom = 0.960688
 margin_left = 0.0319998
 margin_top = -0.0320005
 margin_right = -0.0320053
@@ -167,26 +177,27 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/SCContainer"]
-margin_right = 119.0
-margin_bottom = 84.0
+margin_right = 118.0
+margin_bottom = 111.0
 custom_constants/separation = 8
 
 [node name="Title" type="Label" parent="TabContainer/Conditions/SCContainer/VBoxContainer"]
-margin_right = 119.0
+margin_right = 118.0
 margin_bottom = 6.0
 custom_fonts/font = ExtResource( 3 )
-text = "Second Condition"
+text = "Bonus HP"
 align = 1
+valign = 1
 
 [node name="Description" type="RichTextLabel" parent="TabContainer/Conditions/SCContainer/VBoxContainer"]
 margin_top = 14.0
-margin_right = 119.0
-margin_bottom = 84.0
+margin_right = 118.0
+margin_bottom = 111.0
 size_flags_vertical = 3
 custom_fonts/normal_font = ExtResource( 1 )
 text = "Both arrows avoid any enemy areas while the small arrow is within the large arrow."
 
-[node name="Button" type="Button" parent="."]
+[node name="ExitButton" type="Button" parent="."]
 anchor_left = 0.918
 anchor_top = -0.156
 anchor_right = 0.992188
@@ -202,7 +213,7 @@ custom_styles/disabled = SubResource( 5 )
 custom_styles/normal = SubResource( 5 )
 text = "X"
 
-[node name="Label" type="Label" parent="."]
+[node name="SkillTitle" type="Label" parent="."]
 anchor_top = -0.156
 anchor_right = 1.0
 anchor_bottom = -0.023
