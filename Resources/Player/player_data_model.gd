@@ -14,7 +14,7 @@ var skill_paths = [
 var skills = []
 
 var slot_paths = [
-	null,
+	"res://Resources/Possessions/Modifiers/DoubleDamage.tres",
 	"res://Resources/Possessions/Attack Skills/Basic.tres",
 	"res://Resources/Possessions/Modifiers/DoubleDamage.tres",
 	"res://Resources/Possessions/Attack Skills/Basic.tres",

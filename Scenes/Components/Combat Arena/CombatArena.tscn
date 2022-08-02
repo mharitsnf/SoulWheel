@@ -11,7 +11,7 @@ script = ExtResource( 3 )
 [node name="Positions" type="Node2D" parent="."]
 
 [node name="Player" type="Position2D" parent="Positions"]
-position = Vector2( 64, 108 )
+position = Vector2( 48, 108 )
 
 [node name="Enemies" type="Node2D" parent="Positions"]
 

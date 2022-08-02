@@ -43,10 +43,6 @@ func play_turn():
 	_start_turn()
 	
 	# PHASE 1: Skill selection
-#	yield(_summon_skill_hud(), "completed")
-#	yield(self, "skill_button_pressed") # Wait for player to select a skill
-#	yield(_destroy_skill_hud(), "completed")
-	
 	yield(_summon_hexagonal_slot(), "completed")
 	yield(self, "skill_button_pressed")
 	yield(_destroy_hexagonal_slot(), "completed")
