@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Resource",
-"class": "AttackSkill",
-"language": "GDScript",
-"path": "res://Resources/Attack Skills/attack_skill.gd"
-}, {
 "base": "Node2D",
 "class": "Character",
 "language": "GDScript",
@@ -39,6 +34,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Resources/Player/player_data_model.gd"
 }, {
+"base": "Resource",
+"class": "Possession",
+"language": "GDScript",
+"path": "res://Resources/Possessions/possession.gd"
+}, {
 "base": "Panel",
 "class": "SkillCard",
 "language": "GDScript",
@@ -55,12 +55,12 @@ _global_script_classes=[ {
 "path": "res://Scenes/Components/Wheel/wheel.gd"
 } ]
 _global_script_class_icons={
-"AttackSkill": "",
 "Character": "",
 "Enemy": "",
 "EnemyDataModel": "",
 "Player": "",
 "PlayerDataModel": "",
+"Possession": "",
 "SkillCard": "",
 "TurnManager": "",
 "Wheel": ""

@@ -41,7 +41,7 @@ func destroy():
 
 func draw_areas(pattern, current_enemy):
 	for area in pattern.areas:
-		var new_area = _create_area(area.rot_angle, current_enemy.color)
+		var new_area = _create_area(area.rot_angle, Color(1, 1, 1))
 		$Areas.add_child(new_area)
 		_draw_area(new_area, current_enemy.radius, area.thickness)
 
@@ -128,7 +128,7 @@ func draw_locked_areas(characters):
 				var defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
 				
 				for area in defend_pattern.areas:
-					var saved_area = _create_area(area.rot_angle, character.color, true)
+					var saved_area = _create_area(area.rot_angle, Color(1, 1, 1), true)
 					area_container.add_child(saved_area)
 					_draw_area(saved_area, character.radius, area.thickness)
 				

@@ -1,0 +1,163 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Assets/Fonts/dogicapixel.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://Scenes/UI/Hexagonal Slot/hexagonal_slot.gd" type="Script" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 8
+extra_spacing_bottom = 4
+extra_spacing_char = -1
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.492188, 0.492188, 0.492188, 1 )
+
+[node name="HexagonalSlot" type="Control"]
+modulate = Color( 1, 1, 1, 0 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -16.0
+margin_top = 30.0
+margin_right = -16.0
+margin_bottom = 30.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="LinesContainer" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ButtonsContaner" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Button" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.42
+anchor_top = 0.0711111
+anchor_right = 0.42
+anchor_bottom = 0.0711111
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Button2" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.58
+anchor_top = 0.284444
+anchor_right = 0.58
+anchor_bottom = 0.284444
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Button3" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.58
+anchor_top = 0.533333
+anchor_right = 0.58
+anchor_bottom = 0.533333
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Button4" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.42
+anchor_top = 0.746667
+anchor_right = 0.42
+anchor_bottom = 0.746667
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Button5" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.26
+anchor_top = 0.533333
+anchor_right = 0.26
+anchor_bottom = 0.533333
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Button6" type="Button" parent="ButtonsContaner"]
+anchor_left = 0.26
+anchor_top = 0.284444
+anchor_right = 0.26
+anchor_bottom = 0.284444
+margin_right = 40.0
+margin_bottom = 40.0
+custom_fonts/font = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 3 )
+custom_styles/normal = SubResource( 2 )
+text = "Basic"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Tween" type="Tween" parent="."]

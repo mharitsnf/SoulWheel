@@ -21,8 +21,8 @@ var chosen_skill = null
 # Function for creating player node.
 # Data model is not duplicated, so all the player information
 # will stay there and will be saved if updated
-func create_player_node() -> Player:
-	var new_player : Player = player_node.instance()
+func create_player_node():
+	var new_player = player_node.instance()
 	new_player.position = Nodes.root.get_node("Positions/Player").position
 	return new_player
 
@@ -39,7 +39,7 @@ func create_enemy_node(path_to_edm : String, enemy_idx : int) -> Enemy:
 	enemy.data_model = edm
 	enemy.current_health = edm.max_health
 	enemy.position = Nodes.root.get_node("Positions/Enemies").get_child(enemy_idx).position
-	enemy.color = Configurations.enemy_colors[enemy_idx]
+#	enemy.color = Configurations.enemy_colors[enemy_idx]
 	enemy.radius = 72 - ((enemy_idx * 8))
 	
 	return enemy
@@ -98,6 +98,9 @@ func load_enemy_data_model(path_to_edm : String):
 # Function for loading and duplicating player skills.
 # Duplication acts as a way to avoid changing the
 # original template of the skill.
+
+# Notes for modification:
+# [{"key": "...", "amount": "...", "operation": "..."}]
 func load_skill(path_to_skill : String):
 	var skill = load(path_to_skill).duplicate()
 	
@@ -109,7 +112,12 @@ func load_skill(path_to_skill : String):
 		var new_arrows = []
 		
 		for arrow in phase.arrows:
-			new_arrows.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness, arrow.damage))
+			new_arrows.append(arrow_template.new(
+				arrow.move_speed, 
+				arrow.rot_angle, 
+				arrow.thickness, 
+				arrow.damage)
+			)
 		
 		new_phase.arrows = new_arrows
 		attack_patterns.append(new_phase)
@@ -124,7 +132,11 @@ func load_skill(path_to_skill : String):
 		var new_arrows = []
 		
 		for arrow in phase.arrows:
-			new_arrows.append(arrow_template.new(arrow.move_speed, arrow.rot_angle, arrow.thickness))
+			new_arrows.append(arrow_template.new(
+				arrow.move_speed, 
+				arrow.rot_angle, 
+				arrow.thickness)
+			)
 		
 		new_phase.arrows = new_arrows
 		defend_patterns.append(new_phase)
@@ -136,6 +148,69 @@ func load_skill(path_to_skill : String):
 	skill.behaviors = skill.behaviors.new()
 	
 	return skill
+
+
+func duplicate_attack_skill(skill):
+	# create attack arrows
+	var attack_patterns = []
+
+	for phase in skill.attack_patterns:
+		var new_phase = phase.duplicate()
+		var new_arrows = []
+
+		for arrow in phase.arrows:
+			new_arrows.append(arrow_template.new(
+				arrow.move_speed,
+				arrow.rot_angle,
+				arrow.thickness,
+				arrow.damage)
+			)
+
+		new_phase.arrows = new_arrows
+		attack_patterns.append(new_phase)
+
+	skill.attack_patterns = attack_patterns
+
+	# create defend arrows
+	var defend_patterns = []
+
+	for phase in skill.defend_patterns:
+		var new_phase = phase.duplicate()
+		var new_arrows = []
+
+		for arrow in phase.arrows:
+			new_arrows.append(arrow_template.new(
+				arrow.move_speed,
+				arrow.rot_angle,
+				arrow.thickness)
+			)
+
+		new_phase.arrows = new_arrows
+		defend_patterns.append(new_phase)
+
+	skill.defend_patterns = defend_patterns
+
+	# instantiate conditions
+	skill.conditions = skill.conditions.new()
+	skill.behaviors = skill.behaviors.new()
+
+
+func duplicate_support_skill(_skill):
+	pass
+
+
+#func apply_modifier(modifier, pdm):
+#	for modification in modifier.modifications:
+#		var possession = pdm.slots[modification.relative_idx]
+#
+#		if possession:
+#			match possession.possession_type:
+#				Possession.Types.ATTACK_SKILL: pass
+#				Possession.Types.SUPPORT_SKILL: pass
+
+
+func apply_modifications(_pattern):
+	pass
 
 
 func is_hit(object1 : Vector2, object2 : Vector2):

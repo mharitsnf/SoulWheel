@@ -61,7 +61,6 @@ custom_styles/tab_bg = SubResource( 3 )
 custom_styles/panel = SubResource( 4 )
 
 [node name="Description" type="Control" parent="TabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 24.0
@@ -80,7 +79,7 @@ __meta__ = {
 }
 
 [node name="Description" type="RichTextLabel" parent="TabContainer/Description/MarginContainer"]
-margin_right = 124.0
+margin_right = 123.0
 margin_bottom = 111.0
 custom_fonts/normal_font = ExtResource( 1 )
 text = "One fast small arrow (1) and one slow large arrow (2) that revolves on constant speed."
@@ -99,25 +98,25 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Description/MarginContainer2"]
-margin_right = 115.0
+margin_right = 114.0
 margin_bottom = 111.0
 
 [node name="HPCost" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
-margin_right = 115.0
+margin_right = 114.0
 margin_bottom = 10.0
 custom_fonts/font = ExtResource( 1 )
 text = "HP Wagered: 5"
 
 [node name="HPBonus" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
 margin_top = 14.0
-margin_right = 115.0
+margin_right = 114.0
 margin_bottom = 24.0
 custom_fonts/font = ExtResource( 1 )
 text = "Bonus HP: 5"
 
 [node name="Damage" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
 margin_top = 28.0
-margin_right = 115.0
+margin_right = 114.0
 margin_bottom = 64.0
 custom_fonts/font = ExtResource( 1 )
 text = "Damage:
@@ -125,6 +124,7 @@ text = "Damage:
 (2) - 5"
 
 [node name="Conditions" type="Control" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_top = 24.0
@@ -143,7 +143,7 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/FCContainer"]
-margin_right = 116.0
+margin_right = 115.0
 margin_bottom = 111.0
 custom_constants/separation = 8
 
@@ -177,7 +177,7 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/SCContainer"]
-margin_right = 118.0
+margin_right = 119.0
 margin_bottom = 111.0
 custom_constants/separation = 8
 

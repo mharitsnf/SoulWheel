@@ -9,3 +9,7 @@ export(Array) var defend_patterns
 export(Array) var attack_patterns
 
 export(GDScript) var behaviors
+
+
+func _init():
+	resource_local_to_scene = true

@@ -1,10 +1,7 @@
-extends Resource
-class_name AttackSkill
+extends Possession
 
 
 var arrow_template = preload("res://Resources/Arrow/arrow.gd")
-
-export(String) var name
 
 # Array of array of dictionaries. The array's length represents the number of phases, and
 # each element represents the number of arrows in the respective phase
@@ -32,3 +29,8 @@ export(GDScript) var behaviors
 export(String, MULTILINE) var description
 export(String, MULTILINE) var first_condition
 export(String, MULTILINE) var second_condition
+
+
+func _init():
+	._init()
+	type = Types.ATTACK_SKILL

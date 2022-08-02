@@ -30,12 +30,12 @@ func _init(current_behavior):
 	rng.randomize()
 	
 	match current_behavior:
-		Character.Behavior.ATTACK:
+		Enemy.Behavior.ATTACK:
 			preprocess = funcref(self, \"preprocess_a\")
 			process = funcref(self, \"process_a\")
 			postprocess = funcref(self, \"postprocess_a\")
 		
-		Character.Behavior.DEFEND:
+		Enemy.Behavior.DEFEND:
 			preprocess = funcref(self, \"preprocess_d\")
 			process = funcref(self, \"process_d\")
 			postprocess = funcref(self, \"postprocess_d\")
@@ -169,6 +169,7 @@ func stop_process():
 "
 
 [resource]
+resource_local_to_scene = true
 script = ExtResource( 1 )
 max_health = 30
 defend_patterns = [ {

@@ -2,8 +2,8 @@ extends Character
 class_name Player
 
 
-export(PackedScene) var skill_hud : PackedScene
-var skill_hud_ins : Control = null
+export(PackedScene) var hexagonal_slot_scn
+var hexagonal_slot
 
 export var data_model : Resource
 
@@ -43,9 +43,13 @@ func play_turn():
 	_start_turn()
 	
 	# PHASE 1: Skill selection
-	yield(_summon_skill_hud(), "completed")
-	yield(self, "skill_button_pressed") # Wait for player to select a skill
-	yield(_destroy_skill_hud(), "completed")
+#	yield(_summon_skill_hud(), "completed")
+#	yield(self, "skill_button_pressed") # Wait for player to select a skill
+#	yield(_destroy_skill_hud(), "completed")
+	
+	yield(_summon_hexagonal_slot(), "completed")
+	yield(self, "skill_button_pressed")
+	yield(_destroy_hexagonal_slot(), "completed")
 	
 	yield(_wager_hp(Round.chosen_skill.hp_cost), "completed")
 	
@@ -60,7 +64,7 @@ func play_turn():
 			Nodes.wheel.draw_locked_areas(turn_manager.get_children())
 			
 			# set the enemy current behavior for defend (soul areas)
-			character.select_behavior(Character.Behavior.DEFEND)
+			character.select_behavior(Enemy.Behavior.DEFEND)
 			
 			# set temporary variables
 			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
@@ -111,6 +115,8 @@ func play_turn():
 			pattern,
 			phase_number
 		)
+		
+		# apply modifications (passive and temporary)
 		
 		# draw the arrows
 		Nodes.wheel.draw_arrows(pattern)
@@ -199,10 +205,31 @@ func _start_turn():
 	._start_turn()
 	
 	Round.chosen_skill = null
-	data_model.skills = []
 	
-	for skill in data_model.skill_paths:
-		data_model.skills.append(Round.load_skill(skill))
+	# Load skills
+	for i in range(data_model.slot_paths.size()):
+		var path = data_model.slot_paths[i]
+
+		if path:
+			var possession = load(path).duplicate()
+
+			match possession.type:
+				Possession.Types.ATTACK_SKILL: Round.duplicate_attack_skill(possession)
+				Possession.Types.SUPPORT_SKILL: pass
+
+			data_model.slots[i].possession = possession
+	
+	# Load modifiers
+	for i in range(data_model.slot_paths.size()):
+		var path = data_model.slot_paths[i]
+
+		if path:
+			var possession = load(path).duplicate()
+
+			if possession.type == Possession.Types.MODIFIER:
+				for modification in possession.modifications:
+					for idx in modification.rel_idxs:
+						data_model.slots[(i + idx) % 6].affected_by.append(i)
 
 
 func _end_turn():
@@ -217,19 +244,15 @@ func _end_turn():
 	._end_turn()
 
 
-func _summon_skill_hud():
-	skill_hud_ins = skill_hud.instance()
-	Nodes.root.add_child(skill_hud_ins)
-	skill_hud_ins.initialize(data_model.skills)
-	
-	yield(skill_hud_ins.show(), "completed")
+func _summon_hexagonal_slot():
+	hexagonal_slot = hexagonal_slot_scn.instance()
+	Nodes.root.add_child(hexagonal_slot)
+	yield(hexagonal_slot.initialize(data_model.slots), "completed")
 
 
-func _destroy_skill_hud():
-	skill_hud_ins.disconnect_signals()
-	Nodes.skill_card.hide()
-	yield(skill_hud_ins.hide_and_destroy(), "completed")
-	skill_hud_ins = null
+func _destroy_hexagonal_slot():
+	yield(hexagonal_slot.destroy(), "completed")
+	hexagonal_slot = null
 
 
 func _wager_hp(amount):
@@ -250,7 +273,16 @@ func _update_hp_hud():
 
 func _on_skill_button_pressed(btn_idx):
 	# choose the skill
-	Round.chosen_skill = data_model.skills[btn_idx]
+	Round.chosen_skill = data_model.slots[btn_idx].possession
+	
+	# Data structure for temporary modification (support skills):
+	# [{"key": "...", "amount": "...", "operation": "..."}]
+	#
+	# Key: the key of the dictionary, e.g., move_speed
+	# Amount: the amount of the modification to be applied with the operation, e.g, 2
+	# Operation: multiplication? subtraction? addition?
+	#
+	# Apply the modification here, loop the array to apply.
 	
 	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")

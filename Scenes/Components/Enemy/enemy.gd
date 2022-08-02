@@ -4,9 +4,13 @@ class_name Enemy
 
 onready var health_bar = $HealthBar
 
+enum Behavior {
+	ATTACK
+	DEFEND
+}
+var current_behavior = 0
 var current_health
 
-var color
 var radius
 
 var data_model = null
@@ -77,6 +81,8 @@ func play_turn():
 			phase_number
 		)
 		
+		# apply modifications (passive and temporary)
+		
 		# check result
 		_check_and_append_result(attack_pattern, defend_pattern)
 		
@@ -108,7 +114,7 @@ func play_turn():
 # Select between two behaviors: attack and defend.
 # Select a random behavior for the processing turn as well
 func select_behavior(behavior):
-	.select_behavior(behavior)
+	current_behavior = behavior
 	
 	match current_behavior:
 		Behavior.ATTACK: behavior_idx = rng.randi_range(0, data_model.attack_patterns.size() - 1)
