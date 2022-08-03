@@ -16,6 +16,7 @@ var player_node = preload("res://Scenes/Components/Player/Player.tscn")
 var player = null
 
 var chosen_skill = null
+var modifiers = []
 
 
 # Function for creating player node.
@@ -95,61 +96,6 @@ func load_enemy_data_model(path_to_edm : String):
 	return edm
 
 
-# Function for loading and duplicating player skills.
-# Duplication acts as a way to avoid changing the
-# original template of the skill.
-
-# Notes for modification:
-# [{"key": "...", "amount": "...", "operation": "..."}]
-func load_skill(path_to_skill : String):
-	var skill = load(path_to_skill).duplicate()
-	
-	# create attack arrows
-	var attack_patterns = []
-	
-	for phase in skill.attack_patterns:
-		var new_phase = phase.duplicate()
-		var new_arrows = []
-		
-		for arrow in phase.arrows:
-			new_arrows.append(arrow_template.new(
-				arrow.move_speed, 
-				arrow.rot_angle, 
-				arrow.thickness, 
-				arrow.damage)
-			)
-		
-		new_phase.arrows = new_arrows
-		attack_patterns.append(new_phase)
-
-	skill.attack_patterns = attack_patterns
-	
-	# create defend arrows
-	var defend_patterns = []
-	
-	for phase in skill.defend_patterns:
-		var new_phase = phase.duplicate()
-		var new_arrows = []
-		
-		for arrow in phase.arrows:
-			new_arrows.append(arrow_template.new(
-				arrow.move_speed, 
-				arrow.rot_angle, 
-				arrow.thickness)
-			)
-		
-		new_phase.arrows = new_arrows
-		defend_patterns.append(new_phase)
-
-	skill.defend_patterns = defend_patterns
-	
-	# instantiate conditions
-	skill.conditions = skill.conditions.new()
-	skill.behaviors = skill.behaviors.new()
-	
-	return skill
-
-
 func duplicate_attack_skill(skill):
 	# create attack arrows
 	var attack_patterns = []
@@ -195,8 +141,8 @@ func duplicate_attack_skill(skill):
 	skill.behaviors = skill.behaviors.new()
 
 
-func duplicate_support_skill(_skill):
-	pass
+#func duplicate_support_skill(_skill):
+#	pass
 
 
 #func apply_modifier(modifier, pdm):
@@ -207,10 +153,6 @@ func duplicate_support_skill(_skill):
 #			match possession.possession_type:
 #				Possession.Types.ATTACK_SKILL: pass
 #				Possession.Types.SUPPORT_SKILL: pass
-
-
-func apply_modifications(_pattern):
-	pass
 
 
 func is_hit(object1 : Vector2, object2 : Vector2):

@@ -44,6 +44,7 @@ func _init():
 
 # ===== ATTACK =====
 func _preprocess_a(pattern, phase_number):
+	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:
@@ -56,8 +57,7 @@ func preprocess_a1(pattern):
 	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rot_angle_variation
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 
 
 func _process_a(pattern, visuals, phase_number):
@@ -100,14 +100,14 @@ func _postprocess_a(pattern, phase_number):
 # phase 1
 func postprocess_a1(pattern):
 	for arrow in pattern.arrows:
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 
 # ==================
 
 
 # ===== DEFEND =====
 func _preprocess_d(pattern, phase_number):
+	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:
@@ -119,8 +119,7 @@ func preprocess_d1(pattern):
 	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rot_angle_variation
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 
 
 func _process_d(pattern, visuals, phase_number):
@@ -161,8 +160,7 @@ func _postprocess_d(pattern, phase_number):
 
 func postprocess_d1(pattern):
 	for arrow in pattern.arrows:
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 
 # ==================
 

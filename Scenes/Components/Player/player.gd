@@ -112,6 +112,9 @@ func play_turn():
 			phase_number
 		)
 		
+		# apply modifiers
+		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
+		
 		# apply modifications (passive and temporary)
 		
 		# draw the arrows
@@ -201,6 +204,7 @@ func _start_turn():
 	._start_turn()
 	
 	Round.chosen_skill = null
+	Modify.modifications = []
 	
 	# Load skills
 	for i in range(data_model.slot_paths.size()):
@@ -214,6 +218,7 @@ func _start_turn():
 				Possession.Types.SUPPORT_SKILL: pass
 
 			data_model.slots[i].possession = possession
+			data_model.slots[i].affected_by = []
 	
 	# Load modifiers
 	for i in range(data_model.slot_paths.size()):
@@ -267,18 +272,16 @@ func _update_hp_hud():
 	Nodes.hp_hud.update_health(data_model.current_health)
 
 
+func _compile_permanent_modifiers(slots, indexes):
+	for index in indexes:
+		for modification in slots[index].possession.modifications:
+			Modify.modifications.append(modification.duplicate())
+
+
 func _on_skill_button_pressed(btn_idx):
 	# choose the skill
 	Round.chosen_skill = data_model.slots[btn_idx].possession
-	
-	# Data structure for temporary modification (support skills):
-	# [{"key": "...", "amount": "...", "operation": "..."}]
-	#
-	# Key: the key of the dictionary, e.g., move_speed
-	# Amount: the amount of the modification to be applied with the operation, e.g, 2
-	# Operation: multiplication? subtraction? addition?
-	#
-	# Apply the modification here, loop the array to apply.
+	_compile_permanent_modifiers(data_model.slots, data_model.slots[btn_idx].affected_by)
 	
 	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")

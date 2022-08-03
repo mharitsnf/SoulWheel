@@ -51,6 +51,7 @@ func _init():
 
 # ===== ATTACK =====
 func _preprocess_a(pattern, phase_number):
+	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:
@@ -62,8 +63,7 @@ func preprocess_a1(pattern):
 	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 		
 		# reset variables
 		arrow.rot_angle_displacement = 0
@@ -103,19 +103,17 @@ func _postprocess_a(pattern, phase_number):
 func postprocess_a1(pattern):
 	for arrow in pattern.arrows:
 		# adjust rot angle
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 		
+		# adjust damage based on displacement
 		arrow.damage += floor(arrow.rot_angle_displacement / 360) * pattern.damage_bonus
-		
-		# reset variables
-		arrow.move_speed = arrow.initial_move_speed
 
 # ==================
 
 
 # ===== DEFEND =====
 func _preprocess_d(pattern, phase_number):
+	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:
@@ -126,8 +124,7 @@ func preprocess_d1(pattern):
 	for arrow in pattern.arrows:
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
+		arrow.clamp_rot_angle()
 		
 		# reset variables
 		arrow.rot_angle_displacement = 0
@@ -163,11 +160,7 @@ func _postprocess_d(pattern, phase_number):
 func postprocess_d1(pattern):
 	for arrow in pattern.arrows:
 		# adjust rot angle
-		arrow.rot_angle = fmod(arrow.rot_angle, 360)
-		if arrow.rot_angle < 0: arrow.rot_angle += 360
-		
-		# reset variables
-		arrow.move_speed = arrow.initial_move_speed
+		arrow.clamp_rot_angle()
 
 # ==================
 
