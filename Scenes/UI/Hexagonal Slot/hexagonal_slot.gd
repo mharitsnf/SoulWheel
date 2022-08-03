@@ -52,7 +52,7 @@ func initialize(slots):
 		var line_indexes = all_line_indexes[i]
 		var button = buttons_container.get_child(i)
 		
-		var _e = button.connect("mouse_entered", self, "_on_button_mouse_entered", [line_indexes])
+		var _e = button.connect("mouse_entered", self, "_on_button_mouse_entered", [line_indexes, button.text])
 		_e = button.connect("mouse_exited", self, "_on_button_mouse_exited", [line_indexes])
 	
 	_show()
@@ -69,14 +69,40 @@ func destroy():
 	queue_free()
 
 
-func _on_button_mouse_entered(indexes):
+func _show_title():
+	tween.interpolate_property(
+		$Title, "modulate",
+		modulate, Color(1,1,1,1),
+		0.3, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.start()
+
+
+func _hide_title():
+	tween.interpolate_property(
+		$Title, "modulate",
+		modulate, Color(1,1,1,0),
+		0.3, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.start()
+
+
+func _on_button_mouse_entered(indexes, title):
+	$Title.text = title
+	
 	for idx in indexes:
 		lines_container.get_child(idx).show()
+	
+	_show_title()
 
 
 func _on_button_mouse_exited(indexes):
+	$Title.text = ''
+	
 	for idx in indexes:
 		lines_container.get_child(idx).hide()
+	
+	_hide_title()
 
 
 func _hide():

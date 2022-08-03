@@ -285,20 +285,3 @@ func _on_skill_button_pressed(btn_idx):
 	
 	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")
-
-
-func _on_skill_button_mouse_entered(skill):
-	Nodes.skill_card.title = skill.name
-	Nodes.skill_card.description = skill.description
-	Nodes.skill_card.hp_cost = skill.hp_cost
-	Nodes.skill_card.hp_bonus = skill.hp_bonus
-	Nodes.skill_card.fc = skill.first_condition
-	Nodes.skill_card.sc = skill.second_condition
-	
-	Nodes.skill_card.show()
-
-
-func _on_skill_button_mouse_exited(_skill):
-	Nodes.skill_card.hide()
-
-
