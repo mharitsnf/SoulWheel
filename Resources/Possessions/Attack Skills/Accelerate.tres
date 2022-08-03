@@ -51,7 +51,6 @@ func _init():
 
 # ===== ATTACK =====
 func _preprocess_a(pattern, phase_number):
-	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:
@@ -113,7 +112,6 @@ func postprocess_a1(pattern):
 
 # ===== DEFEND =====
 func _preprocess_d(pattern, phase_number):
-	Modify.reset_modifiers(pattern, Modify.TYPE_ARROW)
 	rng.randomize()
 	
 	match phase_number:

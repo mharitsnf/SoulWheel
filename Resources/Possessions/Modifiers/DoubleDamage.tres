@@ -7,8 +7,7 @@ resource_local_to_scene = true
 script = ExtResource( 1 )
 name = "Double Damage"
 modifications = [ {
-"amount": 2.0,
-"operation": "mul",
-"path": "damage",
+"amount": 2,
+"key": "damage_mul",
 "rel_idxs": [ 1, 5 ]
 } ]

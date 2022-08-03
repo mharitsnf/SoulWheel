@@ -6,27 +6,28 @@ enum {
 	TYPE_AREA
 }
 
-var modifications = []
+var modifications = {}
 
 
 func apply_modifiers(pattern, type):
-	for modification in modifications:
-		
-		match modification.path:
-			"damage": _apply_damage(modification, pattern, type)
+	for key in modifications:
+		match key:
+			"damage_mul": _apply_damage_mul(modifications[key], pattern, type)
 
 
-func reset_modifiers(pattern, type):
+func clear_modifications():
+	modifications = {}
+
+
+func reset_arrow_modifiers(pattern, type):
 	var elements = pattern.arrows if type == TYPE_ARROW else pattern.areas
 	
 	for element in elements:
 		element.reset()
 
 
-func _apply_damage(modification, pattern, type):
+func _apply_damage_mul(mod_data, pattern, type):
 	var elements = pattern.arrows if type == TYPE_ARROW else pattern.areas
 	
 	for element in elements:
-		match modification.operation:
-			"mul": element.damage += element.initial_damage * modification.amount
-			"add": element.damage += element.initial_damage + modification.amount
+		element.damage *= mod_data.amount

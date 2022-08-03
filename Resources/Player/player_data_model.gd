@@ -22,7 +22,6 @@ var slot_paths = [
 	null
 ]
 
-# [{ "possession": "...", "modified_by": [...] }]
 var slots = [
 	{ "possession": null, "affected_by": [] },
 	{ "possession": null, "affected_by": [] },
@@ -31,3 +30,13 @@ var slots = [
 	{ "possession": null, "affected_by": [] },
 	{ "possession": null, "affected_by": [] }
 ]
+
+func reset_slots():
+	slots = [
+		{ "possession": null, "affected_by": [] },
+		{ "possession": null, "affected_by": [] },
+		{ "possession": null, "affected_by": [] },
+		{ "possession": null, "affected_by": [] },
+		{ "possession": null, "affected_by": [] },
+		{ "possession": null, "affected_by": [] }
+	]

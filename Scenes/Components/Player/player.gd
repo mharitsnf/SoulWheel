@@ -115,6 +115,7 @@ func play_turn():
 		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
 		
 		# preprocess the arrows for each round
+		Modify.reset_arrow_modifiers(pattern, Modify.TYPE_ARROW)
 		Round.chosen_skill.behaviors.preprocess_a.call_func(
 			pattern,
 			phase_number
@@ -210,29 +211,30 @@ func _start_turn():
 	._start_turn()
 	
 	Round.chosen_skill = null
-	Modify.modifications = []
+	Modify.clear_modifications()
+	data_model.reset_slots()
 	
 	# Load skills
 	for i in range(data_model.slot_paths.size()):
 		var path = data_model.slot_paths[i]
-
+	
 		if path:
 			var possession = load(path).duplicate()
-
+	
 			match possession.type:
 				Possession.Types.ATTACK_SKILL: Round.duplicate_attack_skill(possession)
 				Possession.Types.SUPPORT_SKILL: pass
-
+	
 			data_model.slots[i].possession = possession
-			data_model.slots[i].affected_by = []
+	
 	
 	# Load modifiers
 	for i in range(data_model.slot_paths.size()):
 		var path = data_model.slot_paths[i]
-
+	
 		if path:
 			var possession = load(path).duplicate()
-
+	
 			if possession.type == Possession.Types.MODIFIER:
 				for modification in possession.modifications:
 					for idx in modification.rel_idxs:
@@ -269,8 +271,15 @@ func _update_hp_hud():
 
 func _compile_permanent_modifiers(slots, indexes):
 	for index in indexes:
-		for modification in slots[index].possession.modifications:
-			Modify.modifications.append(modification.duplicate())
+		for mod in slots[index].possession.modifications:
+			var key = mod.key
+			
+			if !Modify.modifications.has(key):
+				Modify.modifications[key] = {
+					"amount": 0
+				}
+			
+			Modify.modifications[key].amount += mod.amount
 
 
 func _summon_hexagonal_slot():
