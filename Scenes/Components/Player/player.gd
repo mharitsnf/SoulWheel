@@ -51,7 +51,7 @@ func play_turn():
 	_start_turn()
 	
 	# PHASE 1: Skill selection
-	yield(_summon_hexagonal_slot(), "completed")
+	yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
 	yield(self, "skill_button_pressed")
 	yield(_destroy_skill_hud(1), "completed")
 	
@@ -282,11 +282,25 @@ func _compile_permanent_modifiers(slots, indexes):
 			Modify.modifications[key].amount += mod.amount
 
 
+func _summon_skill_hud(type, args = []):
+	match type:
+		SKILL_HEXAGON: yield(_summon_hexagonal_slot(), "completed")
+		SKILL_CONFIRM: yield(_summon_skill_confirmation(args[0], args[1], args[2]), "completed")
+		SKILL_CARD: yield(_summon_skill_card(args[0], args[1]), "completed")
+
+
+func _destroy_skill_hud(direction = -1):
+	if skill_hud.name == "SkillConfirmation":
+		yield(skill_hud.destroy(direction), "completed")
+	else:
+		yield(skill_hud.destroy(), "completed")
+	skill_hud = null
+
+
 func _summon_hexagonal_slot():
 	skill_hud = hexagonal_slot_scn.instance()
 	Nodes.root.add_child(skill_hud)
 	yield(skill_hud.initialize(data_model.slots), "completed")
-
 
 func _summon_skill_confirmation(slot_data, btn_idx, direction):
 	skill_hud = skill_confirmation_scn.instance()
@@ -300,17 +314,9 @@ func _summon_skill_card(slot_data, btn_idx):
 	yield(skill_hud.initialize(slot_data, btn_idx), "completed")
 
 
-func _destroy_skill_hud(direction = -1):
-	if skill_hud.name == "SkillConfirmation":
-		yield(skill_hud.destroy(direction), "completed")
-	else:
-		yield(skill_hud.destroy(), "completed")
-	skill_hud = null
-
-
 func _on_hexagon_button_pressed(slot_data, btn_idx):
 	yield(_destroy_skill_hud(), "completed")
-	yield(_summon_skill_confirmation(slot_data, btn_idx, -1), "completed")
+	yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, -1]), "completed")
 
 
 func _on_skill_confirmed(btn_idx):
@@ -324,13 +330,13 @@ func _on_skill_confirmed(btn_idx):
 
 func _on_skill_info_pressed(slot_data, btn_idx):
 	yield(_destroy_skill_hud(1), "completed")
-	yield(_summon_skill_card(slot_data, btn_idx), "completed")
+	yield(_summon_skill_hud(SKILL_CARD, [slot_data, btn_idx]), "completed")
 
 
 func _on_skill_back_pressed(type, slot_data, btn_idx):
 	yield(_destroy_skill_hud(), "completed")
 	
 	match type:
-		SKILL_CONFIRM: yield(_summon_hexagonal_slot(), "completed")
-		SKILL_CARD: yield(_summon_skill_confirmation(slot_data, btn_idx, 1), "completed")
+		SKILL_CONFIRM: yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
+		SKILL_CARD: yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, 1]), "completed")
 

@@ -275,5 +275,5 @@ is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
 description = "An arrow that accelerates overtime. Adds 1DMG every half circle rotated."
-first_condition = "The arrow hits an overlapping area after revoluting the circle once."
-second_condition = "The arrow avoids any areas after revoluting the circle twice."
+first_condition = "- The arrow hits an overlapping area after revolving the wheel once."
+second_condition = "- The arrow avoids any areas after revolfing the wheel twice."

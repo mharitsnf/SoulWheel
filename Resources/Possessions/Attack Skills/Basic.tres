@@ -242,5 +242,5 @@ is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
 description = "An arrow that rotates on constant speed."
-first_condition = "The arrow hits an overlapping area."
-second_condition = "-"
+first_condition = "- The arrow hits an overlapping area."
+second_condition = ""

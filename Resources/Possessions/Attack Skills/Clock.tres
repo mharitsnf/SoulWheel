@@ -261,6 +261,8 @@ hp_bonus = 3
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "One slow large arrow and one fast small arrow that rotates on constant speed."
-first_condition = "Both arrows hit an area and the small arrow is within the large arrow."
-second_condition = "Both arrows avoid damaging areas and the small arrow is within the large arrow."
+description = "One fast small arrow and one slow large arrow that rotates on constant speed."
+first_condition = "- Both arrows hit an area
+- The small arrow is within the large arrow."
+second_condition = "- Both arrows avoid damaging areas
+- The small arrow is within the large arrow."
