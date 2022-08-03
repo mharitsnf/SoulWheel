@@ -1,14 +1,18 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scenes/Components/Player/player.gd" type="Script" id=1]
 [ext_resource path="res://Resources/Player/Player.tres" type="Resource" id=2]
 [ext_resource path="res://Scenes/Components/Character/Character.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scenes/UI/Skill Confirmation/SkillConfirmation.tscn" type="PackedScene" id=4]
 [ext_resource path="res://icon.png" type="Texture" id=5]
 [ext_resource path="res://Scenes/UI/Hexagonal Slot/HexagonalSlot.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Scenes/UI/Skill Card/SkillCard.tscn" type="PackedScene" id=7]
 
 [node name="Player" instance=ExtResource( 3 )]
 script = ExtResource( 1 )
 hexagonal_slot_scn = ExtResource( 6 )
+skill_confirmation_scn = ExtResource( 4 )
+skill_card_scn = ExtResource( 7 )
 data_model = ExtResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="." index="1"]

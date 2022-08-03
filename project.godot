@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "Panel",
 "class": "SkillCard",
 "language": "GDScript",
-"path": "res://Scenes/UI/Skill Card/skill_card.gd"
+"path": "res://Scenes/UI/Skill Card/skill_card_bkp.gd"
 }, {
 "base": "YSort",
 "class": "TurnManager",

@@ -1,0 +1,93 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://Resources/Fonts/HeaderFont.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Resources/Fonts/NormalFont.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Scenes/UI/Skill Confirmation/skill_confirmation.gd" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.494118, 0.494118, 0.494118, 1 )
+
+[node name="SkillConfirmation" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+
+[node name="Title" type="Label" parent="."]
+anchor_left = 0.18
+anchor_top = 0.248889
+anchor_right = 0.64
+anchor_bottom = 0.319778
+margin_bottom = 0.0499992
+custom_fonts/font = ExtResource( 1 )
+text = "Basic"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="UseButton" type="Button" parent="."]
+anchor_left = 0.34
+anchor_top = 0.355556
+anchor_right = 0.48
+anchor_bottom = 0.462333
+margin_bottom = -0.0249996
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 2 )
+custom_styles/normal = SubResource( 1 )
+text = "Use"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="InfoButton" type="Button" parent="."]
+anchor_left = 0.34
+anchor_top = 0.497778
+anchor_right = 0.48
+anchor_bottom = 0.604556
+margin_bottom = -0.0249996
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 2 )
+custom_styles/normal = SubResource( 1 )
+text = "Info"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="BackButton" type="Button" parent="."]
+anchor_left = 0.34
+anchor_top = 0.64
+anchor_right = 0.48
+anchor_bottom = 0.746778
+margin_bottom = -0.0250015
+custom_fonts/font = ExtResource( 2 )
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 2 )
+custom_styles/normal = SubResource( 1 )
+text = "Back"
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Tween" type="Tween" parent="."]

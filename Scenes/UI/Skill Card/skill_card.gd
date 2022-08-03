@@ -1,61 +1,120 @@
 extends Panel
-class_name SkillCard
 
 
-onready var title_node = $HeaderContainer/HBoxContainer/Title
-onready var description_node = $DescriptionContainer/RichTextLabel
-onready var fc_node = $FCContainer/RichTextLabel
-onready var sc_node = $SCContainer/RichTextLabel
-onready var hp_cost_node = $FooterContainer/HBoxContainer/HPCost
-onready var hp_bonus_node = $FooterContainer/HBoxContainer/HPBonus
-onready var animation_player = $AnimationPlayer
+onready var description = $TabContainer/Description/MarginContainer/Description
+onready var hp_cost = $TabContainer/Description/MarginContainer2/VBoxContainer/HPCost
+onready var hp_bonus = $TabContainer/Description/MarginContainer2/VBoxContainer/HPBonus
+onready var damage = $TabContainer/Description/MarginContainer2/VBoxContainer/Damage
+onready var fc = $TabContainer/Conditions/FCContainer/VBoxContainer/Description
+onready var sc = $TabContainer/Conditions/SCContainer/VBoxContainer/Description
+onready var title = $SkillTitle
+onready var tween = $Tween
+onready var exit_button = $ExitButton
 
-var title = "" setget _set_title
-var description = "" setget _set_description
-var fc = "" setget _set_fc
-var sc = "" setget _set_sc
-var hp_cost = 0 setget _set_hp_cost
-var hp_bonus = 0 setget _set_hp_bonus
+var description_text = ""
+var hp_cost_text = ""
+var hp_bonus_text = ""
+var damage_text = ""
+var fc_text = ""
+var sc_text = ""
+var title_text = ""
+
+var offset = Vector2(0, 30)
 
 
-func show():
-	modulate.a = 1
-
-
-func hide():
+func _init():
 	modulate.a = 0
 
 
-func _set_title(value):
-	title = value
-	title_node.text = value
+func initialize(slot_data, _btn_idx):
+	_set_title_text(slot_data.possession.name)
+	_set_description_text(slot_data.possession.description)
+	_set_hp_cost_text(slot_data.possession.hp_cost)
+	_set_hp_bonus_text(slot_data.possession.hp_bonus)
+	_set_damage_text(slot_data.possession.attack_patterns)
+	_set_fc_text(slot_data.possession.first_condition)
+	_set_sc_text(slot_data.possession.second_condition)
+	
+	exit_button.connect("pressed", Round.player, "_on_skill_back_pressed",
+		[Round.player.SKILL_CARD, slot_data, _btn_idx]
+	)
+	
+	_show()
+	yield(tween, "tween_completed")
 
 
-func _set_description(value):
-	description = value
-	description_node.text = value
+func destroy():
+	_hide()
+	yield(tween, "tween_completed")
+	queue_free()
 
 
-func _set_fc(value):
-	fc = value
-	fc_node.text = "Reclaim HP: " + value
+func _show():
+	tween.interpolate_property(
+		self, "rect_position",
+		rect_position, rect_position + offset,
+		0.2, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.interpolate_property(
+		self, "modulate",
+		modulate, Color(1,1,1,1),
+		0.2, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.start()
 
 
-func _set_sc(value):
-	sc = value
-	sc_node.text = "Bonus HP: " + value
+func _hide():
+	tween.interpolate_property(
+		self, "rect_position",
+		rect_position, rect_position - offset,
+		0.2, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.interpolate_property(
+		self, "modulate",
+		modulate, Color(1,1,1,0),
+		0.2, Tween.TRANS_EXPO, Tween.EASE_OUT
+	)
+	tween.start()
 
 
-func _set_hp_cost(value):
-	hp_cost = value
-	hp_cost_node.text = "Wager " + str(value) + "HP"
+func _set_description_text(value):
+	description_text = value
+	description.text = value
 
 
-func _set_hp_bonus(value):
-	hp_bonus = value
-	hp_bonus_node.text = "Bonus " + str(value) + "HP"
+func _set_hp_cost_text(value):
+	hp_cost_text = str(value)
+	hp_cost.text = "HP Wagered: " + str(value)
 
 
-func _ready():
-	Nodes.skill_card = self
-	modulate.a = 0
+func _set_hp_bonus_text(value):
+	hp_bonus_text = str(value)
+	hp_bonus.text = "HP Bonus: " + str(value)
+
+
+func _set_damage_text(patterns):
+	var result = ""
+	for phase_nr in range(patterns.size()):
+		result += "Phase " + str(phase_nr + 1) + "\n"
+		
+		for arrow_nr in range(patterns[phase_nr].arrows.size()):
+			var arrow = patterns[phase_nr].arrows[arrow_nr]
+			result += "Arrow " + str(arrow_nr + 1) + " - " + str(arrow.damage) + " DMG \n"
+	
+	damage_text = result
+	damage.text = result
+
+
+func _set_fc_text(value):
+	fc_text = value
+	fc.text = value
+
+
+func _set_sc_text(value):
+	sc_text = value
+	sc.text = value
+
+
+func _set_title_text(value):
+	title_text = value
+	title.text = value

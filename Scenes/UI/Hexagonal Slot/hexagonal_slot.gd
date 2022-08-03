@@ -7,6 +7,8 @@ onready var buttons_container = $ButtonsContaner
 onready var lines_container = $LinesContainer
 onready var tween = $Tween
 
+var offset = Vector2(0, 30)
+
 
 func _init():
 	rect_position = Vector2(-16, 30)
@@ -31,11 +33,11 @@ func initialize(slots):
 			
 			for connected_to in slot_data.affected_by:
 				var line = connection_line_scn.instance()
-				var offset = Vector2(20, 20)
+				var line_offset = Vector2(20, 20)
 				var next_button = buttons_container.get_child(connected_to)
 				
-				line.add_point(button.rect_position + offset)
-				line.add_point(next_button.rect_position + offset)
+				line.add_point(button.rect_position + line_offset)
+				line.add_point(next_button.rect_position + line_offset)
 				lines_container.add_child(line)
 				
 				all_line_indexes[i].append(line.get_index())
@@ -45,7 +47,7 @@ func initialize(slots):
 			button.text = ""
 			button.disabled = true
 		
-		var _e = button.connect("pressed", Round.player, "_on_skill_button_pressed", [button.get_index()])
+		var _e = button.connect("pressed", Round.player, "_on_hexagon_button_pressed", [slot_data, button.get_index()])
 	
 	
 	for i in range(all_line_indexes.size()):
@@ -108,7 +110,7 @@ func _on_button_mouse_exited(indexes):
 func _hide():
 	tween.interpolate_property(
 		self, "rect_position",
-		rect_position, rect_position + Vector2(0, 30),
+		rect_position, rect_position + offset,
 		0.3, Tween.TRANS_EXPO, Tween.EASE_OUT
 	)
 	tween.interpolate_property(
@@ -120,7 +122,7 @@ func _hide():
 func _show():
 	tween.interpolate_property(
 		self, "rect_position",
-		rect_position, rect_position - Vector2(0, 30),
+		rect_position, rect_position - offset,
 		0.3, Tween.TRANS_EXPO, Tween.EASE_OUT
 	)
 	tween.interpolate_property(

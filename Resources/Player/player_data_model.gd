@@ -17,8 +17,8 @@ var slot_paths = [
 	"res://Resources/Possessions/Modifiers/DoubleDamage.tres",
 	"res://Resources/Possessions/Attack Skills/Basic.tres",
 	"res://Resources/Possessions/Modifiers/DoubleDamage.tres",
+	"res://Resources/Possessions/Attack Skills/Accelerate.tres",
 	"res://Resources/Possessions/Attack Skills/Basic.tres",
-	null,
 	null
 ]
 

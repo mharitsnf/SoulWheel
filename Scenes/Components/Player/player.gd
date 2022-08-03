@@ -2,8 +2,16 @@ extends Character
 class_name Player
 
 
+enum {
+	SKILL_HEXAGON,
+	SKILL_CONFIRM,
+	SKILL_CARD
+}
+
 export(PackedScene) var hexagonal_slot_scn
-var hexagonal_slot
+export(PackedScene) var skill_confirmation_scn
+export(PackedScene) var skill_card_scn
+var skill_hud
 
 export var data_model : Resource
 
@@ -45,7 +53,7 @@ func play_turn():
 	# PHASE 1: Skill selection
 	yield(_summon_hexagonal_slot(), "completed")
 	yield(self, "skill_button_pressed")
-	yield(_destroy_hexagonal_slot(), "completed")
+	yield(_destroy_skill_hud(1), "completed")
 	
 	yield(_wager_hp(Round.chosen_skill.hp_cost), "completed")
 	
@@ -112,11 +120,6 @@ func play_turn():
 			phase_number
 		)
 		
-		# apply modifiers
-		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
-		
-		# apply modifications (passive and temporary)
-		
 		# draw the arrows
 		Nodes.wheel.draw_arrows(pattern)
 		
@@ -132,6 +135,9 @@ func play_turn():
 			pattern,
 			phase_number
 		)
+		
+		# apply modifiers
+		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
 		
 		# check overlapping areas between arrows and areas for each enemies
 		for character in turn_manager.get_children():
@@ -245,17 +251,6 @@ func _end_turn():
 	._end_turn()
 
 
-func _summon_hexagonal_slot():
-	hexagonal_slot = hexagonal_slot_scn.instance()
-	Nodes.root.add_child(hexagonal_slot)
-	yield(hexagonal_slot.initialize(data_model.slots), "completed")
-
-
-func _destroy_hexagonal_slot():
-	yield(hexagonal_slot.destroy(), "completed")
-	hexagonal_slot = null
-
-
 func _wager_hp(amount):
 	yield(hp_notification(-amount), "completed")
 	data_model.current_health = max(1, data_model.current_health - amount)
@@ -278,10 +273,55 @@ func _compile_permanent_modifiers(slots, indexes):
 			Modify.modifications.append(modification.duplicate())
 
 
-func _on_skill_button_pressed(btn_idx):
+func _summon_hexagonal_slot():
+	skill_hud = hexagonal_slot_scn.instance()
+	Nodes.root.add_child(skill_hud)
+	yield(skill_hud.initialize(data_model.slots), "completed")
+
+
+func _summon_skill_confirmation(slot_data, btn_idx, direction):
+	skill_hud = skill_confirmation_scn.instance()
+	Nodes.root.add_child(skill_hud)
+	yield(skill_hud.initialize(slot_data, btn_idx, direction), "completed")
+
+
+func _summon_skill_card(slot_data, btn_idx):
+	skill_hud = skill_card_scn.instance()
+	Nodes.root.add_child(skill_hud)
+	yield(skill_hud.initialize(slot_data, btn_idx), "completed")
+
+
+func _destroy_skill_hud(direction = -1):
+	if skill_hud.name == "SkillConfirmation":
+		yield(skill_hud.destroy(direction), "completed")
+	else:
+		yield(skill_hud.destroy(), "completed")
+	skill_hud = null
+
+
+func _on_hexagon_button_pressed(slot_data, btn_idx):
+	yield(_destroy_skill_hud(), "completed")
+	yield(_summon_skill_confirmation(slot_data, btn_idx, -1), "completed")
+
+
+func _on_skill_confirmed(btn_idx):
 	# choose the skill
 	Round.chosen_skill = data_model.slots[btn_idx].possession
 	_compile_permanent_modifiers(data_model.slots, data_model.slots[btn_idx].affected_by)
 	
 	# emit the signal button is pressed
 	emit_signal("skill_button_pressed")
+
+
+func _on_skill_info_pressed(slot_data, btn_idx):
+	yield(_destroy_skill_hud(1), "completed")
+	yield(_summon_skill_card(slot_data, btn_idx), "completed")
+
+
+func _on_skill_back_pressed(type, slot_data, btn_idx):
+	yield(_destroy_skill_hud(), "completed")
+	
+	match type:
+		SKILL_CONFIRM: yield(_summon_hexagonal_slot(), "completed")
+		SKILL_CARD: yield(_summon_skill_confirmation(slot_data, btn_idx, 1), "completed")
+

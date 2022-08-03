@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://Resources/Fonts/HeaderFont.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Resources/Fonts/NormalFont.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Resources/Fonts/NormalFont.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/dogicapixel.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Scenes/UI/Skill Card/skill_card.gd" type="Script" id=3]
+[ext_resource path="res://Resources/Fonts/HeaderFont.tres" type="DynamicFont" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 1 )
@@ -11,190 +12,219 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color( 1, 1, 1, 1 )
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
 
-[sub_resource type="Animation" id=2]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/path = NodePath(".:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
-}
-tracks/1/type = "value"
-tracks/1/path = NodePath(".:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/keys = {
-"times": PoolRealArray( 0 ),
-"transitions": PoolRealArray( 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ) ]
-}
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_color = Color( 1, 1, 1, 1 )
 
-[sub_resource type="Animation" id=3]
-resource_name = "hide"
-length = 0.25
-step = 0.05
-tracks/0/type = "value"
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.25 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
-}
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0, 0, 0, 1 )
 
-[sub_resource type="Animation" id=4]
-resource_name = "show"
-length = 0.25
-step = 0.05
-tracks/0/type = "value"
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.25 ),
-"transitions": PoolRealArray( 1, 1 ),
-"update": 0,
-"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
-}
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_top = 4
+border_color = Color( 1, 1, 1, 1 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 8
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0, 0, 0, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
 
 [node name="SkillCard" type="Panel"]
-anchor_right = 0.64
-anchor_bottom = 0.68
-margin_right = -3.05176e-05
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 64.0
+margin_top = 16.0
+margin_right = -80.0
+margin_bottom = -49.0
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 3 )
 
-[node name="HeaderContainer" type="MarginContainer" parent="."]
+[node name="TabContainer" type="TabContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 6.0
-margin_top = 8.0
-margin_right = -5.99998
-margin_bottom = -126.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="HeaderContainer"]
-margin_right = 244.0
-margin_bottom = 19.0
-
-[node name="Control" type="Control" parent="HeaderContainer/HBoxContainer"]
-margin_right = 76.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-
-[node name="Title" type="Label" parent="HeaderContainer/HBoxContainer"]
-margin_left = 80.0
-margin_top = 6.0
-margin_right = 163.0
-margin_bottom = 12.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = -4.0
+margin_bottom = -4.0
 custom_fonts/font = ExtResource( 1 )
-text = "Placeholder"
+custom_styles/tab_fg = SubResource( 2 )
+custom_styles/tab_bg = SubResource( 3 )
+custom_styles/panel = SubResource( 4 )
 
-[node name="Control2" type="Control" parent="HeaderContainer/HBoxContainer"]
-margin_left = 167.0
-margin_right = 244.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
-
-[node name="DescriptionContainer" type="MarginContainer" parent="."]
+[node name="Description" type="Control" parent="TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 6.0
-margin_top = 30.0
-margin_right = -5.99998
-margin_bottom = -81.0
+margin_top = 24.0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="DescriptionContainer"]
-margin_right = 244.0
-margin_bottom = 42.0
-custom_fonts/normal_font = ExtResource( 2 )
-text = "Lorem ipsum dolor sit amet"
-
-[node name="FCContainer" type="MarginContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 6.0
-margin_top = 76.0
-margin_right = -130.0
-margin_bottom = -32.0
-
-[node name="RichTextLabel" type="RichTextLabel" parent="FCContainer"]
-margin_right = 120.0
-margin_bottom = 45.0
-custom_fonts/normal_font = ExtResource( 2 )
-text = "Lorem ipsum dolor sit amet"
-
-[node name="SCContainer" type="MarginContainer" parent="."]
-anchor_left = 0.25
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 66.0
-margin_top = 76.0
-margin_right = -5.99998
-margin_bottom = -32.0
+[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Description"]
+anchor_left = 0.016
+anchor_top = 0.094
+anchor_right = 0.516
+anchor_bottom = 0.960688
+margin_left = 0.0319998
+margin_top = -0.0320005
+margin_right = 0.0319901
+margin_bottom = 0.0319977
 __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="RichTextLabel" type="RichTextLabel" parent="SCContainer"]
-margin_right = 120.0
-margin_bottom = 45.0
-custom_fonts/normal_font = ExtResource( 2 )
-text = "Lorem ipsum dolor sit amet"
+[node name="Description" type="RichTextLabel" parent="TabContainer/Description/MarginContainer"]
+margin_right = 123.0
+margin_bottom = 111.0
+custom_fonts/normal_font = ExtResource( 1 )
+text = "One fast small arrow (1) and one slow large arrow (2) that revolves on constant speed."
 
-[node name="FooterContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer2" type="MarginContainer" parent="TabContainer/Description"]
+anchor_left = 0.532
+anchor_top = 0.094
+anchor_right = 0.996
+anchor_bottom = 0.960688
+margin_left = 0.0639954
+margin_top = -0.0320005
+margin_right = -0.00801086
+margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Description/MarginContainer2"]
+margin_right = 114.0
+margin_bottom = 111.0
+
+[node name="HPCost" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
+margin_right = 114.0
+margin_bottom = 10.0
+custom_fonts/font = ExtResource( 1 )
+text = "HP Wagered: 5"
+
+[node name="HPBonus" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
+margin_top = 14.0
+margin_right = 114.0
+margin_bottom = 24.0
+custom_fonts/font = ExtResource( 1 )
+text = "Bonus HP: 5"
+
+[node name="Damage" type="Label" parent="TabContainer/Description/MarginContainer2/VBoxContainer"]
+margin_top = 28.0
+margin_right = 114.0
+margin_bottom = 64.0
+custom_fonts/font = ExtResource( 1 )
+text = "Damage:
+(1) - 10
+(2) - 5"
+
+[node name="Conditions" type="Control" parent="TabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 6.0
-margin_top = 126.0
-margin_right = -5.99998
-margin_bottom = -8.0
+margin_top = 24.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="FooterContainer"]
-margin_right = 244.0
-margin_bottom = 19.0
+[node name="FCContainer" type="MarginContainer" parent="TabContainer/Conditions"]
+anchor_left = 0.016
+anchor_top = 0.031
+anchor_right = 0.984
+anchor_bottom = 0.452875
+margin_left = 0.0319998
+margin_top = 0.0319996
+margin_right = -0.0320053
+margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
-[node name="HPCost" type="Label" parent="FooterContainer/HBoxContainer"]
-margin_top = 4.0
-margin_right = 13.0
-margin_bottom = 14.0
-custom_fonts/font = ExtResource( 2 )
-text = "+5"
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/FCContainer"]
+margin_right = 240.0
+margin_bottom = 54.0
+custom_constants/separation = 8
 
-[node name="Control" type="Control" parent="FooterContainer/HBoxContainer"]
-margin_left = 17.0
-margin_right = 228.0
-margin_bottom = 19.0
-size_flags_horizontal = 3
+[node name="Title" type="Label" parent="TabContainer/Conditions/FCContainer/VBoxContainer"]
+margin_right = 240.0
+margin_bottom = 6.0
+custom_fonts/font = ExtResource( 4 )
+text = "Reclaim Condition"
+align = 1
+valign = 1
 
-[node name="HPBonus" type="Label" parent="FooterContainer/HBoxContainer"]
-margin_left = 232.0
-margin_top = 4.0
-margin_right = 244.0
-margin_bottom = 14.0
-custom_fonts/font = ExtResource( 2 )
-text = "-5"
+[node name="Description" type="RichTextLabel" parent="TabContainer/Conditions/FCContainer/VBoxContainer"]
+margin_top = 14.0
+margin_right = 240.0
+margin_bottom = 54.0
+size_flags_vertical = 3
+custom_fonts/normal_font = ExtResource( 1 )
+text = "Both arrows hit an enemy area while the small arow is within the large arrow."
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/RESET = SubResource( 2 )
-anims/hide = SubResource( 3 )
-anims/show = SubResource( 4 )
+[node name="SCContainer" type="MarginContainer" parent="TabContainer/Conditions"]
+anchor_left = 0.016
+anchor_top = 0.484625
+anchor_right = 0.984
+anchor_bottom = 0.9685
+margin_left = 0.0319998
+margin_top = -0.0320005
+margin_right = -0.0320053
+margin_bottom = 0.0319977
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/SCContainer"]
+margin_right = 240.0
+margin_bottom = 62.0
+custom_constants/separation = 8
+
+[node name="Title" type="Label" parent="TabContainer/Conditions/SCContainer/VBoxContainer"]
+margin_right = 240.0
+margin_bottom = 6.0
+custom_fonts/font = ExtResource( 4 )
+text = "Bonus Condition"
+align = 1
+valign = 1
+
+[node name="Description" type="RichTextLabel" parent="TabContainer/Conditions/SCContainer/VBoxContainer"]
+margin_top = 14.0
+margin_right = 240.0
+margin_bottom = 62.0
+size_flags_vertical = 3
+custom_fonts/normal_font = ExtResource( 1 )
+text = "Both arrows avoid any enemy areas while the small arrow is within the large arrow."
+
+[node name="ExitButton" type="Button" parent="."]
+anchor_left = 0.918
+anchor_top = -0.156
+anchor_right = 0.992188
+anchor_bottom = -0.023
+margin_left = -0.00801086
+margin_top = -0.0319996
+margin_bottom = -0.0559998
+custom_fonts/font = SubResource( 6 )
+custom_styles/hover = SubResource( 5 )
+custom_styles/pressed = SubResource( 5 )
+custom_styles/focus = SubResource( 5 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 5 )
+text = "X"
+
+[node name="SkillTitle" type="Label" parent="."]
+anchor_top = -0.156
+anchor_right = 1.0
+anchor_bottom = -0.023
+margin_top = -0.0319996
+margin_bottom = -0.0559998
+custom_fonts/font = ExtResource( 4 )
+text = "TITLE"
+align = 1
+valign = 1
+uppercase = true
+
+[node name="Tween" type="Tween" parent="."]
