@@ -53,6 +53,9 @@ func _preprocess_a(pattern, phase_number):
 # phase 1
 func preprocess_a1(pattern):
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()
@@ -114,11 +117,12 @@ func _preprocess_d(pattern, phase_number):
 
 func preprocess_d1(pattern):
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# randomize and clamp rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()
-		
-		print(arrow.damage)
 
 
 func _process_d(pattern, visuals, phase_number):
@@ -237,6 +241,6 @@ hp_bonus = 0
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "An arrow that rotates on constant speed (2DMG)."
+description = "An arrow that rotates on constant speed."
 first_condition = "The arrow hits an overlapping area."
 second_condition = "-"

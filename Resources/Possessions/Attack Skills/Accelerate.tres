@@ -60,6 +60,9 @@ func _preprocess_a(pattern, phase_number):
 # phase 1
 func preprocess_a1(pattern):
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()
@@ -120,6 +123,9 @@ func _preprocess_d(pattern, phase_number):
 
 func preprocess_d1(pattern):
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()
@@ -243,12 +249,12 @@ name = "Accelerate"
 attack_patterns = [ {
 "acceleration": 5.0,
 "arrows": [ {
-"damage": 2,
+"damage": 1,
 "move_speed": 10.0,
 "rot_angle": 0.0,
 "thickness": 2
 } ],
-"damage_bonus": 2.0,
+"damage_bonus": 1.0,
 "offset": [ 1080.0 ],
 "process_time": 6.0
 } ]
@@ -268,6 +274,6 @@ hp_bonus = 2
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "An arrow that accelerates overtime (2DMG). Adds 1DMG every half circle rotated."
+description = "An arrow that accelerates overtime. Adds 1DMG every half circle rotated."
 first_condition = "The arrow hits an overlapping area after revoluting the circle once."
 second_condition = "The arrow avoids any areas after revoluting the circle twice."

@@ -54,6 +54,9 @@ func _preprocess_a(pattern, phase_number):
 func preprocess_a1(pattern):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# process rotation angle
 		arrow.rot_angle += rot_angle_variation
 		arrow.clamp_rot_angle()
@@ -115,6 +118,9 @@ func _preprocess_d(pattern, phase_number):
 func preprocess_d1(pattern):
 	var rot_angle_variation = rng.randi_range(0, 360)
 	for arrow in pattern.arrows:
+		# default reset
+		arrow.reset()
+		
 		# process rotation angle
 		arrow.rot_angle += rot_angle_variation
 		arrow.clamp_rot_angle()
@@ -249,12 +255,12 @@ defend_patterns = [ {
 "offset": [ 2880.0, 720 ],
 "process_time": 6.0
 } ]
-hp_cost = 5
+hp_cost = 7
 is_cost_percentage = false
 hp_bonus = 3
 is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
-description = "One slow large arrow (5DMG) and one fast small arrow (10DMG) that rotates on constant speed."
+description = "One slow large arrow and one fast small arrow that rotates on constant speed."
 first_condition = "Both arrows hit an area and the small arrow is within the large arrow."
 second_condition = "Both arrows avoid damaging areas and the small arrow is within the large arrow."
