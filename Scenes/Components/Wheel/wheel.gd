@@ -40,6 +40,10 @@ func destroy():
 
 
 func draw_areas(pattern, current_enemy):
+	var area_slots = current_enemy.area_slots
+	var width = 6 * (area_slots.end - area_slots.start) + 2 * ((area_slots.end - area_slots.start) - 1)
+	var radius = 72 - (area_slots.start * 8)
+	
 	for area in pattern.areas:
 		var new_area = _create_area(area.rot_angle, Color(1, 1, 1))
 		$Areas.add_child(new_area)
@@ -179,8 +183,9 @@ func _create_area(rot_angle, color, is_locked = false):
 	match phase:
 		Round.WheelPhase.DEFEND: area.default_color = Color(1, 1, 1, 1)
 		_:
-			if is_locked: color.a = .5
-			else: color.a = .5
+			if is_locked: color.a = .25
+			else: color.a = .25
+			
 			area.default_color = color
 	
 	return area

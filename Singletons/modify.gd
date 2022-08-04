@@ -19,13 +19,6 @@ func clear_modifications():
 	modifications = {}
 
 
-func reset_arrow_modifiers(pattern, type):
-	var elements = pattern.arrows if type == TYPE_ARROW else pattern.areas
-	
-	for element in elements:
-		element.reset()
-
-
 func _apply_damage_mul(mod_data, pattern, type):
 	var elements = pattern.arrows if type == TYPE_ARROW else pattern.areas
 	

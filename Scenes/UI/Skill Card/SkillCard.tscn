@@ -146,14 +146,14 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Conditions/FCContainer"]
 margin_right = 240.0
-margin_bottom = 54.0
+margin_bottom = 53.0
 custom_constants/separation = 8
 
 [node name="Title" type="Label" parent="TabContainer/Conditions/FCContainer/VBoxContainer"]
 margin_right = 240.0
 margin_bottom = 6.0
 custom_fonts/font = ExtResource( 4 )
-text = "Reclaim Condition"
+text = "Reclaiming wagered HP"
 align = 1
 valign = 1
 
@@ -187,7 +187,7 @@ custom_constants/separation = 8
 margin_right = 240.0
 margin_bottom = 6.0
 custom_fonts/font = ExtResource( 4 )
-text = "Bonus Condition"
+text = "Gaining bonus HP"
 align = 1
 valign = 1
 

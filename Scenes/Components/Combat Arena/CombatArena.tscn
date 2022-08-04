@@ -15,16 +15,16 @@ position = Vector2( 48, 108 )
 [node name="Enemies" type="Node2D" parent="Positions"]
 
 [node name="Position2D" type="Position2D" parent="Positions/Enemies"]
-position = Vector2( 288, 90 )
+position = Vector2( 288, 106 )
 
 [node name="Position2D2" type="Position2D" parent="Positions/Enemies"]
-position = Vector2( 352, 126 )
+position = Vector2( 352, 142 )
 
 [node name="Position2D3" type="Position2D" parent="Positions/Enemies"]
-position = Vector2( 352, 54 )
+position = Vector2( 352, 70 )
 
 [node name="Position2D4" type="Position2D" parent="Positions/Enemies"]
-position = Vector2( 288, 162 )
+position = Vector2( 288, 178 )
 
 [node name="TurnManager" type="YSort" parent="."]
 script = ExtResource( 2 )

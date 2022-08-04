@@ -40,8 +40,9 @@ func create_enemy_node(path_to_edm : String, enemy_idx : int) -> Enemy:
 	enemy.data_model = edm
 	enemy.current_health = edm.max_health
 	enemy.position = Nodes.root.get_node("Positions/Enemies").get_child(enemy_idx).position
-#	enemy.color = Configurations.enemy_colors[enemy_idx]
-	enemy.radius = 72 - ((enemy_idx * 8))
+	enemy.radius = 72 - (enemy_idx * 8)
+	enemy.area_slots.start = enemy_idx
+	enemy.area_slots.end = enemy_idx + 1
 	
 	return enemy
 
@@ -141,18 +142,10 @@ func duplicate_attack_skill(skill):
 	skill.behaviors = skill.behaviors.new()
 
 
-#func duplicate_support_skill(_skill):
-#	pass
-
-
-#func apply_modifier(modifier, pdm):
-#	for modification in modifier.modifications:
-#		var possession = pdm.slots[modification.relative_idx]
-#
-#		if possession:
-#			match possession.possession_type:
-#				Possession.Types.ATTACK_SKILL: pass
-#				Possession.Types.SUPPORT_SKILL: pass
+func reset_elements(pattern : Dictionary):
+	var elements = pattern.arrows if pattern.has("arrows") else pattern.areas
+	for element in elements:
+		element.reset()
 
 
 func is_hit(object1 : Vector2, object2 : Vector2):

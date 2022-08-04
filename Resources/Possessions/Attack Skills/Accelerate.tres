@@ -60,9 +60,6 @@ func _preprocess_a(pattern, phase_number):
 # phase 1
 func preprocess_a1(pattern):
 	for arrow in pattern.arrows:
-		# default reset
-		arrow.reset()
-		
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()
@@ -123,9 +120,6 @@ func _preprocess_d(pattern, phase_number):
 
 func preprocess_d1(pattern):
 	for arrow in pattern.arrows:
-		# default reset
-		arrow.reset()
-		
 		# process rotation angle
 		arrow.rot_angle += rng.randi_range(0, 360)
 		arrow.clamp_rot_angle()

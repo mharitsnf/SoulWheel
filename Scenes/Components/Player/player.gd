@@ -45,8 +45,6 @@ func take_damage(damage):
 
 
 func play_turn():
-	print("player playing")
-	
 	# PHASE 0: Reset previous round status
 	_start_turn()
 	
@@ -73,6 +71,9 @@ func play_turn():
 			# set temporary variables
 			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
 			var enemy_behavior_idx = character.behavior_idx
+			
+			# reset areas
+			Round.reset_elements(defend_pattern)
 			
 			# preprocess the areas
 			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
@@ -114,8 +115,10 @@ func play_turn():
 		# set temporary variables
 		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
 		
+		# reset arrows
+		Round.reset_elements(pattern)
+		
 		# preprocess the arrows for each round
-		Modify.reset_arrow_modifiers(pattern, Modify.TYPE_ARROW)
 		Round.chosen_skill.behaviors.preprocess_a.call_func(
 			pattern,
 			phase_number
@@ -192,7 +195,6 @@ func _deal_damage(pattern):
 				var damage = arrow.damage * arrow.enemies_struck.count(enemy)
 				enemy.is_defeated = enemy.take_damage(damage)
 				enemy.is_damage_dealt = true
-				print(arrow, " struck ", enemy.name, " for ", damage, " damage! enemy health: ", enemy.current_health)
 
 
 func _remove_defeated_enemies(characters):

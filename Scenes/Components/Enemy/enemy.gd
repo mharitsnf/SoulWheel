@@ -12,6 +12,10 @@ var current_behavior = 0
 var current_health
 
 var radius
+var area_slots = {
+	"start": 0,
+	"end": 0,
+}
 
 var data_model = null
 var data_model_path = null
@@ -36,8 +40,6 @@ func _ready():
 
 
 func play_turn():
-	print("enemy playing")
-	
 	for phase_number in range(Round.chosen_skill.defend_patterns.size()):
 		
 		# summon wheel with defend phase for the player
@@ -49,6 +51,10 @@ func play_turn():
 		# set temporary variables
 		var attack_pattern = data_model.attack_patterns[behavior_idx].duplicate(true)
 		var defend_pattern = Round.chosen_skill.defend_patterns[phase_number].duplicate(true)
+		
+		# reset areas and arrows
+		Round.reset_elements(attack_pattern) # areas
+		Round.reset_elements(defend_pattern) # arrows
 		
 		# preprocess the areas and arrows
 		data_model.behaviors.preprocess.call_func(

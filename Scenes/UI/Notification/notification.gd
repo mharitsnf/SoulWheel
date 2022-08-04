@@ -20,8 +20,8 @@ func _ready():
 		duration, Tween.TRANS_EXPO, Tween.EASE_OUT
 	)
 	tween.start()
-	
-	yield(tween, "tween_completed")
+
+
+func _on_Tween_tween_completed(_object, _key):
 	yield(get_tree().create_timer(.2), "timeout")
-	
 	queue_free()
