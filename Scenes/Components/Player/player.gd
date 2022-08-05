@@ -85,7 +85,7 @@ func play_turn():
 			var _did_player_acted = yield(Nodes.wheel.action(
 				[character.data_model.behaviors],
 				[defend_pattern],
-				{ "ebi": enemy_behavior_idx }
+				{ "ebi": enemy_behavior_idx, "index": character.get_index() }
 			), "completed")
 			
 			# postprocess the areas (if any)
@@ -100,7 +100,9 @@ func play_turn():
 			# Destroy
 			_destroy_wheel()
 			
-			yield(get_tree().create_timer(1), "timeout")
+			yield(get_tree().create_timer(.5), "timeout")
+	
+	yield(get_tree().create_timer(.5), "timeout")
 	
 	# PHASE 3: Soul Strike phase
 	# Loop for each attacking phases

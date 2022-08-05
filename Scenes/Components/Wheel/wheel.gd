@@ -40,13 +40,16 @@ func destroy():
 
 
 func draw_areas(pattern, current_enemy):
-	var area_slots = current_enemy.area_slots
-	var width = 6 * (area_slots.end - area_slots.start) + 2 * ((area_slots.end - area_slots.start) - 1)
-	var radius = 72 - (area_slots.start * 8)
+#	var area_slots = current_enemy.area_slots
+#	var width = 6 * (area_slots.end - area_slots.start) + 2 * ((area_slots.end - area_slots.start) - 1)
+#	var radius = 72 - (area_slots.start * 8)
+	var area_container = Node2D.new()
+	area_container.name = str(current_enemy.get_index())
+	$Areas.add_child(area_container)
 	
 	for area in pattern.areas:
 		var new_area = _create_area(area.rot_angle, Color(1, 1, 1))
-		$Areas.add_child(new_area)
+		area_container.add_child(new_area)
 		_draw_area(new_area, current_enemy.radius, area.thickness)
 
 
@@ -63,20 +66,23 @@ func action(behaviors, patterns, additional_info):
 	for behavior in behaviors:
 		Nodes.root.add_child(behavior)
 	
+	
 	is_running = true
 	
 	match phase:
 		Round.WheelPhase.SOUL_LOCK:
+			var area_visuals = $Areas.get_node(str(additional_info.index)).get_children()
+			
 			behaviors[0].process.call_func(
 				patterns[0],
-				$Areas.get_children(),
+				area_visuals,
 				additional_info.ebi
 			)
 			
 			yield(self, "action_ended")
 			
 			behaviors[0].stop_process()
-			_synchronize(AREAS, patterns[0], $Areas.get_children())
+			_synchronize(AREAS, patterns[0], area_visuals)
 			
 		Round.WheelPhase.SOUL_STRIKE:
 			behaviors[0].process_a.call_func(
@@ -94,10 +100,11 @@ func action(behaviors, patterns, additional_info):
 			# Like the other two phases, the process function stops on
 			# two conditions: player action or time out. The process stops
 			# whenever the fastest process ends.
+			var area_visuals = $Areas.get_node(str(additional_info.index)).get_children()
 			
 			behaviors[0].process.call_func(
 				patterns[0],
-				$Areas.get_children(),
+				area_visuals,
 				additional_info.ebi
 			)
 			
@@ -110,7 +117,7 @@ func action(behaviors, patterns, additional_info):
 			yield(self, "action_ended")
 			
 			behaviors[0].stop_process()
-			_synchronize(AREAS, patterns[0], $Areas.get_children())
+			_synchronize(AREAS, patterns[0], area_visuals)
 			
 			behaviors[1].stop_process()
 			_synchronize(ARROWS, patterns[1], $Arrows.get_children())

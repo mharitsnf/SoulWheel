@@ -74,7 +74,7 @@ func play_turn():
 		var _did_player_acted = yield(Nodes.wheel.action(
 			[data_model.behaviors, Round.chosen_skill.behaviors],
 			[attack_pattern, defend_pattern],
-			{ "ebi": behavior_idx, "phase_number": phase_number }
+			{ "ebi": behavior_idx, "phase_number": phase_number, "index": get_index() }
 		), "completed")
 		
 		# postprocess the areas and arrows
