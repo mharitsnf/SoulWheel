@@ -8,6 +8,7 @@ onready var turn_manager = get_parent()
 
 var turn_count = 0
 
+signal turn_finished
 
 # ===== Turn Management =====
 func first_turn():
@@ -19,7 +20,8 @@ func _start_turn():
 
 
 func play_turn():
-	pass
+	yield(get_tree(), "idle_frame")
+	return false
 
 
 func _end_turn():

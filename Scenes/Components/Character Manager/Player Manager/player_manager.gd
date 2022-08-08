@@ -30,33 +30,117 @@ func _start_turn():
 
 
 func play_turn():
+	yield(get_tree(), "idle_frame")
+	
 	# Setup turn before starting
 	_start_turn()
-	
+
 	# Skill selection phase
 	yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
 	yield(self, "skill_confirmed")
 	yield(_destroy_skill_hud(1), "completed")
-	
+
+	yield(player.wager_hp(Round.chosen_skill.hp_cost), "completed")
+
 	# Soul lock phase
-#	yield(_summon_wheel(Round.WheelPhase.SOUL_LOCK), "completed")
-#
-#	for character in Round.enemy_manager.get_children():
-#		if character is Enemy:
-#			character.select_behavior(Enemy.Behavior.DEFEND)
-#
-#			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
-#			var enemy_behavior_idx = character.behavior_idx
-#
-#			character.reset_areas(defend_pattern)
-#			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
-#
-#
+	_summon_wheel(Round.WheelPhase.SOUL_LOCK)
+
+	for character in Round.enemy_manager.get_children():
+		if character is Enemy:
+			# select enemy behavior
+			character.select_behavior(Enemy.Behavior.DEFEND)
+			
+			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
+			var enemy_behavior_idx = character.behavior_idx
+			
+			# preprocess the areas
+			character.reset_areas(defend_pattern)
+			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
+			
+			# draw the areas
+			Nodes.wheel.draw_areas(defend_pattern, character)
+			
+			# process the areas
+			var _did_player_acted = yield(Nodes.wheel.action(
+				[character.data_model.behaviors],
+				[defend_pattern],
+				{ "ebi": enemy_behavior_idx, "index": character.get_index() }
+			), "completed")
+			
+			# postprocess the areas
+			character.data_model.behaviors.postprocess.call_func(
+				defend_pattern,
+				enemy_behavior_idx
+			)
+			
+			# enemy done processing
+			character.is_locked = true
+			
+			yield(get_tree().create_timer(.25), "timeout")
 	
 	# Soul strike phase
+	Nodes.wheel.change_phase(Round.WheelPhase.SOUL_STRIKE)
+
+	for phase_number in range(Round.chosen_skill.attack_patterns.size()):
+		var pattern = Round.chosen_skill.attack_patterns[phase_number].duplicate(true)
+		
+		# reset the arrows
+		player.reset_arrows(pattern)
+		Round.chosen_skill.behaviors.preprocess_a.call_func(
+			pattern,
+			phase_number
+		)
+		
+		# draw the arrows
+		Nodes.wheel.draw_arrows(pattern)
+		
+		# process the arrows
+		var _did_player_acted = yield(Nodes.wheel.action(
+			[Round.chosen_skill.behaviors],
+			[pattern],
+			{ "phase_number" : phase_number }
+		), "completed")
+		
+		# postprocess the arrows
+		Round.chosen_skill.behaviors.postprocess_a.call_func(
+			pattern,
+			phase_number
+		)
+		
+		# apply modifier to the arrows
+		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
+		
+		# check for overlaps between the arrows and areas
+		for character in Round.enemy_manager.get_children():
+			if character is Enemy:
+				var enemy_defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
+				player.check_overlaps(character, enemy_defend_pattern, pattern)
+		
+		# deal damage to the enemies
+		player.deal_damage(pattern)
+		
+		# check the first condition
+		var fc = Round.chosen_skill.conditions.first_condition.call_func(pattern, phase_number)
+		if fc:
+			player.add_hp(Round.chosen_skill.hp_cost)
+		
+		# remove defeated enemies
+		Round.enemy_manager.remove_defeated_enemies()
+	
+	yield(get_tree().create_timer(0.5), "timeout")
+	
+	# destroy the wheel
+	_destroy_wheel()
 	
 	# Setup turn after finishing
 	_end_turn()
+	
+	# return true if the player won the round
+	if Round.enemy_manager.get_child_count() == 0:
+		return true
+	
+	# return true if there are still enemies around
+	return false
 
 
 func _end_turn():
@@ -134,6 +218,17 @@ func _on_skill_info_pressed(slot_data, btn_idx):
 
 
 # ===============================================
+
+# =============== Processing functions ===============
+func _deal_damage(pattern):
+	for arrow in pattern.arrows:
+		for enemy in arrow.enemies_struck:
+			if !enemy.is_damage_dealt:
+				var damage = arrow.damage * arrow.enemies_struck.count(enemy)
+				enemy.is_defeated = enemy.take_damage(damage)
+				enemy.is_damage_dealt = true
+
+# ====================================================
 
 # =============== Private functions ===============
 func _ready():

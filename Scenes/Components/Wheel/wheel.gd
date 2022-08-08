@@ -39,6 +39,10 @@ func destroy():
 	queue_free()
 
 
+func change_phase(new_phase):
+	phase = new_phase
+
+
 func draw_areas(pattern, current_enemy):
 #	var area_slots = current_enemy.area_slots
 #	var width = 6 * (area_slots.end - area_slots.start) + 2 * ((area_slots.end - area_slots.start) - 1)

@@ -26,8 +26,6 @@ var is_damage_dealt = false
 
 var behavior_idx = 0
 
-signal input_signal
-
 
 # =============== Public functions ===============
 func select_behavior(behavior):
@@ -44,6 +42,25 @@ func reset_areas(pattern):
 	for area in pattern.areas:
 		area.reset()
 
+
+func take_damage(damage):
+	.take_damage(damage)
+	print("taking damage")
+
+	var new_health = current_health - damage
+	current_health = max(0, new_health)
+
+	_update_health_bar()
+
+	if new_health <= 0:
+		return true
+
+	return false
+
+
+func destroy():
+	queue_free()
+
 # ================================================
 
 
@@ -57,6 +74,11 @@ func _ready():
 	current_health = data_model.max_health
 	health_bar.max_value = current_health
 	health_bar.value = current_health
+
+
+func _update_health_bar():
+	health_bar.value = current_health
+
 # =================================================
 
 #func play_turn():

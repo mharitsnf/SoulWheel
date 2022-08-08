@@ -58,6 +58,39 @@ func reset_arrows(pattern):
 func update_hp_hud():
 	Nodes.hp_hud.set_health(data_model.health)
 
+
+func wager_hp(amount):
+	yield(hp_notification(-amount), "completed")
+	data_model.health = max(1, data_model.health - amount)
+	update_hp_hud()
+
+
+func add_hp(amount):
+	hp_notification(amount)
+	data_model.health += amount
+	update_hp_hud()
+
+
+func deal_damage(pattern):
+	for arrow in pattern.arrows:
+		for enemy in arrow.enemies_struck:
+			if !enemy.is_damage_dealt:
+				var damage = arrow.damage * arrow.enemies_struck.count(enemy)
+				enemy.is_defeated = enemy.take_damage(damage)
+				enemy.is_damage_dealt = true
+
+
+# Append enemies struck by an arrow into the arrow's list
+func check_overlaps(enemy, enemy_pattern, player_pattern):
+	for area in enemy_pattern.areas:
+		var area_angle : Vector2 = Round.generate_angles(area.rot_angle, area.thickness)
+
+		for arrow in player_pattern.arrows:
+			var arrow_angle : Vector2 = Round.generate_angles(arrow.rot_angle, arrow.thickness)
+
+			if Round.is_hit(arrow_angle, area_angle):
+				arrow.enemies_struck.append(enemy)
+
 # ================================================
 
 
