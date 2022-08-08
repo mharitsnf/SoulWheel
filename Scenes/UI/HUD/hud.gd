@@ -8,7 +8,7 @@ func _ready():
 	Nodes.hp_hud = self
 
 
-func update_health(new_health):
+func set_health(new_health):
 	hp_label.text = "HP: " + str(new_health)
 
 

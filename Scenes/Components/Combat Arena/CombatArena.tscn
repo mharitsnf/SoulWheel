@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Scenes/UI/HUD/HUD.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Scenes/Components/Combat Arena/turn_manager.gd" type="Script" id=2]
+[ext_resource path="res://Scenes/Components/Turn Manager/TurnManager.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/Components/Combat Arena/combat_arena.gd" type="Script" id=3]
 
 [node name="CombatArena" type="Node"]
@@ -26,8 +26,7 @@ position = Vector2( 352, 70 )
 [node name="Position2D4" type="Position2D" parent="Positions/Enemies"]
 position = Vector2( 288, 178 )
 
-[node name="TurnManager" type="YSort" parent="."]
-script = ExtResource( 2 )
+[node name="TurnManager" parent="." instance=ExtResource( 2 )]
 
 [node name="HUD" parent="." instance=ExtResource( 1 )]
 

@@ -35,8 +35,8 @@ func initialize(slot_data, _btn_idx):
 	_set_fc_text(slot_data.possession.first_condition)
 	_set_sc_text(slot_data.possession.second_condition)
 	
-	exit_button.connect("pressed", Round.player, "_on_skill_back_pressed",
-		[Round.player.SKILL_CARD, slot_data, _btn_idx]
+	exit_button.connect("pressed", Round.player_manager, "_on_skill_back_pressed",
+		[Round.player_manager.SKILL_CARD, slot_data, _btn_idx]
 	)
 	
 	_show()

@@ -47,7 +47,7 @@ func initialize(slots):
 			button.text = ""
 			button.disabled = true
 		
-		var _e = button.connect("pressed", Round.player, "_on_hexagon_button_pressed", [slot_data, button.get_index()])
+		var _e = button.connect("pressed", Round.player_manager, "_on_hexagon_button_pressed", [slot_data, button.get_index()])
 	
 	
 	for i in range(all_line_indexes.size()):

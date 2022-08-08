@@ -17,10 +17,10 @@ func _init():
 func initialize(slot_data, btn_idx, direction):
 	title.text = slot_data.possession.name
 	
-	use_btn.connect("pressed", Round.player, "_on_skill_confirmed", [btn_idx])
-	info_btn.connect("pressed", Round.player, "_on_skill_info_pressed", [slot_data, btn_idx])
-	back_btn.connect("pressed", Round.player, "_on_skill_back_pressed", 
-		[Round.player.SKILL_CONFIRM, slot_data, btn_idx]
+	use_btn.connect("pressed", Round.player_manager, "_on_skill_confirmed", [btn_idx])
+	info_btn.connect("pressed", Round.player_manager, "_on_skill_info_pressed", [slot_data, btn_idx])
+	back_btn.connect("pressed", Round.player_manager, "_on_skill_back_pressed", 
+		[Round.player_manager.SKILL_CONFIRM, slot_data, btn_idx]
 	)
 	
 	_show(direction)

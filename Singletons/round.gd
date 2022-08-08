@@ -15,6 +15,9 @@ var player_node = preload("res://Scenes/Components/Player/Player.tscn")
 
 var player = null
 
+var player_manager = null
+var enemy_manager = null
+
 var chosen_skill = null
 var modifiers = []
 

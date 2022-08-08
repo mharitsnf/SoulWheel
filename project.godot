@@ -14,6 +14,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Scenes/Components/Character/character.gd"
 }, {
+"base": "Node2D",
+"class": "CharacterManager",
+"language": "GDScript",
+"path": "res://Scenes/Components/Character Manager/character_manager.gd"
+}, {
 "base": "Character",
 "class": "Enemy",
 "language": "GDScript",
@@ -24,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Resources/Enemies/enemy_data_model.gd"
 }, {
+"base": "CharacterManager",
+"class": "EnemyManager",
+"language": "GDScript",
+"path": "res://Scenes/Components/Character Manager/Enemy Manager/enemy_manager.gd"
+}, {
 "base": "Character",
 "class": "Player",
 "language": "GDScript",
@@ -33,6 +43,11 @@ _global_script_classes=[ {
 "class": "PlayerDataModel",
 "language": "GDScript",
 "path": "res://Resources/Player/player_data_model.gd"
+}, {
+"base": "CharacterManager",
+"class": "PlayerManager",
+"language": "GDScript",
+"path": "res://Scenes/Components/Character Manager/Player Manager/player_manager.gd"
 }, {
 "base": "Resource",
 "class": "Possession",
@@ -47,7 +62,7 @@ _global_script_classes=[ {
 "base": "YSort",
 "class": "TurnManager",
 "language": "GDScript",
-"path": "res://Scenes/Components/Combat Arena/turn_manager.gd"
+"path": "res://Scenes/Components/Turn Manager/turn_manager.gd"
 }, {
 "base": "Node2D",
 "class": "Wheel",
@@ -56,10 +71,13 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Character": "",
+"CharacterManager": "",
 "Enemy": "",
 "EnemyDataModel": "",
+"EnemyManager": "",
 "Player": "",
 "PlayerDataModel": "",
+"PlayerManager": "",
 "Possession": "",
 "SkillCard": "",
 "TurnManager": "",

@@ -15,6 +15,17 @@ func apply_modifiers(pattern, type):
 			"damage_mul": _apply_damage_mul(modifications[key], pattern, type)
 
 
+func add_modifications(modification):
+	var key = modification.key
+	
+	if !modifications.has(key):
+		modifications[key] = {
+			"amount": 0
+		}
+	
+	modifications[key].amount += modification.amount
+
+
 func clear_modifications():
 	modifications = {}
 
