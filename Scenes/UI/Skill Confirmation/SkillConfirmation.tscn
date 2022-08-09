@@ -27,9 +27,9 @@ script = ExtResource( 3 )
 
 [node name="Title" type="Label" parent="."]
 anchor_left = 0.18
-anchor_top = 0.248889
+anchor_top = 0.177778
 anchor_right = 0.64
-anchor_bottom = 0.319778
+anchor_bottom = 0.248667
 margin_bottom = 0.0499992
 custom_fonts/font = ExtResource( 1 )
 text = "Basic"
@@ -41,9 +41,9 @@ __meta__ = {
 
 [node name="UseButton" type="Button" parent="."]
 anchor_left = 0.34
-anchor_top = 0.355556
+anchor_top = 0.284445
 anchor_right = 0.48
-anchor_bottom = 0.462333
+anchor_bottom = 0.391222
 margin_bottom = -0.0249996
 custom_fonts/font = ExtResource( 2 )
 custom_styles/hover = SubResource( 1 )
@@ -58,9 +58,9 @@ __meta__ = {
 
 [node name="InfoButton" type="Button" parent="."]
 anchor_left = 0.34
-anchor_top = 0.497778
+anchor_top = 0.426667
 anchor_right = 0.48
-anchor_bottom = 0.604556
+anchor_bottom = 0.533445
 margin_bottom = -0.0249996
 custom_fonts/font = ExtResource( 2 )
 custom_styles/hover = SubResource( 1 )
@@ -75,9 +75,9 @@ __meta__ = {
 
 [node name="BackButton" type="Button" parent="."]
 anchor_left = 0.34
-anchor_top = 0.64
+anchor_top = 0.568889
 anchor_right = 0.48
-anchor_bottom = 0.746778
+anchor_bottom = 0.675667
 margin_bottom = -0.0250015
 custom_fonts/font = ExtResource( 2 )
 custom_styles/hover = SubResource( 1 )

@@ -94,6 +94,8 @@ func play_turn():
 		
 		# if player is dead
 		if Round.player.take_damage():
+			yield(get_tree().create_timer(.5), "timeout")
+			
 			# destroy wheel and end turn, still fighting
 			_destroy_wheel()
 			_end_turn()
@@ -103,6 +105,7 @@ func play_turn():
 		var sc_res = Round.chosen_skill.conditions.second_condition.call_func(defend_pattern, phase_number)
 		if sc_res:
 			Round.player.add_hp(Round.chosen_skill.hp_bonus)
+	
 	
 	yield(get_tree().create_timer(.5), "timeout")
 	

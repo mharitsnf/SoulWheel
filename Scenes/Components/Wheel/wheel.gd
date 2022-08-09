@@ -165,22 +165,6 @@ func action(behaviors, patterns, additional_info):
 	
 	return did_player_acted
 
-
-func draw_locked_areas(characters):
-	for character in characters:
-		if character is Enemy:
-			if character.is_locked:
-				
-				var area_container = Node2D.new()
-				var defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
-				
-				for area in defend_pattern.areas:
-					var saved_area = _create_area(area.rot_angle, Color(1, 1, 1), true)
-					area_container.add_child(saved_area)
-					_draw_area(saved_area, character.radius, area.thickness)
-				
-				$SavedAreas.add_child(area_container)
-
 # ================================
 
 # ======= PRIVATE FUNCTIONS =======

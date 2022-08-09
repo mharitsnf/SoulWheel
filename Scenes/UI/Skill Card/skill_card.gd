@@ -19,7 +19,7 @@ var fc_text = ""
 var sc_text = ""
 var title_text = ""
 
-var offset = Vector2(0, 30)
+var offset = Vector2(30, 0)
 
 
 func _init():

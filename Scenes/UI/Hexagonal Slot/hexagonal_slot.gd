@@ -7,11 +7,10 @@ onready var buttons_container = $ButtonsContaner
 onready var lines_container = $LinesContainer
 onready var tween = $Tween
 
-var offset = Vector2(0, 30)
+var offset = Vector2(30, 0)
 
 
 func _init():
-	rect_position = Vector2(-16, 30)
 	modulate.a = 0
 
 

@@ -7,7 +7,7 @@ onready var use_btn = $UseButton
 onready var back_btn = $BackButton
 onready var info_btn = $InfoButton
 
-var offset = Vector2(0, 24)
+var offset = Vector2(24, 0)
 
 
 func _init():

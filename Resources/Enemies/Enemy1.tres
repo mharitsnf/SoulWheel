@@ -49,13 +49,21 @@ func preprocess_a(pattern, behavior_idx):
 
 # behavior 1
 func preprocess_a1(pattern):
-	var rot_angle_variation = rng.randi_range(0, 360)
+	var new_offsets = []
 	
+	var offset_variation = rng.randi_range(-60, 60)
+	for offset in pattern.offset:
+		new_offsets.append(offset + offset_variation)
+	
+	pattern.offset = new_offsets
+	
+	var rot_angle_variation = rng.randi_range(0, 360)
 	for area in pattern.areas:
 		# process rotation angle
 		area.rot_angle += rot_angle_variation
 		area.rot_angle = fmod(area.rot_angle, 360)
 		if area.rot_angle < 0: area.rot_angle += 360
+		
 
 
 func process_a(pattern, visuals, behavior_idx):
