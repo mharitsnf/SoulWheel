@@ -67,9 +67,18 @@ func draw_arrows(pattern):
 # _objects: array of behaviors
 func action(behaviors, patterns, additional_info):
 	
-	for behavior in behaviors:
-		Nodes.root.add_child(behavior)
-	
+	match phase:
+		Round.WheelPhase.DEFEND:
+			for i in range(behaviors.size()):
+				match i:
+					0:
+						for behavior in behaviors[i]:
+							Nodes.root.add_child(behavior)
+					_:
+						Nodes.root.add_child(behaviors[i])
+		_:
+			for behavior in behaviors:
+				Nodes.root.add_child(behavior)
 	
 	is_running = true
 	
@@ -104,13 +113,20 @@ func action(behaviors, patterns, additional_info):
 			# Like the other two phases, the process function stops on
 			# two conditions: player action or time out. The process stops
 			# whenever the fastest process ends.
-			var area_visuals = $Areas.get_node(str(additional_info.index)).get_children()
 			
-			behaviors[0].process.call_func(
-				patterns[0],
-				area_visuals,
-				additional_info.ebi
-			)
+			for i in range(behaviors[0].size()):
+				var enemy_behavior = behaviors[0][i]
+				var enemy_pattern = patterns[0][i]
+				var ebi = additional_info.ebi[i]
+				var index = additional_info.index[i]
+				
+				var area_visuals = $Areas.get_node(str(index)).get_children()
+			
+				enemy_behavior.process.call_func(
+					enemy_pattern,
+					area_visuals,
+					ebi
+				)
 			
 			behaviors[1].process_d.call_func(
 				patterns[1],
@@ -120,16 +136,32 @@ func action(behaviors, patterns, additional_info):
 			
 			yield(self, "action_ended")
 			
-			behaviors[0].stop_process()
-			_synchronize(AREAS, patterns[0], area_visuals)
+			for i in range(behaviors[0].size()):
+				var enemy_behavior = behaviors[0][i]
+				var enemy_pattern = patterns[0][i]
+				var index = additional_info.index[i]
+				var area_visuals = $Areas.get_node(str(index)).get_children()
+				
+				enemy_behavior.stop_process()
+				_synchronize(AREAS, enemy_pattern, area_visuals)
 			
 			behaviors[1].stop_process()
 			_synchronize(ARROWS, patterns[1], $Arrows.get_children())
 	
 	is_running = false
 	
-	for behavior in behaviors:
-		Nodes.root.remove_child(behavior)
+	match phase:
+		Round.WheelPhase.DEFEND:
+			for i in range(behaviors.size()):
+				match i:
+					0:
+						for behavior in behaviors[i]:
+							Nodes.root.remove_child(behavior)
+					_:
+						Nodes.root.remove_child(behaviors[i])
+		_:
+			for behavior in behaviors:
+				Nodes.root.remove_child(behavior)
 	
 	return did_player_acted
 

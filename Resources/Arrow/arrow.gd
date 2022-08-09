@@ -29,6 +29,8 @@ func _init(_move_speed = 0, _rot_angle = 0, _thickness = 2, _damage = 0):
 func reset():
 	move_speed = initial_move_speed
 	damage = initial_damage
+	enemies_struck = []
+	struck_by = []
 
 
 func clamp_rot_angle():

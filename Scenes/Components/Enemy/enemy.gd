@@ -45,17 +45,33 @@ func reset_areas(pattern):
 
 func take_damage(damage):
 	.take_damage(damage)
-	print("taking damage")
-
+	
 	var new_health = current_health - damage
 	current_health = max(0, new_health)
-
+	
 	_update_health_bar()
-
+	
 	if new_health <= 0:
 		return true
-
+	
 	return false
+
+
+func check_overlaps(enemy_pattern, player_pattern):
+	for area in enemy_pattern.areas:
+		var area_angle : Vector2 = Round.generate_angles(area.rot_angle, area.thickness)
+		
+		for arrow in player_pattern.arrows:
+			var arrow_angle : Vector2 = Round.generate_angles(arrow.rot_angle, arrow.thickness)
+		
+			if _is_hit(arrow_angle, area_angle):
+				arrow.struck_by.append(area)
+
+
+func reset():
+	is_locked = false
+	is_damage_dealt = false
+	_reset_data_model()
 
 
 func destroy():
@@ -74,6 +90,11 @@ func _ready():
 	current_health = data_model.max_health
 	health_bar.max_value = current_health
 	health_bar.value = current_health
+
+
+func _reset_data_model():
+	var new_dm = Round.load_enemy_data_model(data_model_path)
+	data_model = new_dm
 
 
 func _update_health_bar():

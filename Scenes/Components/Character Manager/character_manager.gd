@@ -8,8 +8,6 @@ onready var turn_manager = get_parent()
 
 var turn_count = 0
 
-signal turn_finished
-
 # ===== Turn Management =====
 func first_turn():
 	pass

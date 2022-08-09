@@ -35,8 +35,6 @@ func initialize():
 
 
 func play_turn():
-	print(active_manager, "'s turn")
-	
 	# Let the active character moves
 	var wins = yield(active_manager.play_turn(), "completed")
 	turn_count += 1

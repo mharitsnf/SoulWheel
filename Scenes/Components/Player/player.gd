@@ -4,6 +4,8 @@ class_name Player
 
 var arrow_template = preload("res://Resources/Arrow/arrow.gd")
 
+var damage_accumulated = 0
+
 export var data_model : Resource
 
 
@@ -69,6 +71,31 @@ func add_hp(amount):
 	hp_notification(amount)
 	data_model.health += amount
 	update_hp_hud()
+
+
+func accumulate_damage(pattern):
+	for arrow in pattern.arrows:
+		for area in arrow.struck_by:
+			damage_accumulated += area.damage
+
+
+func take_damage(damage = 0):
+	damage = damage_accumulated
+	
+	if damage > 0 :
+		.take_damage(damage)
+	
+		var new_health = data_model.health - damage
+		data_model.health = max(0, new_health)
+	
+		update_hp_hud()
+	
+		damage_accumulated = 0
+	
+		if new_health <= 0:
+			return true
+	
+	return false
 
 
 func deal_damage(pattern):

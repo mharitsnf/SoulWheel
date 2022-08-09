@@ -145,6 +145,9 @@ func play_turn():
 
 func _end_turn():
 	._end_turn()
+	
+	for enemy in Round.enemy_manager.get_children():
+		enemy.reset()
 
 
 func final_turn():
@@ -218,17 +221,6 @@ func _on_skill_info_pressed(slot_data, btn_idx):
 
 
 # ===============================================
-
-# =============== Processing functions ===============
-func _deal_damage(pattern):
-	for arrow in pattern.arrows:
-		for enemy in arrow.enemies_struck:
-			if !enemy.is_damage_dealt:
-				var damage = arrow.damage * arrow.enemies_struck.count(enemy)
-				enemy.is_defeated = enemy.take_damage(damage)
-				enemy.is_damage_dealt = true
-
-# ====================================================
 
 # =============== Private functions ===============
 func _ready():
