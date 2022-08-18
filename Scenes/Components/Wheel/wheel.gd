@@ -68,7 +68,7 @@ func draw_arrows(pattern):
 func action(behaviors, patterns, additional_info):
 	
 	match phase:
-		Round.WheelPhase.DEFEND:
+		Round.WheelPhase.DEFENSE:
 			for i in range(behaviors.size()):
 				match i:
 					0:
@@ -109,7 +109,7 @@ func action(behaviors, patterns, additional_info):
 			behaviors[0].stop_process()
 			_synchronize(ARROWS, patterns[0], $Arrows.get_children())
 			
-		Round.WheelPhase.DEFEND:
+		Round.WheelPhase.DEFENSE:
 			# Like the other two phases, the process function stops on
 			# two conditions: player action or time out. The process stops
 			# whenever the fastest process ends.
@@ -151,7 +151,7 @@ func action(behaviors, patterns, additional_info):
 	is_running = false
 	
 	match phase:
-		Round.WheelPhase.DEFEND:
+		Round.WheelPhase.DEFENSE:
 			for i in range(behaviors.size()):
 				match i:
 					0:
@@ -208,7 +208,7 @@ func _create_area(rot_angle, color, is_locked = false):
 	area.rotation_degrees = rot_angle
 	
 	match phase:
-		Round.WheelPhase.DEFEND: area.default_color = Color(1, 1, 1, 1)
+		Round.WheelPhase.DEFENSE: area.default_color = Color(1, 1, 1, 1)
 		_:
 			if is_locked: color.a = .25
 			else: color.a = .25

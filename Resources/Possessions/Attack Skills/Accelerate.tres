@@ -198,39 +198,30 @@ func stop_process():
 script/source = "extends Node
 
 
-var first_condition
-var second_condition
-
-
-func _init():
-	first_condition = funcref(self, \"fc\")
-	second_condition = funcref(self, \"sc\")
+var first_condition = []
+var second_condition = []
 
 
 # ===== FIRST CONDITION =====
-func fc(pattern, phase_number):
-	match phase_number:
-		0: return fc1(pattern)
-
-
-func fc1(pattern):
+func fc(pattern):
 	var arrow = pattern.arrows[0]
-	if !arrow.enemies_struck.empty() and abs(arrow.rot_angle_displacement) > 360: return true
+	if !arrow.enemies_struck.empty() and abs(arrow.rot_angle_displacement) > 360:
+		first_condition.append(true)
+		return true
 	
+	first_condition.append(false)
 	return false
 
 # ===========================
 
 # ===== SECOND CONDITION =====
-func sc(pattern, phase_number):
-	match phase_number:
-		0: return sc1(pattern)
-
-
-func sc1(pattern):
+func sc(pattern):
 	var arrow = pattern.arrows[0]
-	if arrow.struck_by.empty() and abs(arrow.rot_angle_displacement) > (360*2): return true
+	if arrow.struck_by.empty() and abs(arrow.rot_angle_displacement) > (360*2):
+		second_condition.append(true)
+		return true
 	
+	second_condition.append(false)
 	return false
 
 # ===========================
@@ -252,14 +243,14 @@ attack_patterns = [ {
 "offset": [ 1080.0 ],
 "process_time": 6.0
 } ]
-defend_patterns = [ {
+defense_patterns = [ {
 "acceleration": 5.0,
 "arrows": [ {
-"move_speed": 10.0,
-"rot_angle": 0.0,
+"move_speed": 100,
+"rot_angle": 0,
 "thickness": 2
 } ],
-"offset": [ 360.0 ],
+"offset": [ 360 ],
 "process_time": 6.0
 } ]
 hp_cost = 5

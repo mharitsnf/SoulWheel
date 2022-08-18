@@ -171,49 +171,42 @@ func stop_process():
 script/source = "extends Node
 
 
-var first_condition
-var second_condition
-
-
-func _init():
-	first_condition = funcref(self, \"fc\")
-	second_condition = funcref(self, \"sc\")
+var first_condition = []
+var second_condition = []
 
 
 # ===== FIRST CONDITION =====
-func fc(pattern, phase_number):
-	match phase_number:
-		0: return fc1(pattern)
-
-
-func fc1(pattern):
+func fc(pattern):
 	var angle_small = Round.generate_angles(pattern.arrows[0].rot_angle, pattern.arrows[0].thickness)
 	var angle_large = Round.generate_angles(pattern.arrows[1].rot_angle, pattern.arrows[1].thickness)
 	
 	var is_arrow_overlapping = Round.is_hit(angle_small, angle_large)
 	
 	for arrow in pattern.arrows:
-		if !arrow.enemies_struck.empty() and is_arrow_overlapping: return true
-			
+		if !arrow.enemies_struck.empty() and is_arrow_overlapping:
+			first_condition.append(true)
+			return true
+	
+	first_condition.append(false)
 	return false
+
 # ===========================
 
 # ===== SECOND CONDITION =====
-func sc(pattern, phase_number):
-	match phase_number:
-		0: return sc2(pattern)
-
-
-func sc2(pattern):
+func sc(pattern):
 	var angle_small = Round.generate_angles(pattern.arrows[0].rot_angle, pattern.arrows[0].thickness)
 	var angle_large = Round.generate_angles(pattern.arrows[1].rot_angle, pattern.arrows[1].thickness)
 	
 	var is_arrow_overlapping = Round.is_hit(angle_small, angle_large)
 	
 	for arrow in pattern.arrows:
-		if !arrow.struck_by.empty(): return false
+		if !arrow.struck_by.empty():
+			second_condition.append(false)
+			return false
 	
+	second_condition.append(is_arrow_overlapping)
 	return is_arrow_overlapping
+
 # ===========================
 "
 
@@ -236,18 +229,18 @@ attack_patterns = [ {
 "offset": [ 2880.0, 720 ],
 "process_time": 6.0
 } ]
-defend_patterns = [ {
+defense_patterns = [ {
 "arrows": [ {
-"move_speed": 240.0,
-"rot_angle": 0.0,
+"move_speed": 240,
+"rot_angle": 0,
 "thickness": 2
 }, {
 "move_speed": 100,
 "rot_angle": 0,
 "thickness": 10
 } ],
-"offset": [ 2880.0, 720 ],
-"process_time": 6.0
+"offset": [ 2880, 720 ],
+"process_time": 6
 } ]
 hp_cost = 7
 is_cost_percentage = false

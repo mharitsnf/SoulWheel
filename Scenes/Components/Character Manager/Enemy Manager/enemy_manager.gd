@@ -16,24 +16,24 @@ func play_turn():
 	_start_turn()
 	
 	# summon wheel
-	_summon_wheel(Round.WheelPhase.DEFEND)
+	_summon_wheel(Round.WheelPhase.DEFENSE)
 	
-	for phase_number in range(Round.chosen_skill.defend_patterns.size()):
+	for phase_number in range(Round.chosen_skill.defense_patterns.size()):
 		
 		# --- setup player data ---
-		var defend_pattern = Round.chosen_skill.defend_patterns[phase_number].duplicate(true)
+		var defense_pattern = Round.chosen_skill.defense_patterns[phase_number].duplicate(true)
 		
 		# reset arrows
-		Round.player.reset_arrows(defend_pattern)
+		Round.player.reset_arrows(defense_pattern)
 		
 		# preprocess the arrows
 		Round.chosen_skill.behaviors.preprocess_d.call_func(
-			defend_pattern,
+			defense_pattern,
 			phase_number
 		)
 		
 		# draw ther arrows
-		Nodes.wheel.draw_arrows(defend_pattern)
+		Nodes.wheel.draw_arrows(defense_pattern)
 		
 		# --- setup enemy data for all enemies ---
 		var behaviors = []
@@ -67,13 +67,13 @@ func play_turn():
 		# process the areas and arrows
 		var _did_player_acted = yield(Nodes.wheel.action(
 			[behaviors, Round.chosen_skill.behaviors],
-			[attack_patterns, defend_pattern],
+			[attack_patterns, defense_pattern],
 			{ "ebi": ebis, "phase_number": phase_number, "index": indexes }
 		), "completed")
 		
 		# postprocess player arrows
 		Round.chosen_skill.behaviors.postprocess_d.call_func(
-			defend_pattern,
+			defense_pattern,
 			phase_number
 		)
 		
@@ -87,10 +87,10 @@ func play_turn():
 					enemy.behavior_idx
 				)
 				
-				enemy.check_overlaps(attack_pattern, defend_pattern)
+				enemy.check_overlaps(attack_pattern, defense_pattern)
 		
 		# accumulate the damage from the areas
-		Round.player.accumulate_damage(defend_pattern)
+		Round.player.accumulate_damage(defense_pattern)
 		
 		# if player is dead
 		if Round.player.take_damage():
@@ -102,8 +102,8 @@ func play_turn():
 			return true
 	
 		# assess second condition
-		var sc_res = Round.chosen_skill.conditions.second_condition.call_func(defend_pattern, phase_number)
-		if sc_res:
+		var sc = Round.chosen_skill.conditions.sc(defense_pattern)
+		if sc:
 			Round.player.add_hp(Round.chosen_skill.hp_bonus)
 	
 	

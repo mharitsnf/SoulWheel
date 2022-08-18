@@ -4,7 +4,7 @@ extends Node
 enum WheelPhase {
 	SOUL_LOCK,
 	SOUL_STRIKE,
-	DEFEND
+	DEFENSE
 }
 
 var arrow_template = preload("res://Resources/Arrow/arrow.gd")
@@ -57,9 +57,9 @@ func load_enemy_data_model(path_to_edm : String):
 	var edm = load(path_to_edm).duplicate()
 	
 	# duplicate soul areas
-	var defend_patterns = []
+	var defense_patterns = []
 	
-	for phase in edm.defend_patterns:
+	for phase in edm.defense_patterns:
 		var new_phase = phase.duplicate()
 		var new_areas = []
 		
@@ -71,9 +71,9 @@ func load_enemy_data_model(path_to_edm : String):
 			))
 		
 		new_phase.areas = new_areas
-		defend_patterns.append(new_phase)
+		defense_patterns.append(new_phase)
 	
-	edm.defend_patterns = defend_patterns
+	edm.defense_patterns = defense_patterns
 	
 	# duplicate damage areas
 	var attack_patterns = []
@@ -121,10 +121,10 @@ func duplicate_attack_skill(skill):
 
 	skill.attack_patterns = attack_patterns
 
-	# create defend arrows
-	var defend_patterns = []
+	# create defense arrows
+	var defense_patterns = []
 
-	for phase in skill.defend_patterns:
+	for phase in skill.defense_patterns:
 		var new_phase = phase.duplicate()
 		var new_arrows = []
 
@@ -136,9 +136,9 @@ func duplicate_attack_skill(skill):
 			)
 
 		new_phase.arrows = new_arrows
-		defend_patterns.append(new_phase)
+		defense_patterns.append(new_phase)
 
-	skill.defend_patterns = defend_patterns
+	skill.defense_patterns = defense_patterns
 
 	# instantiate conditions
 	skill.conditions = skill.conditions.new()

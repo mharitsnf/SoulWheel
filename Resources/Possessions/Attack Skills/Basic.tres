@@ -171,38 +171,33 @@ func stop_process():
 script/source = "extends Node
 
 
-var first_condition
-var second_condition
-
-
-func _init():
-	first_condition = funcref(self, \"fc\")
-	second_condition = funcref(self, \"sc\")
+var first_condition = []
+var second_condition = []
 
 
 # ===== FIRST CONDITION =====
-func fc(pattern, phase_number):
-	match phase_number:
-		0: return fc1(pattern)
-
-
-func fc1(pattern):
+func fc(pattern):
 	for arrow in pattern.arrows:
 		for enemy in arrow.enemies_struck:
-			if arrow.enemies_struck.count(enemy) > 1: return true
+			if arrow.enemies_struck.count(enemy) > 1:
+				first_condition.append(true)
+				return true
+	
+	first_condition.append(false)
 	return false
+
 # ===========================
 
 # ===== SECOND CONDITION =====
-func sc(pattern, phase_number):
-	match phase_number:
-		0: return sc2(pattern)
-
-
-func sc2(pattern):
+func sc(pattern):
 	for arrow in pattern.arrows:
-		if !arrow.struck_by.empty(): return false
+		if !arrow.struck_by.empty():
+			second_condition.append(false)
+			return false
+	
+	second_condition.append(false)
 	return true
+
 # ===========================
 "
 
@@ -220,14 +215,14 @@ attack_patterns = [ {
 "offset": [ 1080.0 ],
 "process_time": 6.0
 } ]
-defend_patterns = [ {
+defense_patterns = [ {
 "arrows": [ {
-"move_speed": 125.0,
-"rot_angle": 0.0,
+"move_speed": 125,
+"rot_angle": 0,
 "thickness": 2
 } ],
-"offset": [ 360.0 ],
-"process_time": 6.0
+"offset": [ 360 ],
+"process_time": 6
 } ]
 hp_cost = 3
 is_cost_percentage = false

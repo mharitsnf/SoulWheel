@@ -154,10 +154,10 @@ func _duplicate_attack_skill(skill):
 
 	skill.attack_patterns = attack_patterns
 
-	# create defend arrows
-	var defend_patterns = []
+	# create defense arrows
+	var defense_patterns = []
 
-	for phase in skill.defend_patterns:
+	for phase in skill.defense_patterns:
 		var new_phase = phase.duplicate()
 		var new_arrows = []
 
@@ -169,9 +169,9 @@ func _duplicate_attack_skill(skill):
 			)
 
 		new_phase.arrows = new_arrows
-		defend_patterns.append(new_phase)
+		defense_patterns.append(new_phase)
 
-	skill.defend_patterns = defend_patterns
+	skill.defense_patterns = defense_patterns
 
 	# instantiate conditions
 	skill.conditions = skill.conditions.new()
@@ -243,32 +243,32 @@ func _duplicate_attack_skill(skill):
 #			# draw locked areas
 #			Nodes.wheel.draw_locked_areas(turn_manager.get_children())
 #
-#			# set the enemy current behavior for defend (soul areas)
-#			character.select_behavior(Enemy.Behavior.DEFEND)
+#			# set the enemy current behavior for defense (soul areas)
+#			character.select_behavior(Enemy.Behavior.defense)
 #
 #			# set temporary variables
-#			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
+#			var defense_pattern = character.data_model.defense_patterns[character.behavior_idx].duplicate(true)
 #			var enemy_behavior_idx = character.behavior_idx
 #
 #			# reset areas
-#			Round.reset_elements(defend_pattern)
+#			Round.reset_elements(defense_pattern)
 #
 #			# preprocess the areas
-#			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
+#			character.data_model.behaviors.preprocess.call_func(defense_pattern, enemy_behavior_idx)
 #
 #			# draw the areas
-#			Nodes.wheel.draw_areas(defend_pattern, character)
+#			Nodes.wheel.draw_areas(defense_pattern, character)
 #
 #			# process the areas
 #			var _did_player_acted = yield(Nodes.wheel.action(
 #				[character.data_model.behaviors],
-#				[defend_pattern],
+#				[defense_pattern],
 #				{ "ebi": enemy_behavior_idx, "index": character.get_index() }
 #			), "completed")
 #
 #			# postprocess the areas (if any)
 #			character.data_model.behaviors.postprocess.call_func(
-#				defend_pattern,
+#				defense_pattern,
 #				enemy_behavior_idx
 #			)
 #
@@ -326,8 +326,8 @@ func _duplicate_attack_skill(skill):
 #		# check overlapping areas between arrows and areas for each enemies
 #		for character in turn_manager.get_children():
 #			if character is Enemy:
-#				var enemy_defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
-#				_check_and_append_result(character, enemy_defend_pattern, pattern)
+#				var enemy_defense_pattern = character.data_model.defense_patterns[character.behavior_idx]
+#				_check_and_append_result(character, enemy_defense_pattern, pattern)
 #
 #		# deal damage to the enemies
 #		_deal_damage(pattern)

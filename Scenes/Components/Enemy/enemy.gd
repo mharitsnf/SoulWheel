@@ -6,7 +6,7 @@ onready var health_bar = $HealthBar
 
 enum Behavior {
 	ATTACK
-	DEFEND
+	DEFENSE
 }
 var current_behavior = 0
 var current_health
@@ -33,7 +33,7 @@ func select_behavior(behavior):
 
 	match current_behavior:
 		Behavior.ATTACK: behavior_idx = rng.randi_range(0, data_model.attack_patterns.size() - 1)
-		Behavior.DEFEND: behavior_idx = rng.randi_range(0, data_model.defend_patterns.size() - 1)
+		Behavior.DEFENSE: behavior_idx = rng.randi_range(0, data_model.defense_patterns.size() - 1)
 
 	data_model.behaviors = data_model.behaviors.new(current_behavior)
 
@@ -103,7 +103,7 @@ func _update_health_bar():
 # =================================================
 
 #func play_turn():
-#	for phase_number in range(Round.chosen_skill.defend_patterns.size()):
+#	for phase_number in range(Round.chosen_skill.defense_patterns.size()):
 #
 #		# summon wheel with defend phase for the player
 #		_summon_wheel(Round.WheelPhase.DEFEND)

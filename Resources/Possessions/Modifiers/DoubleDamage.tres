@@ -1,13 +1,19 @@
-[gd_resource type="Resource" load_steps=2 format=2]
+[gd_resource type="Resource" load_steps=3 format=2]
 
 [ext_resource path="res://Resources/Possessions/Modifiers/modifier.gd" type="Script" id=1]
 
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+"
+
 [resource]
-resource_local_to_scene = true
 script = ExtResource( 1 )
-name = "Double Damage"
-modifications = [ {
-"amount": 2,
-"key": "damage_mul",
-"rel_idxs": [ 1, 5 ]
+name = "DoubleDamage"
+benefits = [ {
+"amount": 100,
+"key": "damage_mul"
 } ]
+drawbacks = [ {
+"damage_mul": -50
+} ]
+behaviors = SubResource( 1 )

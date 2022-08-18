@@ -35,7 +35,7 @@ func _init(current_behavior):
 			process = funcref(self, \"process_a\")
 			postprocess = funcref(self, \"postprocess_a\")
 		
-		Enemy.Behavior.DEFEND:
+		Enemy.Behavior.DEFENSE:
 			preprocess = funcref(self, \"preprocess_d\")
 			process = funcref(self, \"process_d\")
 			postprocess = funcref(self, \"postprocess_d\")
@@ -180,18 +180,18 @@ func stop_process():
 resource_local_to_scene = true
 script = ExtResource( 1 )
 max_health = 30
-defend_patterns = [ {
+defense_patterns = [ {
 "areas": [ {
-"move_speed": 50.0,
-"rot_angle": 0.0,
-"thickness": 60.0
+"move_speed": 50,
+"rot_angle": 0,
+"thickness": 60
 }, {
-"move_speed": 150.0,
-"rot_angle": 0.0,
-"thickness": 15.0
+"move_speed": 150,
+"rot_angle": 0,
+"thickness": 15
 } ],
-"offset": [ 270.0, 720.0 ],
-"process_time": 4.0
+"offset": [ 270, 720 ],
+"process_time": 4
 } ]
 attack_patterns = [ {
 "areas": [ {

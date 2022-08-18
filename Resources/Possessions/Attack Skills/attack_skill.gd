@@ -8,7 +8,7 @@ var arrow_template = preload("res://Resources/Arrow/arrow.gd")
 export(Array) var attack_patterns
 
 # Only contains one phase, so Array of arrows.
-export(Array) var defend_patterns
+export(Array) var defense_patterns
 
 # How much HP will be wagered and is it a percentage based on the player's current
 # health?

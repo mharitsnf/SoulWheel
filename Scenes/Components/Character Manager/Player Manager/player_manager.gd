@@ -48,28 +48,28 @@ func play_turn():
 	for character in Round.enemy_manager.get_children():
 		if character is Enemy:
 			# select enemy behavior
-			character.select_behavior(Enemy.Behavior.DEFEND)
+			character.select_behavior(Enemy.Behavior.DEFENSE)
 			
-			var defend_pattern = character.data_model.defend_patterns[character.behavior_idx].duplicate(true)
+			var defense_pattern = character.data_model.defense_patterns[character.behavior_idx].duplicate(true)
 			var enemy_behavior_idx = character.behavior_idx
 			
 			# preprocess the areas
-			character.reset_areas(defend_pattern)
-			character.data_model.behaviors.preprocess.call_func(defend_pattern, enemy_behavior_idx)
+			character.reset_areas(defense_pattern)
+			character.data_model.behaviors.preprocess.call_func(defense_pattern, enemy_behavior_idx)
 			
 			# draw the areas
-			Nodes.wheel.draw_areas(defend_pattern, character)
+			Nodes.wheel.draw_areas(defense_pattern, character)
 			
 			# process the areas
 			var _did_player_acted = yield(Nodes.wheel.action(
 				[character.data_model.behaviors],
-				[defend_pattern],
+				[defense_pattern],
 				{ "ebi": enemy_behavior_idx, "index": character.get_index() }
 			), "completed")
 			
 			# postprocess the areas
 			character.data_model.behaviors.postprocess.call_func(
-				defend_pattern,
+				defense_pattern,
 				enemy_behavior_idx
 			)
 			
@@ -113,14 +113,14 @@ func play_turn():
 		# check for overlaps between the arrows and areas
 		for character in Round.enemy_manager.get_children():
 			if character is Enemy:
-				var enemy_defend_pattern = character.data_model.defend_patterns[character.behavior_idx]
-				player.check_overlaps(character, enemy_defend_pattern, pattern)
+				var enemy_defense_pattern = character.data_model.defense_patterns[character.behavior_idx]
+				player.check_overlaps(character, enemy_defense_pattern, pattern)
 		
 		# deal damage to the enemies
 		player.deal_damage(pattern)
 		
 		# check the first condition
-		var fc = Round.chosen_skill.conditions.first_condition.call_func(pattern, phase_number)
+		var fc = Round.chosen_skill.conditions.fc(pattern)
 		if fc:
 			player.add_hp(Round.chosen_skill.hp_cost)
 		

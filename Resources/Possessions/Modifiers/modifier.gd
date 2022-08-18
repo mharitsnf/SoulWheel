@@ -1,10 +1,9 @@
 extends Possession
 
 
-# List of modifications to be applied.
-# Array of dictionary.
-# {"key": "...", "amount": "...", "operator": "...", "relative_idx": "..."}
-export(Array) var modifications
+export(Array) var benefits
+export(Array) var drawbacks
+export(GDScript) var behaviors
 
 
 func _init():
