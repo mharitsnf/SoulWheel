@@ -26,17 +26,17 @@ func _init():
 	modulate.a = 0
 
 
-func initialize(slot_data, _btn_idx):
-	_set_title_text(slot_data.possession.name)
-	_set_description_text(slot_data.possession.description)
-	_set_hp_cost_text(slot_data.possession.hp_cost)
-	_set_hp_bonus_text(slot_data.possession.hp_bonus)
-	_set_damage_text(slot_data.possession.attack_patterns)
-	_set_fc_text(slot_data.possession.first_condition)
-	_set_sc_text(slot_data.possession.second_condition)
+func initialize(skill_data, _btn_idx):
+	_set_title_text(skill_data.skill.name)
+	_set_description_text(skill_data.skill.description)
+	_set_hp_cost_text(skill_data.skill.hp_cost)
+	_set_hp_bonus_text(skill_data.skill.hp_bonus)
+	_set_damage_text(skill_data.skill.attack_patterns)
+	_set_fc_text(skill_data.skill.first_condition)
+	_set_sc_text(skill_data.skill.second_condition)
 	
 	exit_button.connect("pressed", Round.player_manager, "_on_skill_back_pressed",
-		[Round.player_manager.SKILL_CARD, slot_data, _btn_idx]
+		[Round.player_manager.SKILL_CARD, skill_data, _btn_idx]
 	)
 	
 	_show()

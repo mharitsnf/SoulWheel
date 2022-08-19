@@ -14,13 +14,13 @@ func _init():
 	modulate.a = 0
 
 
-func initialize(slot_data, btn_idx, direction):
-	title.text = slot_data.possession.name
+func initialize(skill_data, btn_idx, direction):
+	title.text = skill_data.skill.name
 	
 	use_btn.connect("pressed", Round.player_manager, "_on_skill_confirmed", [btn_idx])
-	info_btn.connect("pressed", Round.player_manager, "_on_skill_info_pressed", [slot_data, btn_idx])
+	info_btn.connect("pressed", Round.player_manager, "_on_skill_info_pressed", [skill_data, btn_idx])
 	back_btn.connect("pressed", Round.player_manager, "_on_skill_back_pressed", 
-		[Round.player_manager.SKILL_CONFIRM, slot_data, btn_idx]
+		[Round.player_manager.SKILL_CONFIRM, skill_data, btn_idx]
 	)
 	
 	_show(direction)

@@ -4,6 +4,8 @@ extends Resource
 var move_speed
 var initial_move_speed
 
+var defense = 1
+
 var damage
 var initial_damage
 

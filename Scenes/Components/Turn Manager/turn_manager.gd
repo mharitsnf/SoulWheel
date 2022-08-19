@@ -22,7 +22,7 @@ func initialize():
 	# happens here, depending on the level
 	var enemy_manager = enemy_manager_scn.instance()
 	add_child(enemy_manager)
-	for enemy_idx in range(2):
+	for enemy_idx in range(clamp(2, 1, 3)):
 		var enemy = Round.create_enemy_node("res://Resources/Enemies/Enemy1.tres", enemy_idx)
 		enemy_manager.add_child(enemy)
 	

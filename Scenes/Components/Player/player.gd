@@ -10,10 +10,25 @@ export var data_model : Resource
 
 
 # =============== Public functions ===============
-func reset_skill():
+func reset_chosen_skill():
 	Round.chosen_skill = null
-	Modify.clear_modifications()
-	data_model.reset_slots()
+#	Modify.clear_modifications()
+#	data_model.reset_slots()
+
+
+func load_skills():
+	for i in range(data_model.paths.size()):
+		var path = data_model.paths[i]
+		
+		if path.skill != null:
+			var skill = load(path.skill).duplicate()
+			_load_attack_skill(skill)
+			
+			data_model.skills[i].skill = skill
+			
+			# loading mods
+			for j in range(path.mods.size()):
+				data_model.skills[i].mods[j]
 
 
 func load_slots():
@@ -26,7 +41,7 @@ func load_slots():
 		
 			match possession.type:
 				Possession.Types.ATTACK_SKILL:
-					_duplicate_attack_skill(possession)
+					_load_attack_skill(possession)
 				
 				Possession.Types.SUPPORT_SKILL:
 					pass
@@ -40,16 +55,16 @@ func load_slots():
 
 
 func choose_skill(btn_idx):
-	var slot_data = data_model.slots[btn_idx]
+	var skill_data = data_model.skills[btn_idx]
 	
 	# set the chosen skill
-	Round.chosen_skill = slot_data.possession
+	Round.chosen_skill = skill_data.skill
 	
 	# from the affected by array, get the modifications and add it to be
 	# applied in the next turn
-	for index in slot_data.affected_by:
-		for mod in data_model.slots[index].possession.modifications:
-			Modify.add_modifications(mod)
+#	for index in skill_data.affected_by:
+#		for mod in data_model.slots[index].possession.modifications:
+#			Modify.add_modifications(mod)
 
 
 func reset_arrows(pattern):
@@ -133,7 +148,7 @@ func _ready():
 	update_hp_hud()
 
 
-func _duplicate_attack_skill(skill):
+func _load_attack_skill(skill):
 	# create attack arrows
 	var attack_patterns = []
 
@@ -484,21 +499,21 @@ func _duplicate_attack_skill(skill):
 #	Nodes.root.add_child(skill_hud)
 #	yield(skill_hud.initialize(data_model.slots), "completed")
 #
-#func _summon_skill_confirmation(slot_data, btn_idx, direction):
+#func _summon_skill_confirmation(skill_data, btn_idx, direction):
 #	skill_hud = skill_confirmation_scn.instance()
 #	Nodes.root.add_child(skill_hud)
-#	yield(skill_hud.initialize(slot_data, btn_idx, direction), "completed")
+#	yield(skill_hud.initialize(skill_data, btn_idx, direction), "completed")
 #
 #
-#func _summon_skill_card(slot_data, btn_idx):
+#func _summon_skill_card(skill_data, btn_idx):
 #	skill_hud = skill_card_scn.instance()
 #	Nodes.root.add_child(skill_hud)
-#	yield(skill_hud.initialize(slot_data, btn_idx), "completed")
+#	yield(skill_hud.initialize(skill_data, btn_idx), "completed")
 #
 #
-#func _on_hexagon_button_pressed(slot_data, btn_idx):
+#func _on_hexagon_button_pressed(skill_data, btn_idx):
 #	yield(_destroy_skill_hud(), "completed")
-#	yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, -1]), "completed")
+#	yield(_summon_skill_hud(SKILL_CONFIRM, [skill_data, btn_idx, -1]), "completed")
 #
 #
 #func _on_skill_confirmed(btn_idx):
@@ -510,15 +525,15 @@ func _duplicate_attack_skill(skill):
 #	emit_signal("skill_button_pressed")
 #
 #
-#func _on_skill_info_pressed(slot_data, btn_idx):
+#func _on_skill_info_pressed(skill_data, btn_idx):
 #	yield(_destroy_skill_hud(1), "completed")
-#	yield(_summon_skill_hud(SKILL_CARD, [slot_data, btn_idx]), "completed")
+#	yield(_summon_skill_hud(SKILL_CARD, [skill_data, btn_idx]), "completed")
 #
 #
-#func _on_skill_back_pressed(type, slot_data, btn_idx):
+#func _on_skill_back_pressed(type, skill_data, btn_idx):
 #	yield(_destroy_skill_hud(), "completed")
 #
 #	match type:
 #		SKILL_CONFIRM: yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
-#		SKILL_CARD: yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, 1]), "completed")
+#		SKILL_CARD: yield(_summon_skill_hud(SKILL_CONFIRM, [skill_data, btn_idx, 1]), "completed")
 #

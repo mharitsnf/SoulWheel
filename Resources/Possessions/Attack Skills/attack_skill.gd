@@ -13,12 +13,12 @@ export(Array) var defense_patterns
 # How much HP will be wagered and is it a percentage based on the player's current
 # health?
 export(int) var hp_cost
-export(bool) var is_cost_percentage
+var hp_reclaim
 
 # How much bonus HP will the player receive if they manage to avoid the damage areas?
 # And is it a percentage based on the player's max health?
 export(int) var hp_bonus
-export(bool) var is_bonus_percentage
+
 
 # Script that handles the first condition
 export(GDScript) var conditions
@@ -34,3 +34,5 @@ export(String, MULTILINE) var second_condition
 func _init():
 	._init()
 	type = Types.ATTACK_SKILL
+	
+	hp_reclaim = hp_cost

@@ -3,14 +3,14 @@ class_name PlayerManager
 
 
 enum {
-	SKILL_HEXAGON,
+	SKILL_SELECTION,
 	SKILL_CONFIRM,
 	SKILL_CARD
 }
 
-export(PackedScene) var hexagonal_slot
 export(PackedScene) var skill_confirmation
 export(PackedScene) var skill_card
+export(PackedScene) var skill_selection
 var skill_hud
 
 var player : Player
@@ -21,12 +21,13 @@ signal skill_confirmed
 # =============== Turn management ===============
 func first_turn():
 	player = get_child(0)
+	player.load_skills()
 
 
 func _start_turn():
 	._start_turn()
-	player.reset_skill()
-	player.load_slots()
+	player.reset_chosen_skill()
+#	player.load_slots()
 
 
 func play_turn():
@@ -36,7 +37,7 @@ func play_turn():
 	_start_turn()
 
 	# Skill selection phase
-	yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
+	yield(_summon_skill_hud(SKILL_SELECTION), "completed")
 	yield(self, "skill_confirmed")
 	yield(_destroy_skill_hud(1), "completed")
 
@@ -108,7 +109,7 @@ func play_turn():
 		)
 		
 		# apply modifier to the arrows
-		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
+#		Modify.apply_modifiers(pattern, Modify.TYPE_ARROW)
 		
 		# check for overlaps between the arrows and areas
 		for character in Round.enemy_manager.get_children():
@@ -159,30 +160,29 @@ func final_turn():
 # Helper function for summoning skill HUD
 func _summon_skill_hud(type, args = []):
 	match type:
-		SKILL_HEXAGON: yield(_summon_hexagonal_slot(), "completed")
+		SKILL_SELECTION: yield(_summon_skill_selection(), "completed")
 		SKILL_CONFIRM: yield(_summon_skill_confirmation(args[0], args[1], args[2]), "completed")
 		SKILL_CARD: yield(_summon_skill_card(args[0], args[1]), "completed")
 
 
-# Summoning the hexagonal slot
-func _summon_hexagonal_slot():
-	skill_hud = hexagonal_slot.instance()
+func _summon_skill_selection():
+	skill_hud = skill_selection.instance()
 	Nodes.root.add_child(skill_hud)
-	yield(skill_hud.initialize(player.data_model.slots), "completed")
+	yield(skill_hud.initialize(player.data_model.skills), "completed")
 
 
 # Summoning the skill confirmation UI
-func _summon_skill_confirmation(slot_data, btn_idx, direction):
+func _summon_skill_confirmation(skill_data, btn_idx, direction):
 	skill_hud = skill_confirmation.instance()
 	Nodes.root.add_child(skill_hud)
-	yield(skill_hud.initialize(slot_data, btn_idx, direction), "completed")
+	yield(skill_hud.initialize(skill_data, btn_idx, direction), "completed")
 
 
 # Summoning the skill card information UI
-func _summon_skill_card(slot_data, btn_idx):
+func _summon_skill_card(skill_data, btn_idx):
 	skill_hud = skill_card.instance()
 	Nodes.root.add_child(skill_hud)
-	yield(skill_hud.initialize(slot_data, btn_idx), "completed")
+	yield(skill_hud.initialize(skill_data, btn_idx), "completed")
 
 
 # Helper function for destroying skill HUD
@@ -194,17 +194,18 @@ func _destroy_skill_hud(direction = -1):
 	skill_hud = null
 
 
-func _on_skill_back_pressed(type, slot_data, btn_idx):
+# Handles when back is pressed
+func _on_skill_back_pressed(type, skill_data, btn_idx):
 	yield(_destroy_skill_hud(), "completed")
 
 	match type:
-		SKILL_CONFIRM: yield(_summon_skill_hud(SKILL_HEXAGON), "completed")
-		SKILL_CARD: yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, 1]), "completed")
+		SKILL_CONFIRM: yield(_summon_skill_hud(SKILL_SELECTION), "completed")
+		SKILL_CARD: yield(_summon_skill_hud(SKILL_CONFIRM, [skill_data, btn_idx, 1]), "completed")
 
 
-func _on_hexagon_button_pressed(slot_data, btn_idx):
+func _on_skill_selection_pressed(skill, btn_idx):
 	yield(_destroy_skill_hud(), "completed")
-	yield(_summon_skill_hud(SKILL_CONFIRM, [slot_data, btn_idx, -1]), "completed")
+	yield(_summon_skill_hud(SKILL_CONFIRM, [skill, btn_idx, -1]), "completed")
 
 
 func _on_skill_confirmed(btn_idx):
@@ -215,9 +216,9 @@ func _on_skill_confirmed(btn_idx):
 	emit_signal("skill_confirmed")
 
 
-func _on_skill_info_pressed(slot_data, btn_idx):
+func _on_skill_info_pressed(skill_data, btn_idx):
 	yield(_destroy_skill_hud(1), "completed")
-	yield(_summon_skill_hud(SKILL_CARD, [slot_data, btn_idx]), "completed")
+	yield(_summon_skill_hud(SKILL_CARD, [skill_data, btn_idx]), "completed")
 
 
 # ===============================================

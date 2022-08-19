@@ -19,12 +19,9 @@ border_width_bottom = 2
 border_color = Color( 0.247059, 0.247059, 0.247059, 1 )
 
 [node name="SkillButton" type="Button"]
-anchor_left = -0.05
-anchor_top = -0.089
-anchor_right = 0.05
-anchor_bottom = 0.089
-margin_top = 0.0249996
-margin_bottom = -0.0249996
+anchor_right = 0.1
+anchor_bottom = 0.178
+margin_bottom = -0.0499992
 custom_fonts/font = ExtResource( 1 )
 custom_styles/hover = SubResource( 1 )
 custom_styles/pressed = SubResource( 2 )

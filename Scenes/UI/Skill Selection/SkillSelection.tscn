@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scenes/UI/Skill Button/SkillButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/UI/Skill Selection/skill_selection.gd" type="Script" id=2]
+
+[node name="SkillSelection" type="Control"]
+anchor_top = 0.751
+anchor_right = 0.4825
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 65.025
+margin_right = -4.0
+margin_bottom = 52.0
+script = ExtResource( 2 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="SkillButton" parent="HBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 43.0
+margin_bottom = 43.0
+size_flags_horizontal = 3
+
+[node name="SkillButton2" parent="HBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 47.0
+margin_right = 90.0
+margin_bottom = 43.0
+size_flags_horizontal = 3
+
+[node name="SkillButton3" parent="HBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 94.0
+margin_right = 137.0
+margin_bottom = 43.0
+size_flags_horizontal = 3
+
+[node name="SkillButton4" parent="HBoxContainer" instance=ExtResource( 1 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_left = 141.0
+margin_right = 185.0
+margin_bottom = 43.0
+size_flags_horizontal = 3
+
+[node name="Tween" type="Tween" parent="."]

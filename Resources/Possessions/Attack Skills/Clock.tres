@@ -243,9 +243,7 @@ defense_patterns = [ {
 "process_time": 6
 } ]
 hp_cost = 7
-is_cost_percentage = false
 hp_bonus = 3
-is_bonus_percentage = false
 conditions = SubResource( 1 )
 behaviors = SubResource( 2 )
 description = "One fast small arrow and one slow large arrow that rotates on constant speed."
